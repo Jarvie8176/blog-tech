@@ -1,20 +1,24 @@
 # Cloudflare Pages and the blog gateway
 
-tech is an independent Pages project. Its public mount is /tech, under https://blog.fnpg.me. Other sections can choose separate frameworks, themes and deployments.
+Production: https://blog.fnpg.me/tech/. The independent Pages project is `blog-tech`, origin `https://blog-tech-81q.pages.dev`. Worker `blog-tech-gateway` owns the `blog.fnpg.me` Custom Domain and forwards only `/tech` and `/tech/*`; other paths currently return 404. Future sections can add their own origins to the shared front door.
 
-## Build
+## Verified artifact publishing
 
-```sh
-bun install --frozen-lockfile
-bun run build
-bun run validate:site
-```
+`Site checks` validates PRs and main: types, lint, format, unit tests, Astro build, Pagefind, static artifact checks, Chromium desktop/mobile. It saves `site-<SHA>` for seven days.
 
-Upload dist/ together with `_pagefind/`, HTML and all assets. The browser search API sets Pagefind baseUrl to /tech/ before initialization. For Pages Git integration, use the build command above and dist as output; Direct Upload can publish the same checked artifact. Project, credentials, preview/production selection and the final publishing workflow remain deployment work. The current CI saves artifacts but does not deploy.
+`.github/workflows/publish.yml` runs after successful main **push** checks from this repository. It checks out that SHA, skips an obsolete main revision, downloads the matching checked artifact and invokes `scripts/cloudflare/publish.js`. It does not rebuild the site. Production publishes are serialized, and deployment receipts are retained for 30 days.
 
-## Path mapping
+The publisher uses the Cloudflare REST API to upload static assets and create the Pages production deployment. It rejects Functions/routing files, checks the configured project and branch, waits for deployment success, verifies its canonical source SHA, and checks the public gateway. Content publishing does not modify Worker bindings or DNS.
 
-`gateway/worker.ts` exports the Cloudflare fetch handler. Set TECH_ORIGIN to the distinct Pages origin, with scheme and hostname only. Do not use blog.fnpg.me or include /tech in TECH_ORIGIN.
+Repository configuration:
+
+- Actions secret `CLOUDFLARE_API_TOKEN`, supplied from the existing `CF_API_TOKEN_FNPG` credential.
+- Actions variable `CLOUDFLARE_ACCOUNT_ID`, identifying the account owning the Pages project.
+- Runtime `RELEASE_SHA`, supplied by the successful check run.
+
+No credential values belong in Git or logs. The credential source is the `homelab/cloudflare` 1Password item and the SOPS-age encrypted envctl cache. For headless operations use `~/cc/envctl --file ~/cc/.env.enc exec -- <command>` with the correct local tool PATH. The default plaintext `.env` is not the authoritative cache. Actions Secrets are an encrypted consumer copy; rotate/update that copy when changing the canonical credential.
+
+## Public path mapping
 
 ```text
 Public URL                           Pages request
@@ -24,22 +28,18 @@ Public URL                           Pages request
 /tech/_pagefind/pagefind.js           /_pagefind/pagefind.js
 ```
 
-The gateway handles only /tech and /tech/*, normalizes /tech to /tech/, forwards GET/HEAD, strips the mount once, and excludes reader cookies/authorization. It returns upstream responses without following redirects, rewrites origin-local Location headers, and preserves preview noindex headers.
+SITE_URL is `https://blog.fnpg.me`; BASE_PATH is `/tech`. Pagefind sets its browser baseUrl before initialization. Opening a raw Pages origin does not emulate the public mount. Use `bun run preview:gateway` for local preview.
 
-The origin must not redirect every request to blog.fnpg.me. For preview, use a gateway with the same mount rather than opening the Pages origin as if it were the public mounted site. Canonical metadata stays on the formal public URL.
+The gateway fixes TECH_ORIGIN to the distinct Pages origin, forwards GET/HEAD, preserves queries, excludes reader cookies/authorization, rewrites origin-local redirects and removes origin cookies. Do not configure an origin-wide redirect back to blog.fnpg.me.
 
-`gateway/wrangler.toml` contains source configuration only, without claiming a production route. Configure hostname/route ownership at deployment. Other paths currently return 404. A future shared front door can dispatch arts, photo and notes to their declared origins.
+`gateway/wrangler.toml` remains a source/local configuration. Production bootstrap used the Cloudflare API with the compiled module, compatibility date 2026-10-25 and a plaintext TECH_ORIGIN binding. A Workers Custom Domain creates the hostname binding; it does not require zone Worker Routes access. Check existing DNS/domain ownership before a new binding. Separate gateway releases require separate verification and must not be folded into every article publish.
 
-## Shared ownership
+Root homepage, robots.txt and the global sitemap index belong to the shared front door. tech contributes `/tech/sitemap-index.xml` and localized feeds. Keep all section resources beneath their mounts and namespace browser preferences.
 
-Root homepage, robots.txt and the global sitemap index belong to the shared front door. tech contributes /tech/sitemap-index.xml and localized feeds. Keep per-site resources under their mounts, namespace browser storage and use normal navigation across sites.
+## Verification and rollback
 
-## Before cutover
+Initial production bootstrap published source `80f7a82835c13d08fd045f4943c0923728b06349`, Pages deployment `768c7f1a-4d9a-4cfd-aa10-1402cdc4b331`. Current releases are identified by the workflow's `cloudflare-deployment.json` receipt, containing current and previous deployment IDs, source SHA and manifest digest.
 
-- Test the real Pages origin and gateway, including slash redirects, query preservation, conditional requests and failure responses.
-- Fetch three-language articles, assets, search, RSS and sitemap through the public URL.
-- Verify production canonical/hreflang and preview noindex, keeping previews out of the global sitemap.
-- Coordinate root files without altering other sections.
-- Record source SHA and deployment IDs, and exercise Pages/gateway rollback separately.
+Verify public three-language articles, assets, same-article language links, search, RSS, sitemap, redirects and missing pages after deployment. Preserve preview noindex and production self-canonical/hreflang. Full search quality, screen-reader and production performance audits remain separate work.
 
-A local build is not evidence for live DNS or Cloudflare deployment. Credentials and production configuration are separate from theme adoption.
+For a Pages rollback, inspect the recorded previous successful production deployment and invoke the Cloudflare Pages rollback endpoint or dashboard action, then recheck the public URL. The first deployment has no previous release to roll back to. Gateway/domain rollback is separate: keep its prior version/bindings and domain ID, and avoid changing other blog sections. Never treat an API upload response alone as proof that public routing works.
