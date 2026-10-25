@@ -62,7 +62,7 @@ bun run test:e2e
 
 浏览器检查覆盖桌面和手机尺寸、三语言搜索、缺失译文、偏好隔离与无 JavaScript 阅读。静态检查核对真实构建产物的链接、资源、语言、canonical、RSS、草稿排除及 Pagefind。
 
-PR 和 main CI 执行完整检查并保存静态产物；生产发布尚未接线。本版未启用统计或评论服务。
+PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，Publish Pages 工作流通过 Cloudflare API 发布同一份产物。过期提交与 PR 事件不会触发生产发布。本版未启用统计或评论服务。
 
 ## 发布与维护
 
