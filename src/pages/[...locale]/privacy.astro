@@ -1,7 +1,8 @@
 ---
 import { getEntry, render } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
-import { SITE } from '~/config';
+import { ANALYTICS, SITE } from '~/config';
+import { useTranslations } from '~/i18n/utils';
 
 export function getStaticPaths() {
   return SITE.locales.map((l) => ({
@@ -10,6 +11,7 @@ export function getStaticPaths() {
   }));
 }
 const { locale } = Astro.props;
+const t = useTranslations(locale);
 const entry = await getEntry('pages', `${locale}/privacy`);
 if (!entry) return Astro.rewrite('/404');
 const { Content } = await render(entry);
@@ -21,5 +23,6 @@ const { Content } = await render(entry);
   locale={locale}
   math={entry.data.math}
 >
+  <p>{t(ANALYTICS.enabled ? 'privacy.analyticsEnabled' : 'privacy.analyticsDisabled')}</p>
   <Content />
 </PageLayout>

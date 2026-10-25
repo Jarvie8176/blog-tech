@@ -15,6 +15,7 @@ Repository configuration:
 - Actions secret `CLOUDFLARE_API_TOKEN`, supplied from the existing `CF_API_TOKEN_FNPG` credential.
 - Actions variable `CLOUDFLARE_ACCOUNT_ID`, identifying the account owning the Pages project.
 - Runtime `RELEASE_SHA`, supplied by the successful check run.
+- Optional public Actions variables `PUBLIC_UMAMI_WEBSITE_ID` and `PUBLIC_UMAMI_SCRIPT_URL`, consumed during Site checks when building the artifact. These are a public website UUID and HTTPS tracker URL, never an Umami API token. Leave the ID empty to disable analytics; the privacy page reflects this state. Changing either variable requires a new checked main build before production changes.
 
 No credential values belong in Git or logs. The credential source is the `homelab/cloudflare` 1Password item and the SOPS-age encrypted envctl cache. For headless operations use `~/cc/envctl --file ~/cc/.env.enc exec -- <command>` with the correct local tool PATH. The default plaintext `.env` is not the authoritative cache. Actions Secrets are an encrypted consumer copy; rotate/update that copy when changing the canonical credential.
 

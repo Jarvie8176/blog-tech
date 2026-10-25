@@ -3,6 +3,8 @@
 
 interface ImportMetaEnv {
   readonly SITE_URL?: string;
+  readonly PUBLIC_UMAMI_WEBSITE_ID?: string;
+  readonly PUBLIC_UMAMI_SCRIPT_URL?: string;
   readonly CI_SKIP_CONTENT_COLLECTIONS?: string;
   readonly CI_SKIP_RSS_SITEMAP?: string;
   readonly PUBLIC_GISCUS_ENABLED?: string;
