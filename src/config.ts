@@ -114,9 +114,13 @@ export const SITE: SiteConfig = {
   multilingual: true,
 };
 
+export const TOPICS = [
+  { key: 'yaaa', href: '/yaaa/', descriptionKey: 'yaaa.description' },
+] as const;
+
 export const NAV: readonly NavItem[] = [
   { key: 'home', href: '/', icon: 'lucide:home' },
-  { key: 'yaaa', href: '/yaaa/', icon: 'lucide:layers' },
+  { key: 'topics', href: '/topics/', icon: 'lucide:layers', children: TOPICS },
   { key: 'categories', href: '/categories', icon: 'lucide:layers' },
   { key: 'tags', href: '/tags', icon: 'lucide:tag' },
   { key: 'archives', href: '/archives', icon: 'lucide:archive' },

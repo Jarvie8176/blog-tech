@@ -671,6 +671,15 @@
   .chirpy-nav-link[aria-current='page']:hover {
     background: color-mix(in oklab, var(--color-primary) 12%, transparent);
   }
+  .chirpy-nav-link[data-section-active='true'] {
+    color: var(--color-primary);
+  }
+  .chirpy-nav-children {
+    @apply border-base-300 ml-5 border-l pl-2;
+  }
+  .chirpy-nav-children .chirpy-nav-link {
+    @apply py-2 text-xs font-medium tracking-normal normal-case;
+  }
   .chirpy-nav-link i,
   .chirpy-nav-link svg {
     @apply h-4 w-4 shrink-0;

@@ -24,10 +24,17 @@ for (const { prefix, lang, heading, query } of variants) {
       'href',
       `https://blog.fnpg.me/tech${prefix}/posts/yaaa/`,
     );
+    const languages = page.locator('[data-article-languages]');
+    await expect(languages).toBeVisible();
+    await expect(languages.locator('a[aria-current="page"]')).toHaveAttribute('hreflang', lang);
     for (const other of variants.filter((variant) => variant.prefix !== prefix)) {
       await expect(
         page.locator(`a[data-lang-target="${other.prefix.slice(1) || 'zh'}"]`),
       ).toHaveAttribute('href', `/tech${other.prefix}/posts/yaaa/`);
+      await expect(languages.locator(`a[hreflang="${other.lang}"]`)).toHaveAttribute(
+        'href',
+        `/tech${other.prefix}/posts/yaaa/`,
+      );
     }
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(
@@ -58,6 +65,7 @@ for (const { prefix, lang, heading, query } of variants) {
 test('missing translations and other blog paths are not synthesized', async ({ page, request }) => {
   await page.goto('/tech/posts/closeout-notes/');
   await expect(page.locator('[data-lang-switcher]')).toHaveCount(0);
+  await expect(page.locator('[data-article-languages]')).toHaveCount(0);
   for (const path of ['/tech/en/posts/closeout-notes/', '/arts/', '/technology/']) {
     expect((await request.get(path)).status()).toBe(404);
   }
@@ -94,6 +102,8 @@ test('article and language links work without JavaScript', async ({ browser }) =
   await page.locator('[data-lang-switcher] summary').click();
   await page.locator('a[data-lang-target="ja"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await page.locator('[data-article-languages] a[hreflang="zh-Hans"]').click();
+  await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hans');
   await context.close();
 });
 

@@ -6,7 +6,15 @@ import TableOfContents from '../components/islands/TableOfContents.astro';
 import Giscus from '../components/islands/Giscus.astro';
 import { Icon } from 'astro-icon/components';
 import { GISCUS, SITE, type Locale } from '../config';
-import { useTranslations, stripLocale, formatDate, isoDate, localizedPath } from '../i18n/utils';
+import {
+  useTranslations,
+  stripLocale,
+  formatDate,
+  isoDate,
+  localizedPath,
+  localeLabel,
+  htmlLang,
+} from '../i18n/utils';
 import { readingTime } from '../utils/reading-time';
 import {
   type Post,
@@ -178,6 +186,40 @@ if (post.data.mermaid) {
           {minutes}
           {t('post.readingTime')}
         </span>
+        {
+          SITE.multilingual && availableLocales.length > 1 && (
+            <nav
+              aria-label={t('lang.switcher')}
+              data-article-languages
+              data-pagefind-ignore
+              class="flex w-full flex-wrap items-center gap-2 sm:w-auto"
+            >
+              <Icon name="lucide:languages" width={14} height={14} aria-hidden="true" />
+              <ul class="flex flex-wrap items-center gap-1">
+                {SITE.locales
+                  .filter((language) => translationLinks[language])
+                  .map((language) => (
+                    <li>
+                      <a
+                        href={translationLinks[language]}
+                        lang={htmlLang(language)}
+                        hreflang={htmlLang(language)}
+                        aria-current={language === locale ? 'page' : undefined}
+                        class:list={[
+                          'hover:text-primary rounded px-2 py-1 transition focus-visible:outline-2 focus-visible:outline-offset-2',
+                          language === locale
+                            ? 'bg-primary/10 text-primary font-semibold'
+                            : 'hover:bg-base-200',
+                        ]}
+                      >
+                        {localeLabel(language)}
+                      </a>
+                    </li>
+                  ))}
+              </ul>
+            </nav>
+          )
+        }
       </div>
     </header>
 

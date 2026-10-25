@@ -45,6 +45,8 @@ export interface NavItem {
   href: string;
   /** Optional icon name (e.g. "home", "tags"). */
   icon?: string;
+  /** Optional second-level navigation links. */
+  children?: readonly Omit<NavItem, 'children'>[];
 }
 
 export interface SocialLink {
