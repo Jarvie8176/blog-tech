@@ -40,3 +40,6 @@ pagefind/
 *.log
 test-results/
 playwright-report/
+
+# deployment receipt
+cloudflare-deployment.json

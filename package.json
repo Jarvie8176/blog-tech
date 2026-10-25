@@ -24,7 +24,8 @@
     "format:check": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,md,mdx,css,json}\"",
     "validate:site": "bun run scripts/validate-site.ts",
     "test:e2e": "playwright test",
-    "preview:gateway": "bun run scripts/preview-gateway.ts"
+    "preview:gateway": "bun run scripts/preview-gateway.ts",
+    "deploy:pages": "node scripts/cloudflare/publish.js"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "^0.3.3",
@@ -66,7 +67,9 @@
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3",
     "zod": "^4.4.3",
-    "@playwright/test": "1.64.1"
+    "@playwright/test": "1.64.1",
+    "blake3-wasm": "2.1.5",
+    "mime": "4.1.0"
   },
   "keywords": [
     "astro",
