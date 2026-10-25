@@ -1,0 +1,42 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PostList from '~/components/PostList.astro';
+import Pagination from '~/components/Pagination.astro';
+import { SITE } from '~/config';
+import { localizedPath, useTranslations } from '~/i18n/utils';
+import { getPosts } from '~/utils/posts';
+
+export function getStaticPaths() {
+  return SITE.locales.map((l) => ({
+    params: { locale: l === SITE.defaultLocale ? undefined : l },
+    props: { locale: l },
+  }));
+}
+const { locale } = Astro.props;
+
+const t = useTranslations(locale);
+const posts = await getPosts(locale);
+const pageSize = SITE.postsPerPage;
+const lastPage = Math.max(1, Math.ceil(posts.length / pageSize));
+const currentPage = 1;
+const pagePosts = posts.slice(0, pageSize);
+
+const hrefForPage = (n: number) => localizedPath(n === 1 ? '/' : `/page/${n}/`, locale);
+---
+
+<BaseLayout title={t('site.title')} description={t('site.description')} pathWithoutLocale="/">
+  <section class="border-base-300 mb-8 border-b pb-6">
+    <h1 class="text-3xl font-bold tracking-tight">{t('site.title')}</h1>
+    <p class="text-base-content/70 mt-3 text-lg">{t('site.description')}</p>
+    <a href={localizedPath('/yaaa/', locale)} class="text-primary mt-4 inline-block underline"
+      >{t('nav.yaaa')} →</a
+    >
+  </section>
+  <PostList posts={pagePosts} locale={locale} />
+  <Pagination
+    currentPage={currentPage}
+    lastPage={lastPage}
+    hrefForPage={hrefForPage}
+    locale={locale}
+  />
+</BaseLayout>

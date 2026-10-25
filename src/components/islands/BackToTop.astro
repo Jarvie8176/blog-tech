@@ -1,0 +1,32 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations } from '../../i18n/utils';
+import type { Locale } from '../../config';
+interface Props {
+  locale: Locale;
+}
+const t = useTranslations(Astro.props.locale);
+---
+
+<button type="button" class="back-to-top" aria-label={t('site.backToTop')} data-back-to-top>
+  <Icon name="lucide:arrow-up" width={18} height={18} />
+</button>
+
+<script>
+  function setupBackToTop() {
+    const btn = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+    if (!btn) return;
+    const target = btn;
+    function onScroll() {
+      if (window.scrollY > 320) target.classList.add('is-visible');
+      else target.classList.remove('is-visible');
+    }
+    target.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+  setupBackToTop();
+  document.addEventListener('astro:page-load', setupBackToTop);
+</script>

@@ -1,0 +1,7 @@
+name = "blog-tech-gateway"
+main = "worker.ts"
+compatibility_date = "2026-10-25"
+workers_dev = true
+
+# Add TECH_ORIGIN as the distinct Pages project origin at deployment.
+# Route ownership of blog.fnpg.me is deliberately configured separately.
