@@ -1,0 +1,26 @@
+---
+import { ANALYTICS } from '../config';
+---
+
+<script is:inline>
+  window.blogTechBeforeSend = function (_type, payload) {
+    // Same-origin referrers may contain a search query as well.
+    ['url', 'referrer'].forEach(function (key) {
+      if (typeof payload[key] === 'string') payload[key] = payload[key].split(/[?#]/)[0];
+    });
+    return payload;
+  };
+</script>
+<script
+  is:inline
+  defer
+  src={ANALYTICS.scriptUrl}
+  data-website-id={ANALYTICS.websiteId}
+  data-domains={ANALYTICS.domain}
+  data-exclude-search="true"
+  data-exclude-hash="true"
+  data-do-not-track="true"
+  data-before-send="blogTechBeforeSend"
+>
+  /* Umami loads from src after the privacy hook above is installed. */
+</script>

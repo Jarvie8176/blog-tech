@@ -11,6 +11,8 @@ jobs:
     env:
       SITE_URL: https://blog.fnpg.me
       BASE_PATH: /tech
+      PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
+      PUBLIC_UMAMI_SCRIPT_URL: ${{ vars.PUBLIC_UMAMI_SCRIPT_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

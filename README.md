@@ -62,7 +62,7 @@ bun run test:e2e
 
 浏览器检查覆盖桌面和手机尺寸、三语言搜索、缺失译文、偏好隔离与无 JavaScript 阅读。静态检查核对真实构建产物的链接、资源、语言、canonical、RSS、草稿排除及 Pagefind。
 
-PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，Publish Pages 工作流通过 Cloudflare API 发布同一份产物。过期提交与 PR 事件不会触发生产发布。本版未启用统计或评论服务。
+PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，Publish Pages 工作流通过 Cloudflare API 发布同一份产物。过期提交与 PR 事件不会触发生产发布。评论服务未启用。Umami 访问统计由公开的 website ID 控制，配置与隐私说明见下文。
 
 ## 发布与维护
 
@@ -72,3 +72,11 @@ PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，
 - [主题选型 #2](https://github.com/Jarvie8176/blog-tech/issues/2)
 
 上游代码与资源保留 MIT 许可证，见 [NOTICE.md](NOTICE.md)。仓库原有 [CC0 LICENSE](LICENSE) 不覆盖上游声明。
+
+## 署名、版本与访问统计
+
+页脚署名为 J. Kong，链接到 https://portfolio.fnpg.me/；GitHub 短 hash 指向实际构建提交。CI 使用 GITHUB_SHA，Pages 原生构建可使用 CF_PAGES_COMMIT_SHA，本地回退至 Git HEAD；无 Git 元数据时仅显示仓库链接。署名不修改现有许可证。
+
+Umami 使用公开的 `PUBLIC_UMAMI_WEBSITE_ID` 与可选 `PUBLIC_UMAMI_SCRIPT_URL`（默认 https://cloud.umami.is/script.js）。在 GitHub Actions 仓库 Variables 配置这两个名称；构建读取公开标识，不接收 Umami API Token。ID 为空时不生成统计脚本，三语言隐私页同步显示启用状态。
+
+脚本仅在 SITE_URL 对应的正式 hostname 采集，排除当前 URL 与 referrer 的查询参数/锚点，并启用 Do Not Track 检查。不设置用户 ID、搜索事件或会话回放。PR、本机和 Pages origin 的 hostname 不符合采集条件。启用前确认 Umami 中的站点属于 blog.fnpg.me，勿复用作品集的 website ID。

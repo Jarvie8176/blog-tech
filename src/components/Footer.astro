@@ -1,5 +1,7 @@
 ---
-import { SITE, type Locale } from '../config';
+import { execFileSync } from 'node:child_process';
+import process from 'node:process';
+import { REPO, SITE, type Locale } from '../config';
 import { localizedPath, useTranslations } from '../i18n/utils';
 
 interface Props {
@@ -13,7 +15,19 @@ const footerLeftText = SITE.footer.leftText?.trim();
 const footerRightText = SITE.footer.rightText?.trim();
 const showPrivacyPolicy = SITE.footer.showPrivacyPolicy ?? SITE.showPrivacyPolicy;
 const showThemeCredits = SITE.footer.showThemeCredits ?? true;
-const shouldRenderRightFooter = Boolean(footerRightText) || showThemeCredits;
+let revision = process.env.GITHUB_SHA || process.env.CF_PAGES_COMMIT_SHA || '';
+if (!revision) {
+  try {
+    revision = execFileSync('git', ['rev-parse', 'HEAD'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    // Source archives without Git metadata still link to the repository.
+  }
+}
+const sourceRevision = /^[a-f0-9]{40}$/.test(revision) ? revision : undefined;
+const sourceUrl = sourceRevision ? `${REPO.url}/commit/${sourceRevision}` : REPO.url;
 const resolvedLeftText = footerLeftText
   ?.replaceAll('{year}', String(year))
   .replaceAll('{author}', SITE.author.name);
@@ -33,7 +47,6 @@ const resolvedLeftText = footerLeftText
           <a href={SITE.author.url ?? '#'} rel="noopener" class="hover:text-primary">
             {SITE.author.name}
           </a>
-          . {t('footer.copyright')}
         </>
       )
     }
@@ -48,35 +61,49 @@ const resolvedLeftText = footerLeftText
       )
     }
   </p>
-  {
-    shouldRenderRightFooter && (
-      <p>
-        {footerRightText ? (
+  <p>
+    {
+      footerRightText ? (
+        <>
+          {footerRightText}
+          {showThemeCredits && (
+            <>
+              {' · '}
+              {t('footer.theme')}{' '}
+              <a href={SITE.footer.themeUrl} rel="noopener" class="hover:text-primary">
+                {SITE.footer.themeName}
+              </a>
+            </>
+          )}
+        </>
+      ) : showThemeCredits ? (
+        <>
+          {t('footer.poweredBy')}{' '}
+          <a href="https://astro.build" rel="noopener" class="hover:text-primary">
+            Astro
+          </a>{' '}
+          · {t('footer.theme')}{' '}
+          <a href={SITE.footer.themeUrl} rel="noopener" class="hover:text-primary">
+            {SITE.footer.themeName}
+          </a>
+        </>
+      ) : null
+    }
+    {(footerRightText || showThemeCredits) && ' · '}
+    <a
+      href={sourceUrl}
+      title={sourceRevision}
+      aria-label={t('footer.source')}
+      class="hover:text-primary whitespace-nowrap"
+    >
+      GitHub{
+        sourceRevision && (
           <>
-            {footerRightText}
-            {showThemeCredits && (
-              <>
-                {' · '}
-                {t('footer.theme')}{' '}
-                <a href={SITE.footer.themeUrl} rel="noopener" class="hover:text-primary">
-                  {SITE.footer.themeName}
-                </a>
-              </>
-            )}
+            {' '}
+            · <code>{sourceRevision.slice(0, 7)}</code>
           </>
-        ) : (
-          <>
-            {t('footer.poweredBy')}{' '}
-            <a href="https://astro.build" rel="noopener" class="hover:text-primary">
-              Astro
-            </a>{' '}
-            · {t('footer.theme')}{' '}
-            <a href={SITE.footer.themeUrl} rel="noopener" class="hover:text-primary">
-              {SITE.footer.themeName}
-            </a>
-          </>
-        )}
-      </p>
-    )
-  }
+        )
+      }
+    </a>
+  </p>
 </footer>

@@ -55,8 +55,8 @@ export const SITE: SiteConfig = {
   description: 'Yaaa、个人 AI 系统，以及从工程实践中留下的知识。',
   /** Author/handle shown in footer + meta. */
   author: {
-    name: 'Jarvie',
-    url: GITHUB_HANDLE ? `https://github.com/${GITHUB_HANDLE}` : undefined,
+    name: 'J. Kong',
+    url: 'https://portfolio.fnpg.me/',
     avatar: avatarImg,
     bio: '记录设计，也记录设计被验证的过程。',
   },
@@ -80,7 +80,7 @@ export const SITE: SiteConfig = {
   footer: {
     /**
      * Optional full override for the left footer line. Supports {year} and {author}.
-     * Default when undefined: "© {year} {author}. All rights reserved." (+ Privacy Policy link if enabled).
+     * Default when undefined: "© {year} {author}" (+ Privacy Policy link if enabled).
      */
     leftText: undefined,
     /**
@@ -113,6 +113,26 @@ export const SITE: SiteConfig = {
   /** Show the language switcher and link to translated pages. */
   multilingual: true,
 };
+
+// Public tracker configuration only. API credentials never belong in the build.
+const umamiWebsiteId = (import.meta.env.PUBLIC_UMAMI_WEBSITE_ID ?? '').trim();
+const umamiScriptUrl =
+  (import.meta.env.PUBLIC_UMAMI_SCRIPT_URL ?? '').trim() || 'https://cloud.umami.is/script.js';
+if (
+  umamiWebsiteId &&
+  !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(umamiWebsiteId)
+) {
+  throw new Error('PUBLIC_UMAMI_WEBSITE_ID must be an Umami website UUID');
+}
+if (new URL(umamiScriptUrl).protocol !== 'https:') {
+  throw new Error('PUBLIC_UMAMI_SCRIPT_URL must use HTTPS');
+}
+export const ANALYTICS = {
+  enabled: Boolean(umamiWebsiteId),
+  websiteId: umamiWebsiteId,
+  scriptUrl: umamiScriptUrl,
+  domain: new URL(SITE.url).hostname,
+} as const;
 
 export const TOPICS = [
   { key: 'yaaa', href: '/yaaa/', descriptionKey: 'yaaa.description' },

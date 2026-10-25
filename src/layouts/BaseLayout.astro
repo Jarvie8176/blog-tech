@@ -7,9 +7,10 @@ import Topbar from '../components/Topbar.astro';
 import Footer from '../components/Footer.astro';
 import Panel from '../components/Panel.astro';
 import SEO from '../components/SEO.astro';
+import Analytics from '../components/Analytics.astro';
 import BackToTop from '../components/islands/BackToTop.astro';
 import faviconImg from '../assets/images/site/favicon.svg';
-import type { Locale } from '../config';
+import { ANALYTICS, type Locale } from '../config';
 import { detectLocale, htmlLang, useTranslations, stripLocale, withBase } from '../i18n/utils';
 import { buildSeo, type SeoMeta } from '../utils/seo';
 
@@ -92,6 +93,7 @@ const meta: SeoMeta =
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e" />
     <link rel="icon" type="image/svg+xml" href={withBase(faviconImg.src)} />
     <SEO meta={meta} />
+    {ANALYTICS.enabled && <Analytics />}
     {/* Custom fonts configured via Astro Fonts API */}
     <Font cssVariable="--font-source-sans-3" />
     <Font cssVariable="--font-lato" />
