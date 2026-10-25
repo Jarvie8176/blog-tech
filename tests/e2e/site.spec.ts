@@ -1,25 +1,47 @@
 import { test, expect } from '@playwright/test';
 
 const variants = [
-  { prefix: '', lang: 'zh-Hans', heading: 'Yaaa：把设计、验证与知识连起来', query: '知识' },
+  {
+    prefix: '',
+    lang: 'zh-Hans',
+    heading: 'Yaaa：一个由自己掌握的个人 AI 系统',
+    query: '知识',
+    diagram: 'zh',
+  },
   {
     prefix: '/en',
     lang: 'en',
-    heading: 'Yaaa: connecting design, evidence, and knowledge',
+    heading: 'Yaaa: a personal AI system under your control',
     query: 'knowledge',
+    diagram: 'en',
   },
-  { prefix: '/ja', lang: 'ja', heading: 'Yaaa：設計・検証・知識をつなぐ', query: '知識' },
+  {
+    prefix: '/ja',
+    lang: 'ja',
+    heading: 'Yaaa：自分で管理できるパーソナル AI システム',
+    query: '知識',
+    diagram: 'ja',
+  },
 ];
 
-for (const { prefix, lang, heading, query } of variants) {
+for (const { prefix, lang, heading, query, diagram } of variants) {
   test(`${lang}: readable article, correct language and paired destinations`, async ({ page }) => {
     const response = await page.goto(`/tech${prefix}/posts/yaaa/`);
     expect(response?.status()).toBe(200);
     await expect(page.locator('html')).toHaveAttribute('lang', lang);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
-    await expect(page.locator('article table')).toBeVisible();
+    await expect(page.locator('article table').first()).toBeVisible();
+    await expect(page.locator('article pre')).toHaveCount(2);
     const image = page.locator('article img');
-    await expect(image).toHaveAttribute('src', '/tech/images/knowledge-flow.svg');
+    await expect(image).toHaveAttribute('src', `/tech/images/yaaa/overview-${diagram}.png`);
+    await expect
+      .poll(() =>
+        image.evaluate(
+          (el: HTMLImageElement) =>
+            el.complete && el.naturalWidth === 2320 && el.naturalHeight === 1320,
+        ),
+      )
+      .toBe(true);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       `https://blog.fnpg.me/tech${prefix}/posts/yaaa/`,
@@ -54,7 +76,7 @@ for (const { prefix, lang, heading, query } of variants) {
       'href',
       `/tech${prefix}/posts/yaaa/`,
     );
-    await search.fill('sourceHash');
+    await search.fill('nonce');
     await expect(results.filter({ hasText: heading })).toHaveCount(1);
     await search.fill('nonexistentquery5827');
     await expect(results).toHaveCount(0);
@@ -98,7 +120,7 @@ test('article and language links work without JavaScript', async ({ browser }) =
     'href',
     '/tech/ja/posts/yaaa/',
   );
-  await expect(page.locator('article table')).toBeVisible();
+  await expect(page.locator('article table').first()).toBeVisible();
   await page.locator('[data-lang-switcher] summary').click();
   await page.locator('a[data-lang-target="ja"]').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
