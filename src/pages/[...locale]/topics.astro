@@ -1,0 +1,46 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { SITE, TOPICS } from '~/config';
+import { useTranslations, localizedPath } from '~/i18n/utils';
+import type { UIKey } from '~/i18n/ui';
+import { Icon } from 'astro-icon/components';
+
+export function getStaticPaths() {
+  return SITE.locales.map((locale) => ({
+    params: { locale: locale === SITE.defaultLocale ? undefined : locale },
+    props: { locale },
+  }));
+}
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  title={t('nav.topics')}
+  description={t('topics.description')}
+  pathWithoutLocale="/topics/"
+  crumbs={[{ label: t('nav.topics') }]}
+>
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight">{t('nav.topics')}</h1>
+    <p class="text-base-content/70 mt-3 text-lg">{t('topics.description')}</p>
+  </header>
+  <ul class="grid gap-4 sm:grid-cols-2">
+    {
+      TOPICS.map((topic) => (
+        <li>
+          <a
+            href={localizedPath(topic.href, locale)}
+            class="card border-base-300 bg-base-100 hover:border-primary block border transition"
+          >
+            <div class="card-body">
+              <Icon name="lucide:layers" width={24} height={24} class="text-primary" />
+              <h2 class="text-xl font-semibold">{t(`nav.${topic.key}` as UIKey)}</h2>
+              <p class="text-base-content/70">{t(topic.descriptionKey)}</p>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

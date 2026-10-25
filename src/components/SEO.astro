@@ -1,0 +1,105 @@
+---
+import { SITE } from '../config';
+import { localizedPath, withBase, htmlLang, localeLabel, useTranslations } from '../i18n/utils';
+import type { SeoMeta } from '../utils/seo';
+
+interface Props {
+  meta: SeoMeta;
+}
+
+const { meta } = Astro.props;
+const t = useTranslations(meta.locale);
+
+// Feed auto-discovery — feed readers and browser extensions look for
+// these <link rel="alternate"> tags in <head>. We advertise the active
+// locale's feed as the primary one, and (when multilingual) every other
+// locale's feed too.
+const primaryFeed = {
+  href: localizedPath('/rss.xml', meta.locale),
+  title: `${t('site.title')} (${localeLabel(meta.locale)}) — RSS`,
+};
+const otherFeeds = SITE.multilingual
+  ? SITE.locales
+      .filter((l) => l !== meta.locale)
+      .map((l) => ({
+        href: localizedPath('/rss.xml', l),
+        title: `${useTranslations(l)('site.title')} (${localeLabel(l)}) — RSS`,
+      }))
+  : [];
+const sitemapHref = withBase('/sitemap-index.xml');
+---
+
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={meta.canonical} />
+{meta.noindex && <meta name="robots" content="noindex, nofollow" />}
+
+{/* Feed + sitemap auto-discovery */}
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={primaryFeed.title}
+  href={primaryFeed.href}
+/>
+{
+  otherFeeds.map((f) => (
+    <link rel="alternate" type="application/rss+xml" title={f.title} href={f.href} />
+  ))
+}
+<link rel="sitemap" type="application/xml" href={sitemapHref} />
+
+{/* Open Graph */}
+<meta property="og:site_name" content={t('site.title')} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+<meta property="og:type" content={meta.type} />
+<meta property="og:url" content={meta.canonical} />
+<meta property="og:image" content={meta.ogImage} />
+<meta property="og:locale" content={{ zh: 'zh_CN', en: 'en_US', ja: 'ja_JP' }[meta.locale]} />
+
+{/* Twitter */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={meta.title} />
+<meta name="twitter:description" content={meta.description} />
+<meta name="twitter:image" content={meta.ogImage} />
+
+{/* Article-specific */}
+{
+  meta.type === 'article' && meta.publishedTime && (
+    <meta property="article:published_time" content={meta.publishedTime} />
+  )
+}
+{
+  meta.type === 'article' && meta.modifiedTime && (
+    <meta property="article:modified_time" content={meta.modifiedTime} />
+  )
+}
+{meta.type === 'article' && meta.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
+
+{/* hreflang alternates for SEO */}
+{
+  SITE.multilingual &&
+    meta.hreflangs.map(({ locale, href }) => <link rel="alternate" hreflang={locale} href={href} />)
+}
+
+{
+  meta.type === 'article' && (
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: meta.title,
+        description: meta.description,
+        url: meta.canonical,
+        mainEntityOfPage: meta.canonical,
+        inLanguage: htmlLang(meta.locale),
+        datePublished: meta.publishedTime,
+        dateModified: meta.modifiedTime ?? meta.publishedTime,
+        author: { '@type': 'Person', name: SITE.author.name, url: 'https://github.com/Jarvie8176' },
+        image: meta.ogImage,
+      }).replace(/</g, '\u003c')}
+    />
+  )
+}
