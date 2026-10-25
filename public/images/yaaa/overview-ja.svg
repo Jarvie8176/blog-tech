@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="660" viewBox="0 0 1160 660" role="img" aria-labelledby="title desc" xml:lang="ja">
+  <title id="title">Yaaa アーキテクチャの概要</title>
+  <desc id="desc">情報と依頼は対話と推論へ進み、操作の意図は実行ゲートの許可を得てから外部システムへ渡されます。実行記録は整理とレビューを経て、将来のタスクに使われる知識や手順に反映されます。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
+    <style>
+      text {font-family:"Noto Sans CJK SC","Noto Sans SC","Microsoft YaHei",sans-serif;fill:#20334a}
+      .title {font-size:27px;font-weight:700}
+      .label {font-size:21px;font-weight:600}
+      .sub {font-size:16px;fill:#52657c}
+      .edge {fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)}
+      .box {fill:#fff;stroke:#bac9d9;stroke-width:1.5;rx:12}
+    
+text {font-family:"Noto Sans CJK JP","Noto Sans JP","Noto Sans Mono CJK SC",sans-serif;}
+</style>
+  </defs>
+  <rect width="1160" height="660" rx="18" fill="#f6f8fb" />
+  <text x="42" y="53" class="title" id="label-0">Yaaa · 実行とガバナンス</text>
+  <text x="42" y="85" class="sub" id="label-1">設計上の関係図 · 各機能は個別に実装・検証</text>
+  <rect x="30" y="112" width="1100" height="282" rx="14" fill="#eaf0f7" />
+  <text x="52" y="147" class="label" id="label-2">現在のタスク</text>
+  <rect x="55" y="187" width="180" height="100" class="box" />
+  <text x="145" y="227" text-anchor="middle" class="label" id="label-3">情報と依頼</text>
+  <text x="145" y="257" text-anchor="middle" class="sub" id="label-4">出典と文脈を保持</text>
+  <rect x="305" y="187" width="210" height="100" class="box" />
+  <text x="410" y="227" text-anchor="middle" class="label" id="label-5">対話と推論</text>
+  <text x="410" y="248.0" text-anchor="middle" class="sub" id="label-6"><tspan x="410" dy="0">許可された経路で</tspan><tspan x="410" dy="18">文脈を利用</tspan></text>
+  <rect x="610" y="187" width="210" height="100" rx="12" fill="#fff" stroke="#4268a0" stroke-width="2" />
+  <text x="715" y="227" text-anchor="middle" class="label" id="label-7">操作の実行ゲート</text>
+  <text x="715" y="257" text-anchor="middle" class="sub" id="label-8">実行 · 拒否 · 保留</text>
+  <rect x="900" y="187" width="190" height="100" class="box" />
+  <text x="995" y="227" text-anchor="middle" class="label" id="label-9">外部システム</text>
+  <text x="995" y="257" text-anchor="middle" class="sub" id="label-10">範囲を限定した操作</text>
+  <path d="M235 237H305" class="edge" />
+  <path d="M515 237H610" class="edge" stroke-dasharray="6 5" />
+  <text x="562" y="177" text-anchor="middle" class="sub" id="label-11">操作の意図</text>
+  <path d="M820 237H900" class="edge" />
+  <text x="860" y="177" text-anchor="middle" class="sub" id="label-12">実行を許可</text>
+  <rect x="305" y="319" width="515" height="50" class="box" />
+  <text x="562" y="351" text-anchor="middle" class="sub" id="label-13">回答・処理結果・追跡可能な記録を表示</text>
+  <path d="M410 287V319" class="edge" />
+  <path d="M715 287V319" class="edge" />
+  <rect x="30" y="419" width="1100" height="193" rx="14" fill="#edf3ed" />
+  <text x="52" y="455" class="label" id="label-14">将来のタスクに向けたガバナンス</text>
+  <rect x="55" y="480" width="200" height="90" class="box" />
+  <text x="155" y="518" text-anchor="middle" class="label" id="label-15">実行記録</text>
+  <text x="155" y="547" text-anchor="middle" class="sub" id="label-16">結果 · 証拠 · 失敗</text>
+  <rect x="345" y="480" width="210" height="90" class="box" />
+  <text x="450" y="518" text-anchor="middle" class="label" id="label-17">整理とレビュー</text>
+  <text x="450" y="538.0" text-anchor="middle" class="sub" id="label-18"><tspan x="450" dy="0">候補と根拠</tspan><tspan x="450" dy="18">採用または修正</tspan></text>
+  <rect x="670" y="480" width="420" height="90" class="box" />
+  <text x="880" y="518" text-anchor="middle" class="label" id="label-19">採用された知識と手順</text>
+  <text x="880" y="547" text-anchor="middle" class="sub" id="label-20">長期記憶 · SOP · ポリシー · 実行手順</text>
+  <path d="M255 525H345" class="edge" />
+  <path d="M555 525H670" class="edge" />
+  <path d="M305 344H42V466H155V480" class="edge" />
+  <path d="M1090 525H1114V155H410V187" class="edge" stroke-dasharray="6 5" />
+  <text x="975" y="150" text-anchor="middle" class="sub" id="label-21">将来のタスクに利用</text>
+  <text x="42" y="641" class="sub" id="label-22">長期的な変更はレビューを経て反映。各コンポーネントは独自のペースで実行。</text>
+</svg>
