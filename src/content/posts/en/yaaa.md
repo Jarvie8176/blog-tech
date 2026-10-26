@@ -85,9 +85,9 @@ Here, `sources` contains validated pairs of identifiers, not paths supplied by a
 
 The assistant may propose moving the appointment to Tuesday afternoon. The executor needs the account, event, new time, and whether the other party should be notified. Approval should bind to the content the user actually reviewed.
 
-![Approval flow: review a specific action, issue approval, check it before execution, claim a one-time nonce, execute, and record each outcome; failed checks stop execution and duplicate requests only look up receipts](/images/yaaa/approval-flow-en.png)
+![Approval flow: propose a change, review and confirm, check whether it can proceed, act, and show the outcome; otherwise stop and explain why](/images/yaaa/approval-flow-en.png)
 
-_This is the intended approval flow; end-to-end acceptance is still pending. Changes to the action or target version require fresh confirmation. Duplicate submissions must not execute again._
+_The diagram shows the steps a user sees. Changes require fresh confirmation, and repeated requests must not repeat the action. The complete flow still awaits validation._
 
 The intended shape is shown below. Identifiers and signature values are illustrative:
 
