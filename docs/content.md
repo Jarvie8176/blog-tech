@@ -31,3 +31,7 @@ Language links for articles are generated from real content entries. Each articl
 5. Run all checks required by AGENTS.md. The browser scenarios check each localized title, both code examples, diagram loading and dimensions, same-article language links, search, and reading without JavaScript.
 
 The public origin and production deployment process remain as documented in deployment.md.
+
+## Yaaa topic page
+
+The topic landing page lives at `/tech/topics/yaaa/`, `/tech/en/topics/yaaa/` and `/tech/ja/topics/yaaa/`. Astro emits static HTML redirects from the previous localized `/yaaa/` paths to these destinations. Article URLs under `/posts/yaaa/` are unchanged.

@@ -19,7 +19,7 @@ const posts = (await getPosts(locale)).filter((post) => post.data.categories.inc
 <BaseLayout
   title={t('yaaa.title')}
   description={t('yaaa.description')}
-  pathWithoutLocale="/yaaa/"
+  pathWithoutLocale="/topics/yaaa/"
   crumbs={[
     { label: t('nav.topics'), href: localizedPath('/topics/', locale) },
     { label: t('nav.yaaa') },
