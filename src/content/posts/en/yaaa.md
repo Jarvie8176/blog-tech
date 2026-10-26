@@ -9,7 +9,7 @@ pinned: true
 toc: true
 ---
 
-Yaaa stands for Yet Another AI Assistant: a self-hostable, local-first design for a personal assistant system. I want to replace models and tools while retaining control over how knowledge is maintained, where sensitive information goes, and which external operations are allowed.
+[Yaaa](https://portfolio.fnpg.me/projects/yaaa/) stands for Yet Another AI Assistant: a self-hostable, local-first design for a personal assistant system. I want to replace models and tools while retaining control over how knowledge is maintained, where sensitive information goes, and which external operations are allowed.
 
 Imagine an email announcing an appointment change. I ask the assistant to check my calendar, prepare a proposal, and make changes after I confirm. It needs to understand the email, find the event, and propose an update. It also needs to know which parts of the email are trustworthy, where information may be sent, and exactly which operation my approval covers. **This illustrative scenario connects the design below; the status table distinguishes what has actually been delivered.**
 
@@ -29,17 +29,19 @@ Self-hosted platforms such as [Open WebUI](https://docs.openwebui.com/) and [Lib
 
 ## What has been delivered
 
-**Snapshot: October 25, 2026.** This table summarizes code and recorded acceptance results. Dates identify the cited evidence, rather than continuous health checks across all production environments.
+As of October 25, 2026, email digest delivery, classification and routing for single requests, and read-only checks of shared Codex and Claude procedures are complete. The long-term memory repository can also be deployed and its caches generated. The remaining gaps are retrieving useful memories across tools in real tasks, recovering multi-turn conversations, safely executing approved actions, automating task closeout, and fully verifying encryption, backups, retention, and deletion.
 
-| Component                                               | Status and delivered scope                                                                                                                                           | Evidence date               |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| Amanuensis email ingestion, triage, and digest delivery | The email digest loop is usable; other sources are integrated separately                                                                                             | 2026-07-08                  |
-| Single-turn conversation handling                       | Triage, routing decisions, and escalation are deployed; multi-turn recovery and real answer coverage still have gaps                                                 | 2026-07-12                  |
-| Git memory and derived caches                           | Partially usable: deployment, cache freshness, and static checks have evidence; cross-tool recall is incomplete                                                      | 2026-10-25                  |
-| Cross-tool procedure calls                              | Read-only checks through the official Codex and Claude paths passed acceptance; directory discovery works in this session                                            | 2026-10-08; 2026-10-25      |
-| Independent approval issuance and action binding        | Design and implementation requirements are defined; the complete approval chain awaits acceptance                                                                    | 2026-10-21                  |
-| Programmatic closeout                                   | A five-step SOP exists and an execution direction has been chosen; the offline spike has not run                                                                     | 2026-10-25                  |
-| Encryption, retention, and deletion                     | Raw archival has a layered encryption design; content encryption for the memory repository and complete backup, retention, and deletion acceptance remain unfinished | Records reviewed 2026-10-25 |
+Amanuensis is the component I use to collect email, sort it by importance, and deliver digests. The table separates what works from what remains, with the date of the latest record.
+
+| Area                                | What works now                                                                                          | What remains                                                                                  | Latest record               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------- |
+| Email processing (Amanuensis)       | Collecting, classifying, and delivering email digests                                                   | Connecting sources beyond email                                                               | 2026-07-08                  |
+| Single-request conversations        | Classifying requests, selecting a processing route, and escalating when needed                          | Recovering multi-turn conversations and covering more real answers                            | 2026-07-12                  |
+| Long-term memory                    | Deploying the Git memory repository, generating caches, and checking that they stay current             | Confirming that different tools retrieve the memories needed in real tasks                    | 2026-10-25                  |
+| Shared procedures                   | Read-only checks through the official Codex and Claude paths passed; procedure directories can be found | Verifying actual actions; read-only checks do not establish that writes work                  | 2026-10-08; 2026-10-25      |
+| Executing approved actions          | Defining what an approval contains and what must be checked before execution                            | Running and verifying the complete approval-to-execution flow                                 | 2026-10-21                  |
+| Task closeout                       | A five-step guide and a chosen implementation direction                                                 | Running an offline trial to collect results, verification evidence, and outstanding work      | 2026-10-25                  |
+| Encryption, retention, and deletion | Designing layered encryption for raw records                                                            | Verifying memory content encryption, backup recovery, retention limits, and complete deletion | Records reviewed 2026-10-25 |
 
 The structured routing rules, approval data, and review parameters below are **proposed improvements**, illustrating the intended behavior.
 
@@ -50,8 +52,6 @@ Ingestion first records the source identity and time. Following my request, the 
 ![Yaaa architecture: handling current tasks and reviewing changes for future work](/images/yaaa/overview-en.png)
 
 _The diagram shows the overall design. Delivered scope is listed in the status table._
-
-[中文图](/images/yaaa/overview-zh.png) · [日本語版](/images/yaaa/overview-ja.png)
 
 If the email is highly sensitive, its summary, retrieved excerpts, and combined context must inherit **at least the highest sensitivity of all their actual sources**. Missing or unresolved provenance should lead to high-sensitivity handling or quarantine. Shortening a summary or making it less specific cannot lower its classification; declassification requires a separate, explicit policy and review.
 
@@ -78,6 +78,10 @@ Here, `sources` contains validated pairs of identifiers, not paths supplied by a
 ## From a proposal to a specific approval
 
 The assistant may propose moving the appointment to Tuesday afternoon. The executor needs the account, event, new time, and whether the other party should be notified. Approval should bind to the content the user actually reviewed.
+
+![Approval flow: review a specific action, issue approval, check it before execution, claim a one-time nonce, execute, and record each outcome; failed checks stop execution and duplicate requests only look up receipts](/images/yaaa/approval-flow-en.png)
+
+_This is the intended approval flow; end-to-end acceptance is still pending. Changes to the action or target version require fresh confirmation. Duplicate submissions must not execute again._
 
 The intended shape is shown below. Identifiers and signature values are illustrative:
 
