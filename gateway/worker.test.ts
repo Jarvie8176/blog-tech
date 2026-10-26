@@ -15,8 +15,8 @@ describe('tech path gateway', () => {
       const response = await routeRequest(
         new Request(`https://blog.fnpg.me${path}`),
         env,
-        async (input) =>
-          input.cache === 'no-store'
+        async (input, options) =>
+          input.cache === 'no-store' && options?.cf?.cacheTtlByStatus['100-599'] === -1
             ? new Response('removed', { status: 404 })
             : new Response('stale article', { status: 200 }),
       );
