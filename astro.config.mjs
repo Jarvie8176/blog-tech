@@ -150,6 +150,12 @@ export default defineConfig({
   // We rely on filesystem routing (src/pages and src/pages/[...locale]) for the actual
   // routes, but still expose locales here so integrations like sitemap can
   // generate hreflang alternates correctly.
+  redirects: {
+    '/yaaa/': `${BASE}/topics/yaaa/`,
+    '/en/yaaa/': `${BASE}/en/topics/yaaa/`,
+    '/ja/yaaa/': `${BASE}/ja/topics/yaaa/`,
+  },
+
   i18n: {
     locales: [...SITE.locales],
     defaultLocale: SITE.defaultLocale,

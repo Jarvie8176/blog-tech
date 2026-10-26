@@ -2,6 +2,7 @@ import process from 'node:process';
 import avatarImg from './assets/images/site/avatar.svg';
 import ogDefaultImg from './assets/images/site/og-default.png';
 import type { GiscusConfig, NavItem, SiteConfig, SocialLink } from './types/config';
+import type { UIKey } from './i18n/ui';
 
 /**
  * Global site + theme configuration.
@@ -134,9 +135,39 @@ export const ANALYTICS = {
   domain: new URL(SITE.url).hostname,
 } as const;
 
-export const TOPICS = [
-  { key: 'yaaa', href: '/yaaa/', descriptionKey: 'yaaa.description' },
-] as const;
+/** One registry drives topic routes, cards, navigation and homepage links. */
+interface TopicDefinition {
+  key: string;
+  labelKey: UIKey;
+  titleKey: UIKey;
+  introKey: UIKey;
+  descriptionKey: UIKey;
+  category: string;
+}
+
+const topicDefinitions = [
+  {
+    key: 'yaaa',
+    labelKey: 'nav.yaaa',
+    titleKey: 'yaaa.title',
+    introKey: 'yaaa.intro',
+    descriptionKey: 'yaaa.description',
+    category: 'Yaaa',
+  },
+  {
+    key: 'homelab-ops',
+    labelKey: 'nav.homelabOps',
+    titleKey: 'homelabOps.title',
+    introKey: 'homelabOps.intro',
+    descriptionKey: 'homelabOps.description',
+    category: 'Homelab Ops',
+  },
+] as const satisfies readonly TopicDefinition[];
+
+export const TOPICS = topicDefinitions.map((topic) => ({
+  ...topic,
+  href: `/topics/${topic.key}/`,
+}));
 
 export const NAV: readonly NavItem[] = [
   { key: 'home', href: '/', icon: 'lucide:home' },

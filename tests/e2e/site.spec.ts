@@ -93,7 +93,8 @@ for (const { prefix, lang, heading, closeoutHeading, query, diagram } of variant
       'href',
       `/tech${prefix}/posts/session-closeout/`,
     );
-    await search.fill('qxjvpk');
+    // The old placeholder can match the indexed word “no” in Pagefind.
+    await search.fill('zxqvtr5827');
     await expect(results).toHaveCount(0);
     expect(errors).toEqual([]);
   });
@@ -160,5 +161,25 @@ for (const { prefix, heading, query } of variants) {
     );
     await page.keyboard.press('Escape');
     await expect(dialog).not.toBeVisible();
+  });
+}
+
+for (const { prefix } of variants) {
+  test(`Yaaa topic ${prefix || 'zh'} uses nested route and language links`, async ({ page }) => {
+    await page.goto(`/tech${prefix}/topics/`);
+    await page.locator(`main a[href="/tech${prefix}/topics/yaaa/"]`).click();
+    await expect(page).toHaveURL(`/tech${prefix}/topics/yaaa/`);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      `https://blog.fnpg.me/tech${prefix}/topics/yaaa/`,
+    );
+    for (const other of variants.filter((variant) => variant.prefix !== prefix)) {
+      await expect(
+        page.locator(`a[data-lang-target="${other.prefix.slice(1) || 'zh'}"]`),
+      ).toHaveAttribute('href', `/tech${other.prefix}/topics/yaaa/`);
+    }
+    await expect(page.locator('main a[href*="/posts/yaaa/"]').first()).toBeVisible();
+    await page.goto(`/tech${prefix}/yaaa/`);
+    await expect(page).toHaveURL(`/tech${prefix}/topics/yaaa/`);
   });
 }

@@ -47,6 +47,12 @@ toc: true
 
 Yaaa 导读已包含完整中文稿、对应日英编辑译文及三语架构图。图片位于 `public/images/yaaa/`，PNG 用于正文显示，SVG 保留可编辑源；文章中的 `/images/` 链接由构建器统一加上 `/tech`。更新正文、译文和配图时参见 [内容维护](docs/content.md)。本地 LLM 调度、源版本校验、增量重译、语义检查与自动接受仍由 [epic #1](https://github.com/Jarvie8176/blog-tech/issues/1) 跟踪。
 
+## Homelab Ops 专题
+
+两篇开题文章已提供中、日、英版本，分别讨论为什么拥有 Homelab，以及如何从手动维护转向 AI 运维。专题入口为各语言的 `/topics/homelab-ops/`，侧栏和专题总览共用该入口。
+
+量化部分提供月度规模、相对增幅和月度活动三类图表，每类均有中日英 PNG/SVG，位于 `public/images/homelab-ops/`。公开聚合数据为 `public/data/homelab-ops-monthly.csv`；`scripts/charts/homelab.py` 可离线重绘，不参与正常站点构建。维护口径见 [内容维护](docs/content.md#homelab-ops)。
+
 ## 检查
 
 ```sh
