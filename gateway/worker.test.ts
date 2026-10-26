@@ -4,6 +4,40 @@ import { routeRequest } from './worker';
 const env = { TECH_ORIGIN: 'https://tech-origin.pages.dev' };
 
 describe('tech path gateway', () => {
+  test('upgrades public HTTP requests without fetching, preserving paths and queries', async () => {
+    for (const method of ['GET', 'HEAD', 'POST']) {
+      for (const path of [
+        '/tech',
+        '/tech/',
+        '/tech/ja/posts/yaaa/',
+        '/tech/_pagefind/pagefind.js',
+        '/arts/',
+      ]) {
+        const response = await routeRequest(
+          new Request(`http://blog.fnpg.me${path}?q=%E7%9F%A5%E8%AD%98&lang=ja`, { method }),
+          env,
+          async () => {
+            throw new Error('HTTP requests must not reach the origin');
+          },
+        );
+        expect(response.status).toBe(308);
+        expect(response.headers.get('location')).toBe(
+          `https://blog.fnpg.me${path === '/tech' ? '/tech/' : path}?q=%E7%9F%A5%E8%AD%98&lang=ja`,
+        );
+      }
+    }
+  });
+
+  test('keeps local HTTP previews usable', async () => {
+    const response = await routeRequest(
+      new Request('http://127.0.0.1:4321/tech/'),
+      env,
+      async () => new Response('preview'),
+    );
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe('preview');
+  });
+
   test('does not capture other blog paths or lookalike prefixes', async () => {
     for (const path of ['/', '/arts/', '/photo/', '/notes/', '/technology/', '/technique']) {
       const response = await routeRequest(new Request(`https://blog.fnpg.me${path}`), env);

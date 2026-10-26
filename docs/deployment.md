@@ -33,6 +33,8 @@ SITE_URL is `https://blog.fnpg.me`; BASE_PATH is `/tech`. Pagefind sets its brow
 
 The gateway fixes TECH_ORIGIN to the distinct Pages origin, forwards GET/HEAD, preserves queries, excludes reader cookies/authorization, rewrites origin-local redirects and removes origin cookies. Do not configure an origin-wide redirect back to blog.fnpg.me.
 
+HTTP requests to `blog.fnpg.me` receive a permanent 308 redirect to the same HTTPS path and query before proxying. `/tech` also gains its trailing slash in that redirect, avoiding a second hop. Other paths upgrade to HTTPS and then retain their normal 404 behavior. Local HTTP preview hosts are exempt. This is a hostname-specific Worker policy, not a zone-wide setting for other fnpg.me services; release the Worker separately when changing it.
+
 `gateway/wrangler.toml` remains a source/local configuration. Production bootstrap used the Cloudflare API with the compiled module, compatibility date 2026-10-25 and a plaintext TECH_ORIGIN binding. A Workers Custom Domain creates the hostname binding; it does not require zone Worker Routes access. Check existing DNS/domain ownership before a new binding. Separate gateway releases require separate verification and must not be folded into every article publish.
 
 Root homepage, robots.txt and the global sitemap index belong to the shared front door. tech contributes `/tech/sitemap-index.xml` and localized feeds. Keep all section resources beneath their mounts and namespace browser preferences.
