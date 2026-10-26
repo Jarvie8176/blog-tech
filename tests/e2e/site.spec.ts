@@ -32,16 +32,22 @@ for (const { prefix, lang, heading, query, diagram } of variants) {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
     await expect(page.locator('article table').first()).toBeVisible();
     await expect(page.locator('article pre')).toHaveCount(2);
-    const image = page.locator('article img');
-    await expect(image).toHaveAttribute('src', `/tech/images/yaaa/overview-${diagram}.png`);
-    await expect
-      .poll(() =>
-        image.evaluate(
-          (el: HTMLImageElement) =>
-            el.complete && el.naturalWidth === 2320 && el.naturalHeight === 1320,
-        ),
-      )
-      .toBe(true);
+    for (const [name, width, height] of [
+      ['overview', 2320, 1320],
+      ['approval-flow', 1920, 2360],
+    ] as const) {
+      const image = page.locator(`article img[src="/tech/images/yaaa/${name}-${diagram}.png"]`);
+      await expect(image).toHaveCount(1);
+      await expect
+        .poll(() =>
+          image.evaluate(
+            (el: HTMLImageElement, size) =>
+              el.complete && el.naturalWidth === size.width && el.naturalHeight === size.height,
+            { width, height },
+          ),
+        )
+        .toBe(true);
+    }
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       'href',
       `https://blog.fnpg.me/tech${prefix}/posts/yaaa/`,

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1180" viewBox="0 0 960 1180" role="img" aria-labelledby="title desc" xml:lang="ja">
+<title id="title">変更案から具体的な承認へ</title><desc id="desc">具体的な操作をまとめる → この操作を承認する？ → 独立した仕組みで承認を発行 → 承認は今も有効？ → nonce を初回取得できた？ → 承認済みの内容を実行 → 予定変更と通知の結果を別々に記録</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
+<style>text{font-family:"Noto Sans CJK JP",sans-serif;fill:#20334a} .title{font-size:27px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
+<rect width="960" height="1180" rx="18" fill="#f6f8fb" />
+<text x="36" y="48" class="title" id="text0">変更案から具体的な承認へ</text><text x="36" y="80" class="sub" id="text1">目標フロー · 一連の動作検証は未完了</text>
+<rect x="60" y="120" width="510" height="80" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="315.0" y="152" text-anchor="middle" class="label" id="text2">具体的な操作をまとめる</text>
+<text x="315.0" y="178" text-anchor="middle" class="sub" id="text3">アカウント · 予定 · 時刻 · 宛先 · 本文</text>
+<path d="M315 215L570 280L315 345L60 280Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
+<text x="315" y="277" text-anchor="middle" class="label" id="text4">この操作を承認する？</text>
+<text x="315" y="304" text-anchor="middle" class="sub" id="text5">同じ具体的な内容を確認</text>
+<rect x="60" y="380" width="510" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="315.0" y="412" text-anchor="middle" class="label" id="text6">独立した仕組みで承認を発行</text>
+<text x="315.0" y="438" text-anchor="middle" class="sub" id="text7">操作ハッシュ・期限・nonce・範囲に署名</text>
+<path d="M315 490L570 555L315 620L60 555Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
+<text x="315" y="552" text-anchor="middle" class="label" id="text8">承認は今も有効？</text>
+<text x="315" y="579" text-anchor="middle" class="sub" id="text9">署名 · 期限 · 方針 · 対象のバージョン</text>
+<path d="M315 675L570 740L315 805L60 740Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
+<text x="315" y="737" text-anchor="middle" class="label" id="text10">nonce を初回取得できた？</text>
+<text x="315" y="764" text-anchor="middle" class="sub" id="text11">不可分に取得し、初回だけ実行</text>
+<rect x="60" y="860" width="510" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="315.0" y="892" text-anchor="middle" class="label" id="text12">承認済みの内容を実行</text>
+<text x="315.0" y="918" text-anchor="middle" class="sub" id="text13">制御された呼び出しと冪等性キーを使用</text>
+<rect x="60" y="1000" width="510" height="110" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="315.0" y="1032" text-anchor="middle" class="label" id="text14">予定変更と通知の結果を別々に記録</text>
+<text x="315.0" y="1058" text-anchor="middle" class="sub" id="text15">成功 · 失敗 · 確認待ち</text>
+<text x="315.0" y="1083" text-anchor="middle" class="sub" id="text16">再試行は未完了部分だけ</text>
+<rect x="650" y="240" width="274" height="80" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="787.0" y="272" text-anchor="middle" class="sub" id="text17">拒否または保留</text>
+<text x="787.0" y="298" text-anchor="middle" class="sub" id="text18">理由を示し、実行しない</text>
+<rect x="650" y="515" width="274" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="787.0" y="547" text-anchor="middle" class="sub" id="text19">拒否または再確認</text>
+<text x="787.0" y="573" text-anchor="middle" class="sub" id="text20">内容変更・期限切れ・条件不一致</text>
+<rect x="650" y="695" width="274" height="110" rx="12" fill="#eaf0f7" stroke="#bac9d9" stroke-width="1.5" />
+<text x="787.0" y="727" text-anchor="middle" class="sub" id="text21">既存の実行記録を参照</text>
+<text x="787.0" y="753" text-anchor="middle" class="sub" id="text22">使用済みまたは処理中</text>
+<text x="787.0" y="778" text-anchor="middle" class="sub" id="text23">再実行しない</text>
+<path d="M315 200V215" class="edge" />
+<path d="M315 345V380" class="edge" />
+<text x="350" y="367" text-anchor="start" class="tag" id="text24">承認</text>
+<path d="M315 465V490" class="edge" />
+<path d="M315 620V675" class="edge" />
+<text x="350" y="650" text-anchor="start" class="tag" id="text25">有効</text>
+<path d="M315 805V860" class="edge" />
+<text x="350" y="838" text-anchor="start" class="tag" id="text26">初回取得</text>
+<path d="M315 945V1000" class="edge" />
+<path d="M570 280H650" class="edge" />
+<text x="610" y="268" text-anchor="middle" class="tag" id="text27">未承認</text>
+<path d="M570 555H650" class="edge" />
+<text x="610" y="543" text-anchor="middle" class="tag" id="text28">無効</text>
+<path d="M570 740H650" class="edge" />
+<text x="610" y="728" text-anchor="middle" class="tag" id="text29">重複</text>
+<text x="36" y="1154" text-anchor="start" class="sub" id="text30">操作内容や対象のバージョンが変われば再確認し、判断理由を残す。</text>
+</svg>
