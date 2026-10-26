@@ -24,7 +24,7 @@ Language links for articles are generated from real content entries. Each articl
 
 ## Session closeout article
 
-The second article lives at `src/content/posts/{zh,en,ja}/session-closeout.md`, with `translationKey: session-closeout-knowledge`. Public destinations are `/tech/posts/session-closeout/`, `/tech/en/posts/session-closeout/`, and `/tech/ja/posts/session-closeout/`. Each uses `/images/closeout/lifecycle-<language>.png`, a 2000 × 1720 PNG with an editable SVG beside it.
+The Session closeout article belongs to Homelab Ops and lives at `src/content/posts/{zh,en,ja}/session-closeout.md`, with `translationKey: session-closeout-knowledge`. Public destinations are `/tech/posts/session-closeout/`, `/tech/en/posts/session-closeout/`, and `/tech/ja/posts/session-closeout/`. Each uses `/images/closeout/lifecycle-<language>.png`, a 2000 × 1720 PNG with an editable SVG beside it.
 
 Preserve the distinction between manual five-step SOP practice, historical record assessment, the read-only status display, and the planned execution and knowledge-promotion paths. The six CLI rows are actual output from synthetic fixtures, not scanned personal histories. The experimental receipt is an input to that display, not a released procedure schema or proof of business completion. The 11 tests apply to the offline display, not to end-to-end automatic closeout or independent takeover.
 
@@ -35,6 +35,8 @@ The quantitative snapshot separates 92 discussion comments, 10 purposively revie
 Each edition ends with a localized, copyable closeout prompt adapted from the author's draft. It uses public placeholders for project, SOP, and write scope; preserves the five steps, evidence limits, artifact disposition, durable handoff, method reuse, and readback; and makes no claim that the planned executor is delivered. Its optional authorization block applies only when explicitly added to an invocation and only to a separate journal/record PR. Keep new methods, ADRs, implementation, scripts, fixtures, configuration, inventory, and existing business PRs outside that grant. These article examples are quoted content, not authorization to merge this article PR or perform closeout operations during editing.
 
 ## Homelab Ops
+
+The editorial sequence is why to run a homelab → AI operations → architecture and stack → session closeout and lasting knowledge. Publication timestamps on October 25, 2026 use America/Vancouver offsets: `why-homelab` at 19:00, `managing-homelab-with-ai` at 19:05, `homelab-ops-what` at 19:10, and `session-closeout` at 19:15. Keep the same timestamp and category across available translations. These timestamps organize the reading sequence; historical evidence dates inside the articles remain separate. Article lists still show newest first, and previous/next navigation follows chronology. The architecture article currently exists only in Chinese.
 
 The two articles live at `src/content/posts/{zh,en,ja}/why-homelab.md` and `managing-homelab-with-ai.md`. Their translation keys are `homelab-ops-why` and `homelab-ops-management`. The shared topic registry matches category `Homelab Ops` and generates `/tech/topics/homelab-ops/` with corresponding `/tech/en/` and `/tech/ja/` destinations, linked from the topic index, sidebar and homepage. Category pages remain available separately.
 
