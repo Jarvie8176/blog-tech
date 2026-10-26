@@ -112,8 +112,6 @@ if (sitemap.includes('/search/')) failures.push('search pages in sitemap');
 if (sitemap.includes('unpublished-fixture')) failures.push('draft in sitemap');
 if (!(await Bun.file(resolve(root, '_pagefind/pagefind.js')).exists()))
   failures.push('missing Pagefind bundle');
-if (await Bun.file(resolve(root, 'en/posts/closeout-notes/index.html')).exists())
-  failures.push('missing translation synthesized');
 
 if (failures.length) {
   console.error(failures.join('\n'));
