@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="860" viewBox="0 0 1000 860" role="img" aria-labelledby="title desc" xml:lang="en">
+<title id="title">From conversation to lasting knowledge</title><desc id="desc">Conversations &amp; evidence → Verify facts and close out → Reusable lesson candidates → Maintainer reviews &amp; verifies → Memory · SOPs · tests → The next task; Working record &amp; handoff</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
+<style>text{font-family:"DejaVu Sans",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .tag{font-size:16px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)}</style></defs>
+<rect width="1000" height="860" rx="18" fill="#f6f8fb" />
+<text x="36" y="50" class="title" text-anchor="start" id="text0">From conversation to lasting knowledge</text>
+<text x="36" y="85" class="sub" text-anchor="start" id="text1">Leave a usable handoff; review lessons before reusing them</text>
+<rect x="40" y="140" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="174" class="label" text-anchor="middle" id="text2">Conversations &amp; evidence</text>
+<text x="230" y="202" class="sub" text-anchor="middle" id="text3">Keep sources and scope</text>
+<rect x="580" y="140" width="380" height="85" rx="12" fill="#eaf0f7" stroke="#9bb4d0" stroke-width="1.5" />
+<text x="770" y="174" class="label" text-anchor="middle" id="text4">Verify facts and close out</text>
+<text x="770" y="202" class="sub" text-anchor="middle" id="text5">Results · evidence · remaining work</text>
+<rect x="40" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="354" class="label" text-anchor="middle" id="text6">Working record &amp; handoff</text>
+<text x="230" y="382" class="sub" text-anchor="middle" id="text7">Unfinished work can remain</text>
+<rect x="580" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="770" y="354" class="label" text-anchor="middle" id="text8">Reusable lesson candidates</text>
+<text x="770" y="382" class="sub" text-anchor="middle" id="text9">Conclusion · conditions · owner</text>
+<rect x="580" y="480" width="380" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="770" y="514" class="label" text-anchor="middle" id="text10" style="font-size:20.27px">Maintainer reviews &amp; verifies</text>
+<text x="770" y="542" class="sub" text-anchor="middle" id="text11">Accept · revise · defer</text>
+<rect x="580" y="640" width="380" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="770" y="674" class="label" text-anchor="middle" id="text12">Memory · SOPs · tests</text>
+<text x="770" y="702" class="sub" text-anchor="middle" id="text13">Knowledge can be revised or removed</text>
+<rect x="40" y="640" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="674" class="label" text-anchor="middle" id="text14">The next task</text>
+<text x="230" y="702" class="sub" text-anchor="middle" id="text15" style="font-size:15.98px">Check applicability; verify again if needed</text>
+<path d="M420 182H580" class="edge" />
+<path d="M770 225V320" class="edge" />
+<path d="M770 270H230V320" class="edge" />
+<path d="M770 405V480" class="edge" />
+<path d="M770 565V640" class="edge" />
+<text x="800" y="610" class="tag" text-anchor="start" id="text16">Accept</text>
+<path d="M580 682H420" class="edge" />
+<path d="M230 405V640" class="edge" />
+<text x="36" y="795" class="sub" text-anchor="start" id="text17">Unaccepted candidates stay in working records, outside lasting knowledge.</text>
+<text x="36" y="827" class="sub" text-anchor="start" id="text18">Manage raw conversation access, retention, and deletion separately.</text>
+</svg>

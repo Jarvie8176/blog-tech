@@ -5,6 +5,7 @@ const variants = [
     prefix: '',
     lang: 'zh-Hans',
     heading: 'Yaaa：一个由自己掌握的个人 AI 系统',
+    closeoutHeading: '从 AI 对话到长期知识：Session closeout 的概念与实现',
     query: '知识',
     diagram: 'zh',
   },
@@ -12,6 +13,7 @@ const variants = [
     prefix: '/en',
     lang: 'en',
     heading: 'Yaaa: a personal AI system under your control',
+    closeoutHeading: 'From AI conversations to lasting knowledge: session closeout in practice',
     query: 'knowledge',
     diagram: 'en',
   },
@@ -19,12 +21,13 @@ const variants = [
     prefix: '/ja',
     lang: 'ja',
     heading: 'Yaaa：自分で管理できるパーソナル AI システム',
+    closeoutHeading: 'AI との対話から長く使える知識へ：Session closeout の考え方と実装',
     query: '知識',
     diagram: 'ja',
   },
 ];
 
-for (const { prefix, lang, heading, query, diagram } of variants) {
+for (const { prefix, lang, heading, closeoutHeading, query, diagram } of variants) {
   test(`${lang}: readable article, correct language and paired destinations`, async ({ page }) => {
     const response = await page.goto(`/tech${prefix}/posts/yaaa/`);
     expect(response?.status()).toBe(200);
@@ -84,6 +87,12 @@ for (const { prefix, lang, heading, query, diagram } of variants) {
     );
     await search.fill('nonce');
     await expect(results.filter({ hasText: heading })).toHaveCount(1);
+    await search.fill('covers_through');
+    await expect(results.filter({ hasText: closeoutHeading })).toHaveCount(1);
+    await expect(results.filter({ hasText: closeoutHeading })).toHaveAttribute(
+      'href',
+      `/tech${prefix}/posts/session-closeout/`,
+    );
     // The old placeholder can match the indexed word “no” in Pagefind.
     await search.fill('zxqvtr5827');
     await expect(results).toHaveCount(0);
