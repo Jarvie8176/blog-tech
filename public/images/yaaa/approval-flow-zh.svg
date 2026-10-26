@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <svg xmlns="http://www.w3.org/2000/svg" width="840" height="960" viewBox="0 0 840 960" role="img" aria-labelledby="title desc" xml:lang="zh">
-<title id="title">确认后，助理怎样执行</title><desc id="desc">助理列出具体改动 → 我核对并确认 → 现在可以执行？ → 执行这次确认的改动 → 告诉我处理结果; 先不执行: 拒绝或延后</desc>
+<title id="title">确认后，助理怎样执行</title><desc id="desc">助理列出具体改动 → 用户核对并批准 → 现在可以执行？ → 执行这次确认的改动 → 向用户反馈结果; 先不执行: 拒绝或延后</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
 <style>text{font-family:"Noto Sans CJK SC",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:23px;font-weight:600} .sub{font-size:18px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
 <rect width="840" height="960" rx="18" fill="#f6f8fb" />
@@ -10,16 +10,16 @@
 <text x="260" y="154" class="label" text-anchor="middle" id="text2">助理列出具体改动</text>
 <text x="260" y="182" class="sub" text-anchor="middle" id="text3">改哪项安排、改成什么、是否通知对方</text>
 <rect x="40" y="260" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="260" y="294" class="label" text-anchor="middle" id="text4">我核对并确认</text>
-<text x="260" y="322" class="sub" text-anchor="middle" id="text5">确认这一次的具体内容</text>
+<text x="260" y="294" class="label" text-anchor="middle" id="text4">用户核对并批准</text>
+<text x="260" y="322" class="sub" text-anchor="middle" id="text5">批准这一次的具体内容</text>
 <path d="M260 390L480 465L260 540L40 465Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
 <text x="260" y="460" class="label" text-anchor="middle" id="text6">现在可以执行？</text>
 <text x="260" y="489" class="sub" text-anchor="middle" id="text7">确认有效，情况未变</text>
 <rect x="40" y="610" width="440" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
 <text x="260" y="644" class="label" text-anchor="middle" id="text8">执行这次确认的改动</text>
-<text x="260" y="672" class="sub" text-anchor="middle" id="text9">只处理已确认的范围</text>
+<text x="260" y="672" class="sub" text-anchor="middle" id="text9">只处理已批准的范围</text>
 <rect x="40" y="750" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="260" y="784" class="label" text-anchor="middle" id="text10">告诉我处理结果</text>
+<text x="260" y="784" class="label" text-anchor="middle" id="text10">向用户反馈结果</text>
 <text x="260" y="812" class="sub" text-anchor="middle" id="text11">哪些成功、哪些失败、还有什么没完成</text>
 <rect x="540" y="405" width="270" height="125" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
 <text x="675" y="440" class="label" text-anchor="middle" id="text12">先不执行</text>
