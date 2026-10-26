@@ -135,7 +135,7 @@ export const ANALYTICS = {
 } as const;
 
 export const TOPICS = [
-  { key: 'yaaa', href: '/yaaa/', descriptionKey: 'yaaa.description' },
+  { key: 'yaaa', href: '/topics/yaaa/', descriptionKey: 'yaaa.description' },
 ] as const;
 
 export const NAV: readonly NavItem[] = [

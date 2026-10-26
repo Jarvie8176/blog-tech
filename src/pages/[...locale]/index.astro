@@ -28,8 +28,9 @@ const hrefForPage = (n: number) => localizedPath(n === 1 ? '/' : `/page/${n}/`, 
   <section class="border-base-300 mb-8 border-b pb-6">
     <h1 class="text-3xl font-bold tracking-tight">{t('site.title')}</h1>
     <p class="text-base-content/70 mt-3 text-lg">{t('site.description')}</p>
-    <a href={localizedPath('/yaaa/', locale)} class="text-primary mt-4 inline-block underline"
-      >{t('nav.yaaa')} →</a
+    <a
+      href={localizedPath('/topics/yaaa/', locale)}
+      class="text-primary mt-4 inline-block underline">{t('nav.yaaa')} →</a
     >
   </section>
   <PostList posts={pagePosts} locale={locale} />
