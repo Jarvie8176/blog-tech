@@ -1,9 +1,9 @@
 ---
 title: 'AI との対話から長く使える知識へ：Session closeout の考え方と実装'
 description: 'ブログ公開の例から、事実確認、根拠の保存、残作業の引き継ぎ、レビューを経た記憶・SOP・テストへの整理を説明する。'
-pubDate: 2026-10-25T12:30:00-07:00
+pubDate: 2026-10-25T19:15:00-07:00
 translationKey: session-closeout-knowledge
-categories: [Yaaa]
+categories: [Homelab Ops]
 tags: [Yaaa, closeout, knowledge, workflow]
 toc: true
 ---
