@@ -8,7 +8,10 @@ const PREFIX = '/tech';
 export async function routeRequest(
   request: Request,
   env: GatewayEnv,
-  upstreamFetch: (request: Request) => Promise<Response> = fetch,
+  upstreamFetch: (
+    request: Request,
+    options?: RequestInit & { cf?: { cacheTtlByStatus: Record<string, number> } },
+  ) => Promise<Response> = fetch,
 ): Promise<Response> {
   const publicUrl = new URL(request.url);
   // Upgrade the public hostname at the edge; local HTTP previews stay usable.
@@ -73,6 +76,7 @@ export async function routeRequest(
         redirect: 'manual',
         cache: cacheableAsset ? undefined : 'no-store',
       }),
+      cacheableAsset ? undefined : { cf: { cacheTtlByStatus: { '100-599': -1 } } },
     );
   } catch {
     return new Response('Blog origin is unavailable', { status: 502 });
