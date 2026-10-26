@@ -4,6 +4,42 @@ import { routeRequest } from './worker';
 const env = { TECH_ORIGIN: 'https://tech-origin.pages.dev' };
 
 describe('tech path gateway', () => {
+  test('revalidates content deletion and search manifests without serving a stale cache', async () => {
+    for (const path of [
+      '/tech/posts/removed/',
+      '/tech/',
+      '/tech/rss.xml',
+      '/tech/sitemap-0.xml',
+      '/tech/_pagefind/pagefind-entry.json',
+    ]) {
+      const response = await routeRequest(
+        new Request(`https://blog.fnpg.me${path}`),
+        env,
+        async (input) =>
+          input.cache === 'no-store'
+            ? new Response('removed', { status: 404 })
+            : new Response('stale article', { status: 200 }),
+      );
+      expect(response.status).toBe(404);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+    }
+    for (const path of [
+      '/tech/_astro/site.hash.css',
+      '/tech/images/diagram.png',
+      '/tech/_pagefind/fragment/hash.pf_fragment',
+    ]) {
+      const response = await routeRequest(
+        new Request(`https://blog.fnpg.me${path}`),
+        env,
+        async (input) => {
+          expect(input.cache).toBe('default');
+          return new Response('asset', { headers: { 'cache-control': 'public, max-age=3600' } });
+        },
+      );
+      expect(response.headers.get('cache-control')).toBe('public, max-age=3600');
+    }
+  });
+
   test('upgrades public HTTP requests without fetching, preserving paths and queries', async () => {
     for (const method of ['GET', 'HEAD', 'POST']) {
       for (const path of [
