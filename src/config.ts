@@ -136,6 +136,7 @@ export const ANALYTICS = {
 
 export const TOPICS = [
   { key: 'yaaa', href: '/yaaa/', descriptionKey: 'yaaa.description' },
+  { key: 'homelabOps', href: '/categories/homelab-ops/', descriptionKey: 'homelabOps.description' },
 ] as const;
 
 export const NAV: readonly NavItem[] = [

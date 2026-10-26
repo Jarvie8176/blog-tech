@@ -1,0 +1,27 @@
+{
+  "period": "2026-05-13 to 2026-10-25 12:57:06 America/Vancouver",
+  "dataset": "scripts/charts/homelab-monthly.csv",
+  "dataset_sha256": "e8fc9fffbc4121e4b9a45d15e2fc3dbb621807cefe4f97d6d4567d2ae1b378a2",
+  "matplotlib": "3.11.2",
+  "locales": ["zh", "en", "ja"],
+  "exports": [
+    "monthly-scale-zh.png",
+    "monthly-scale-zh.svg",
+    "relative-growth-zh.png",
+    "relative-growth-zh.svg",
+    "monthly-activity-zh.png",
+    "monthly-activity-zh.svg",
+    "monthly-scale-en.png",
+    "monthly-scale-en.svg",
+    "relative-growth-en.png",
+    "relative-growth-en.svg",
+    "monthly-activity-en.png",
+    "monthly-activity-en.svg",
+    "monthly-scale-ja.png",
+    "monthly-scale-ja.svg",
+    "relative-growth-ja.png",
+    "relative-growth-ja.svg",
+    "monthly-activity-ja.png",
+    "monthly-activity-ja.svg"
+  ]
+}

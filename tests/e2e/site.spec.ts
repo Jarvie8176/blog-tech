@@ -84,7 +84,8 @@ for (const { prefix, lang, heading, query, diagram } of variants) {
     );
     await search.fill('nonce');
     await expect(results.filter({ hasText: heading })).toHaveCount(1);
-    await search.fill('nonexistentquery5827');
+    // The old placeholder can match the indexed word “no” in Pagefind.
+    await search.fill('zxqvtr5827');
     await expect(results).toHaveCount(0);
     expect(errors).toEqual([]);
   });
