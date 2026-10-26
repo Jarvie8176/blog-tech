@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="860" viewBox="0 0 1000 860" role="img" aria-labelledby="title desc" xml:lang="zh">
+<title id="title">从对话到长期知识</title><desc id="desc">对话与工具证据 → 核对事实，完成收尾 → 可复用的经验候选 → 维护者审阅与验证 → 记忆 · SOP · 测试 → 下一次工作; 工作记录与交接</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
+<style>text{font-family:"Noto Sans CJK SC",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .tag{font-size:16px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)}</style></defs>
+<rect width="1000" height="860" rx="18" fill="#f6f8fb" />
+<text x="36" y="50" class="title" text-anchor="start" id="text0">从对话到长期知识</text>
+<text x="36" y="85" class="sub" text-anchor="start" id="text1">先留下可接手的记录，再审阅值得复用的经验</text>
+<rect x="40" y="140" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="174" class="label" text-anchor="middle" id="text2">对话与工具证据</text>
+<text x="230" y="202" class="sub" text-anchor="middle" id="text3">保留来源和范围</text>
+<rect x="580" y="140" width="380" height="85" rx="12" fill="#eaf0f7" stroke="#9bb4d0" stroke-width="1.5" />
+<text x="770" y="174" class="label" text-anchor="middle" id="text4">核对事实，完成收尾</text>
+<text x="770" y="202" class="sub" text-anchor="middle" id="text5">结果 · 证据 · 剩余工作</text>
+<rect x="40" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="354" class="label" text-anchor="middle" id="text6">工作记录与交接</text>
+<text x="230" y="382" class="sub" text-anchor="middle" id="text7">允许保留未完成事项</text>
+<rect x="580" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="770" y="354" class="label" text-anchor="middle" id="text8">可复用的经验候选</text>
+<text x="770" y="382" class="sub" text-anchor="middle" id="text9">结论 · 条件 · 维护位置</text>
+<rect x="580" y="480" width="380" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="770" y="514" class="label" text-anchor="middle" id="text10">维护者审阅与验证</text>
+<text x="770" y="542" class="sub" text-anchor="middle" id="text11">接受 · 修订 · 暂缓</text>
+<rect x="580" y="640" width="380" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="770" y="674" class="label" text-anchor="middle" id="text12">记忆 · SOP · 测试</text>
+<text x="770" y="702" class="sub" text-anchor="middle" id="text13">知识可以修订或撤销</text>
+<rect x="40" y="640" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="674" class="label" text-anchor="middle" id="text14">下一次工作</text>
+<text x="230" y="702" class="sub" text-anchor="middle" id="text15">核对适用条件，必要时重新验证</text>
+<path d="M420 182H580" class="edge" />
+<path d="M770 225V320" class="edge" />
+<path d="M770 270H230V320" class="edge" />
+<path d="M770 405V480" class="edge" />
+<path d="M770 565V640" class="edge" />
+<text x="800" y="610" class="tag" text-anchor="start" id="text16">接受</text>
+<path d="M580 682H420" class="edge" />
+<path d="M230 405V640" class="edge" />
+<text x="36" y="795" class="sub" text-anchor="start" id="text17">未接受的候选留在工作记录中，不自动成为长期知识。</text>
+<text x="36" y="827" class="sub" text-anchor="start" id="text18">原始对话的访问、保留和删除另行管理。</text>
+</svg>
