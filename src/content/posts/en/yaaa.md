@@ -31,7 +31,7 @@ Self-hosted platforms such as [Open WebUI](https://docs.openwebui.com/) and [Lib
 
 As of October 25, 2026, email digest delivery, classification and routing for single requests, and read-only checks of shared Codex and Claude procedures are complete. The long-term memory repository can also be deployed and its caches generated. The remaining gaps are retrieving useful memories across tools in real tasks, recovering multi-turn conversations, safely executing approved actions, automating task closeout, and fully verifying encryption, backups, retention, and deletion.
 
-Amanuensis is the component I use to collect email, sort it by importance, and deliver digests. The table separates what works from what remains, with the date of the latest record.
+[Amanuensis](https://portfolio.fnpg.me/projects/amanuensis/) is the component I use to collect email, sort it by importance, and deliver digests. The table separates what works from what remains, with the date of the latest record.
 
 | Area                                | What works now                                                                                          | What remains                                                                                  | Latest record               |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------- |
