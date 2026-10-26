@@ -154,6 +154,14 @@ const topicDefinitions = [
     descriptionKey: 'yaaa.description',
     category: 'Yaaa',
   },
+  {
+    key: 'homelab-ops',
+    labelKey: 'nav.homelabOps',
+    titleKey: 'homelabOps.title',
+    introKey: 'homelabOps.intro',
+    descriptionKey: 'homelabOps.description',
+    category: 'Homelab Ops',
+  },
 ] as const satisfies readonly TopicDefinition[];
 
 export const TOPICS = topicDefinitions.map((topic) => ({
