@@ -1,5 +1,5 @@
 ---
-title: '从 AI 对话到长期知识：Session closeout 的概念与实现'
+title: '[04] 从 AI 对话到长期知识：Session closeout 的概念与实现'
 description: '用一次博客发布说明 session closeout：核对事实、留下证据、交接剩余工作，再把经过审阅的经验变成记忆、SOP 和测试。'
 pubDate: 2026-10-25T19:15:00-07:00
 translationKey: session-closeout-knowledge

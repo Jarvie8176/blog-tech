@@ -1,5 +1,5 @@
 ---
-title: '如何管理 Homelab：从手动维护到 AI 运维'
+title: '[02] 如何管理 Homelab：从手动维护到 AI 运维'
 description: '介绍homelab-ops管理的服务，以月度数据和真实事故讨论AI运维的能力、治理成本，以及人应保留的判断、停止和恢复能力。'
 pubDate: 2026-10-25T19:05:00-07:00
 translationKey: homelab-ops-management

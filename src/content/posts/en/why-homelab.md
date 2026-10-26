@@ -1,5 +1,5 @@
 ---
-title: 'Why I run a homelab: from Raspberry Pi lighting control'
+title: '[01] Why I run a homelab: from Raspberry Pi lighting control'
 description: 'From Raspberry Pi lighting control in 2022 to home automation and personal services: their value, maintenance cost, and what people still need to understand as AI improves.'
 pubDate: 2026-10-25T19:00:00-07:00
 translationKey: homelab-ops-why

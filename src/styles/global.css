@@ -528,20 +528,22 @@
     border: 0;
   }
 
-  /* Hero image — contained within content width, using the sidebar's
-     subtle gradient as a placeholder background. */
+  /* Keep article covers compact while preserving the entire image. */
   .post-hero {
     @apply mx-auto;
     max-width: 100%;
   }
   .post-hero__frame {
-    @apply relative overflow-hidden rounded-md;
+    @apply relative mx-auto w-fit max-w-full overflow-hidden rounded-md;
     background: var(--color-sidebar-to);
   }
   .post-hero__img {
-    @apply block w-full;
+    @apply mx-auto block;
+    width: auto;
+    max-width: 100%;
     height: auto;
-    object-fit: cover;
+    max-height: min(40svh, 18rem);
+    object-fit: contain;
   }
   .prose-chirpy table {
     @apply my-6 w-full border-collapse text-left text-sm;

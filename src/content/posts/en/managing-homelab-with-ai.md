@@ -1,5 +1,5 @@
 ---
-title: 'Managing a homelab: from manual maintenance to AI operations'
+title: '[02] Managing a homelab: from manual maintenance to AI operations'
 description: 'The services behind Homelab Ops, monthly repository evidence, and a real incident: how AI changes operations and what people need to verify, stop, and recover.'
 pubDate: 2026-10-25T19:05:00-07:00
 translationKey: homelab-ops-management

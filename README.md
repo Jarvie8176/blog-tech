@@ -49,7 +49,7 @@ Yaaa 导读已包含完整中文稿、对应日英编辑译文及三语架构图
 
 ## Homelab Ops 专题
 
-专题阅读顺序为：为什么要 Homelab → 如何管理 Homelab → homelab-ops what? → Session closeout →《PR review 太多了！》。会话收尾篇和 PR review 篇归属 Homelab Ops，均提供中、日、英版本；架构篇目前只有中文。发布时间按这一内容顺序安排，列表仍按新到旧显示。
+专题阅读顺序为：[01] 为什么要 Homelab → [02] 如何管理 Homelab → [03] homelab-ops what? → [04] Session closeout →《[05] PR review 太多了！》。各语言标题统一使用 `[NN]` 序号前缀。会话收尾篇和 PR review 篇归属 Homelab Ops，均提供中、日、英版本；架构篇目前只有中文。发布时间按这一内容顺序安排，列表仍按新到旧显示。
 
 两篇开题文章已提供中、日、英版本，分别讨论为什么拥有 Homelab，以及如何从手动维护转向 AI 运维。专题入口为各语言的 `/topics/homelab-ops/`，侧栏和专题总览共用该入口。
 
