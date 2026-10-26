@@ -1,6 +1,6 @@
 ---
 title: '[05] PR review 太多了！'
-description: '把 AI 当作流体，用需求、约束、对抗审计和验收塑造实现，让项目推进到决策点，并控制自动增长的复杂度。'
+description: '当implementation不再稀缺时，如何重新分配人类判断、机器执行、工程验证和项目决策之间的责任。'
 pubDate: 2026-10-25T19:20:00-07:00
 translationKey: homelab-ops-pr-review
 categories: [Homelab Ops]
@@ -10,7 +10,7 @@ heroImageAlt: '《負けヒロインが多すぎる！》封面（图片来源�
 toc: true
 ---
 
-_把 AI 当作流体，用需求、约束和验收塑造实现。_
+_当implementation不再稀缺时，如何重新分配人类判断、机器执行、工程验证和项目决策之间的责任。_
 
 把 Homelab 的配置、脚本和维护工作交给 AI，变化很快就会体现在 GitHub 上：要检查的实现、要确认的设计、要处理的 PR，一起增加了。
 

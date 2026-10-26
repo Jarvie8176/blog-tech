@@ -1,6 +1,6 @@
 ---
 title: '[05] Too many pull requests to review!'
-description: 'Treat AI as a fluid intelligence, shape implementation with requirements and verification, and keep both review work and growing complexity under control.'
+description: 'When implementation is no longer scarce, how should responsibility be redistributed among human judgment, machine execution, engineering verification, and project decisions?'
 pubDate: 2026-10-25T19:20:00-07:00
 translationKey: homelab-ops-pr-review
 categories: [Homelab Ops]
@@ -10,7 +10,7 @@ heroImageAlt: 'Cover of 負けヒロインが多すぎる！. Image source: Bang
 toc: true
 ---
 
-_Treat AI as a fluid intelligence, and shape its output with requirements, constraints, and acceptance criteria._
+_When implementation is no longer scarce, how should responsibility be redistributed among human judgment, machine execution, engineering verification, and project decisions?_
 
 Hand configuration, scripts, and maintenance to AI, and the change soon becomes visible on GitHub: more implementations to check, more designs to assess, and more pull requests to handle.
 
