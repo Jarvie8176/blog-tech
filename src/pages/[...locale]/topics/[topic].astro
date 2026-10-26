@@ -1,0 +1,37 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import PostList from '~/components/PostList.astro';
+import { SITE, TOPICS } from '~/config';
+import { useTranslations, localizedPath } from '~/i18n/utils';
+import { getPosts } from '~/utils/posts';
+
+export function getStaticPaths() {
+  return TOPICS.flatMap((topic) =>
+    SITE.locales.map((locale) => ({
+      params: { locale: locale === SITE.defaultLocale ? undefined : locale, topic: topic.key },
+      props: { locale, topic },
+    })),
+  );
+}
+const { locale, topic } = Astro.props;
+const t = useTranslations(locale);
+const posts = (await getPosts(locale)).filter((post) =>
+  post.data.categories.includes(topic.category),
+);
+---
+
+<BaseLayout
+  title={t(topic.titleKey)}
+  description={t(topic.descriptionKey)}
+  pathWithoutLocale={topic.href}
+  crumbs={[
+    { label: t('nav.topics'), href: localizedPath('/topics/', locale) },
+    { label: t(topic.labelKey) },
+  ]}
+>
+  <section data-pagefind-body class="border-base-300 mb-8 border-b pb-6">
+    <h1 class="text-3xl font-bold tracking-tight">{t(topic.titleKey)}</h1>
+    <p class="text-base-content/70 mt-3 text-lg">{t(topic.introKey)}</p>
+  </section>
+  <PostList posts={posts} locale={locale} />
+</BaseLayout>

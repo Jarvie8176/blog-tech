@@ -24,7 +24,7 @@ Language links for articles are generated from real content entries. Each articl
 
 ## Homelab Ops
 
-The two articles live at `src/content/posts/{zh,en,ja}/why-homelab.md` and `managing-homelab-with-ai.md`. Their translation keys are `homelab-ops-why` and `homelab-ops-management`. Category `Homelab Ops` provides `/tech/categories/homelab-ops/` and the corresponding `/tech/en/` and `/tech/ja/` destinations; the shared topic configuration links to those real category pages.
+The two articles live at `src/content/posts/{zh,en,ja}/why-homelab.md` and `managing-homelab-with-ai.md`. Their translation keys are `homelab-ops-why` and `homelab-ops-management`. The shared topic registry matches category `Homelab Ops` and generates `/tech/topics/homelab-ops/` with corresponding `/tech/en/` and `/tech/ja/` destinations, linked from the topic index, sidebar and homepage. Category pages remain available separately.
 
 The Chinese source and editorial Japanese/English translations retain the same personal history, six service groups, monthly quantities, SSH incident scope, and thesis about human understanding and control. Keep normative goals separate from delivered or verified capabilities. Personal experience is dated to 2022; manual management continued before 2026. The first exact AI-delegation date is not asserted.
 
@@ -45,3 +45,13 @@ The Homelab browser checks cover the six article destinations, paired language l
 5. Run all checks required by AGENTS.md. The browser scenarios check each localized title, both code examples, diagram loading and dimensions, same-article language links, search, and reading without JavaScript.
 
 The public origin and production deployment process remain as documented in deployment.md.
+
+## Yaaa topic page
+
+The topic landing page lives at `/tech/topics/yaaa/`, `/tech/en/topics/yaaa/` and `/tech/ja/topics/yaaa/`. Astro emits static HTML redirects from the previous localized `/yaaa/` paths to these destinations. Article URLs under `/posts/yaaa/` are unchanged.
+
+## Adding a topic
+
+Add a definition to `topicDefinitions` in `src/config.ts`: a unique URL-safe `key`, the exact category to match, and translation keys for its navigation label, title, introduction and description. Supply every key in all three dictionaries in `src/i18n/ui.ts`; the registry checks the key types. Keep category names consistent across article translations.
+
+The shared `src/pages/[...locale]/topics/[topic].astro` template generates each configured topic in all site languages and selects published posts by the configured category. The registry also drives the topic index cards, sidebar children and homepage links. No new page file or duplicated path is needed. Unregistered topics return 404; drafts continue to follow the existing production post filtering. Redirects for historical URLs remain explicit migration rules in `astro.config.mjs`.

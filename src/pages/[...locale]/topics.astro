@@ -2,7 +2,6 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import { SITE, TOPICS } from '~/config';
 import { useTranslations, localizedPath } from '~/i18n/utils';
-import type { UIKey } from '~/i18n/ui';
 import { Icon } from 'astro-icon/components';
 
 export function getStaticPaths() {
@@ -35,7 +34,7 @@ const t = useTranslations(locale);
           >
             <div class="card-body">
               <Icon name="lucide:layers" width={24} height={24} class="text-primary" />
-              <h2 class="text-xl font-semibold">{t(`nav.${topic.key}` as UIKey)}</h2>
+              <h2 class="text-xl font-semibold">{t(topic.labelKey)}</h2>
               <p class="text-base-content/70">{t(topic.descriptionKey)}</p>
             </div>
           </a>

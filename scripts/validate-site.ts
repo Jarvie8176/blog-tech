@@ -70,6 +70,16 @@ for (const filename of htmlFiles) {
     })
     .transform(new Response(raw))
     .text();
+  // Astro emits minimal HTML redirects, outside the normal page layout.
+  const legacyTopic = /^(?:(en|ja)\/)?yaaa\/index\.html$/.exec(filename);
+  if (legacyTopic) {
+    const destination = `${mount}/${legacyTopic[1] ? `${legacyTopic[1]}/` : ''}topics/yaaa/`;
+    if (!raw.includes('http-equiv="refresh"') || !raw.includes(`url=${destination}`))
+      failures.push(`${filename}: missing topic redirect`);
+    if (!(await existsAt(new URL(destination, origin))))
+      failures.push(`${filename}: missing redirect destination`);
+    continue;
+  }
   if (!['zh-Hans', 'en', 'ja'].includes(lang))
     failures.push(`${filename}: invalid language ${lang}`);
   if (filename !== '404.html' && (canonicals.length !== 1 || canonicals[0] !== current.href))

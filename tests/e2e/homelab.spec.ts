@@ -89,7 +89,7 @@ for (const language of languages) {
   test.describe(`${language.locale}: without JavaScript`, () => {
     test.use({ javaScriptEnabled: false });
     test('Homelab topic and language links', async ({ page }) => {
-      await page.goto(`/tech${language.prefix}/categories/homelab-ops/`);
+      await page.goto(`/tech${language.prefix}/topics/homelab-ops/`);
       for (const title of language.titles)
         await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
       await page

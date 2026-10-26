@@ -110,6 +110,9 @@ const en = {
   'yaaa.title': 'Yaaa',
   'yaaa.intro':
     'A personal AI architecture built around owned memory, replaceable tools, and reviewed changes.',
+  'homelabOps.title': 'Homelab Ops',
+  'homelabOps.intro':
+    'From Raspberry Pi home automation to AI operations: why to run a homelab, how to maintain it, and what people need to understand and control.',
   'homelabOps.description':
     'Home automation, self-hosted services, and AI operations under human control.',
   'yaaa.description': 'Architecture, engineering notes, and open questions around Yaaa.',
@@ -220,6 +223,9 @@ export const messages = {
     'site.breadcrumb': '当前位置',
     'yaaa.title': 'Yaaa 专题',
     'yaaa.intro': '围绕可掌握的记忆、可替换的工具和经过审阅的变更，构建个人 AI 系统。',
+    'homelabOps.title': 'Homelab Ops 专题',
+    'homelabOps.intro':
+      '从树莓派家居自动化到 AI 运维：为什么要 Homelab，如何持续管理，以及人需要理解和掌控什么。',
     'homelabOps.description': '家居自动化、自托管服务与人可理解和掌控的 AI 运维。',
     'yaaa.description': 'Yaaa 的架构、工程记录与开放问题。',
   },
@@ -328,6 +334,9 @@ export const messages = {
     'yaaa.title': 'Yaaa 特集',
     'yaaa.intro':
       '自分で管理できる記憶、交換可能なツール、レビューを経た変更を軸に個人向け AI を構築します。',
+    'homelabOps.title': 'Homelab Ops 特集',
+    'homelabOps.intro':
+      'Raspberry Pi による家の自動化から AI 運用へ。Homelab を持つ理由、継続的な管理、人が理解しコントロールすべきことを考えます。',
     'homelabOps.description': '家の自動化、セルフホスト、人が理解し管理できる AI 運用。',
     'yaaa.description': 'Yaaa のアーキテクチャ、開発記録、未解決の課題。',
   },
