@@ -30,6 +30,8 @@ Preserve the distinction between manual five-step SOP practice, historical recor
 
 The historical assessment is described in anonymized aggregate form. Public references use the blog's gateway fix; do not publish private issue links, raw journals, host identifiers, or original source records. The article's date does not refresh historical production acceptance. Keep handoff preparation separate from demonstrated takeover, and retain unknown states when evidence is unavailable.
 
+The quantitative snapshot separates 92 discussion comments, 10 purposively reviewed case groups, and seven reread PRs. Five of those case groups were explicitly traced to method-bearing PRs: three merged and two open. The confirmed merged subset contains four substantive operating/acceptance documents (three new, one revised) and one verifier suite (implementation, synthetic tests, CI). Count case groups and artifacts separately; journals, indexes, and links are excluded from the method-artifact count. This is a confirmed lower bound, not an exhaustive inventory, conversion rate, or evidence of independent reuse. Keep all counts, units, status dates, and exclusions aligned across translations.
+
 ## Editing and acceptance
 
 1. Update the Chinese source and review which facts, examples, and status dates changed.

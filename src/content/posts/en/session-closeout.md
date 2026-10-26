@@ -109,7 +109,18 @@ Closure and inactivity are independent. A recently resumed session may need anot
 
 ## What works now, and what to verify next
 
-As of October 25, 2026, the five-step SOP has manual-use records and the historical sample assessment is complete. The read-only status prototype outputs a CLI table, JSON, and static HTML. Its 11 tests passed when rerun for this article, using synthetic sessions and synthetic native-format records.
+As of October 25, 2026, the five-step SOP has manual-use records and the historical sample assessment is complete. Record volume and accepted reusable outputs are counted separately:
+
+| What was counted                | Verified count           | Counting rule                                                                                                                          |
+| ------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Discussion records              | 92 comments              | Includes closeouts, takeovers, additions, and revisions; not 92 independent sessions                                                   |
+| Detailed review                 | 10 case groups and 7 PRs | Purposive review of records, artifacts, and PR status, not a census of all history                                                     |
+| Merged reusable methods         | At least 3 case groups   | Produced 4 operating or acceptance guides (3 new, 1 revised), plus 1 verifier suite comprising implementation, synthetic tests, and CI |
+| Method artifacts awaiting merge | 2 case groups            | Guides, check scripts, or tests exist in PRs but do not count as accepted outputs                                                      |
+
+The three merged cases contributed a verification ladder and domain acceptance guide, layered recovery checks, and a recovery guide with a read-only verifier. Only reusable method artifacts count; journals, indexes, and links do not count as additional outputs. Multiple files from one case still count as one case group. These five groups are the cases explicitly traced to method-bearing PRs in this review, not a finding that the other cases produced nothing reusable. “At least three” is therefore a confirmed lower bound, not a success rate with ten or 92 as the denominator. Merge acceptance also does not demonstrate later independent reuse.
+
+The read-only status prototype outputs a CLI table, JSON, and static HTML. Its 11 tests passed when rerun for this article, using synthetic sessions and synthetic native-format records. That test count is separate from historical records and accepted reusable outputs.
 
 Full automatic closeout is unfinished. Real closeout workflows do not yet publish receipts automatically. The prototype has not been connected to real-history scanning, has no deployed persistent interface, and does not feed an automatic long-term knowledge acceptance pipeline. A direction has been selected for the shared execution mechanism and merge-authorization constraints; implementation and acceptance remain future work. Requesting closeout does not itself authorize merging or deployment.
 
