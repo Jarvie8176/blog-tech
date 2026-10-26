@@ -1,5 +1,6 @@
 import type { Locale } from '../config';
 import type { ImageMetadata } from 'astro';
+import type { UIKey } from '../i18n/ui';
 
 export interface SiteConfig {
   title: string;
@@ -41,6 +42,8 @@ export interface SiteConfig {
 export interface NavItem {
   /** Unique key matching i18n.ts entries. */
   key: string;
+  /** Explicit translated label for configured destinations such as topics. */
+  labelKey?: UIKey;
   /** Path WITHOUT leading locale prefix. The renderer adds it. */
   href: string;
   /** Optional icon name (e.g. "home", "tags"). */

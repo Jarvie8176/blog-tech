@@ -30,7 +30,7 @@ const navItems = NAV.map((item) => ({
   children: item.children?.map((child) => ({
     ...child,
     href: localizedPath(child.href, locale),
-    label: t(`nav.${child.key}` as UIKey),
+    label: t(child.labelKey ?? (`nav.${child.key}` as UIKey)),
   })),
 }));
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';

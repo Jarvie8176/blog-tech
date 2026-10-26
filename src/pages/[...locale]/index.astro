@@ -2,7 +2,7 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import PostList from '~/components/PostList.astro';
 import Pagination from '~/components/Pagination.astro';
-import { SITE } from '~/config';
+import { SITE, TOPICS } from '~/config';
 import { localizedPath, useTranslations } from '~/i18n/utils';
 import { getPosts } from '~/utils/posts';
 
@@ -28,10 +28,17 @@ const hrefForPage = (n: number) => localizedPath(n === 1 ? '/' : `/page/${n}/`, 
   <section class="border-base-300 mb-8 border-b pb-6">
     <h1 class="text-3xl font-bold tracking-tight">{t('site.title')}</h1>
     <p class="text-base-content/70 mt-3 text-lg">{t('site.description')}</p>
-    <a
-      href={localizedPath('/topics/yaaa/', locale)}
-      class="text-primary mt-4 inline-block underline">{t('nav.yaaa')} →</a
-    >
+    <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+      {
+        TOPICS.map((topic) => (
+          <li>
+            <a href={localizedPath(topic.href, locale)} class="text-primary underline">
+              {t(topic.labelKey)} →
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </section>
   <PostList posts={pagePosts} locale={locale} />
   <Pagination

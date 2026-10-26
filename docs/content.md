@@ -35,3 +35,9 @@ The public origin and production deployment process remain as documented in depl
 ## Yaaa topic page
 
 The topic landing page lives at `/tech/topics/yaaa/`, `/tech/en/topics/yaaa/` and `/tech/ja/topics/yaaa/`. Astro emits static HTML redirects from the previous localized `/yaaa/` paths to these destinations. Article URLs under `/posts/yaaa/` are unchanged.
+
+## Adding a topic
+
+Add a definition to `topicDefinitions` in `src/config.ts`: a unique URL-safe `key`, the exact category to match, and translation keys for its navigation label, title, introduction and description. Supply every key in all three dictionaries in `src/i18n/ui.ts`; the registry checks the key types. Keep category names consistent across article translations.
+
+The shared `src/pages/[...locale]/topics/[topic].astro` template generates each configured topic in all site languages and selects published posts by the configured category. The registry also drives the topic index cards, sidebar children and homepage links. No new page file or duplicated path is needed. Unregistered topics return 404; drafts continue to follow the existing production post filtering. Redirects for historical URLs remain explicit migration rules in `astro.config.mjs`.
