@@ -198,8 +198,8 @@ Treating AI as a fluid intelligence means giving it room to work while continuin
 
 The rhythm I want for Homelab Ops is to describe the required shape, let AI make sustained progress, inspect the result through evidence, and bring feedback into the next iteration. When there are too many PRs to review, the process that funnels implementation back to a person may itself need redesign.
 
-## Next: [06] What if secrets leak?
+## Continue with credential management
 
 Delegating implementation and operations to cloud AI raises a concrete question: services need credentials, but how much do models and tools need to see? Configuration, command arguments, logs, and task context can all become routes for secrets to escape. Careful review also needs operating practices that reduce unnecessary exposure.
 
-The next article, “[06] What if secrets leak?”, will introduce the homelab’s own `envctl`, [age](https://github.com/FiloSottile/age) for public-key encryption, and [SOPS](https://getsops.io/docs/) for managing encrypted configuration files. It will explain how their roles fit together to store credentials as ciphertext and make them available to processes when needed. File encryption does not prevent a running program or its output from exposing a secret. We will also examine how to establish the affected scope and credential consumers, and the decisions involved in revocation, rotation, and service recovery.
+[“[06] What if secrets leak?”](/en/posts/secrets-and-credentials/) introduces the homelab’s own `envctl`, [age](https://github.com/FiloSottile/age) for public-key encryption, and [SOPS](https://getsops.io/docs/) for managing encrypted configuration files. It explains how their roles fit together to store credentials as ciphertext and make them available to processes when needed. File encryption does not prevent a running program or its output from exposing a secret. It also examines how to establish the affected scope and credential consumers, and the decisions involved in revocation, rotation, and service recovery.
