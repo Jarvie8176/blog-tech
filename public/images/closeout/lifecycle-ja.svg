@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="860" viewBox="0 0 1000 860" role="img" aria-labelledby="title desc" xml:lang="ja">
+<title id="title">対話から長く使える知識へ</title><desc id="desc">対話とツールの根拠 → 事実を確認して締めくくる → 再利用する経験の候補 → 保守者がレビュー・検証 → 記憶 · SOP · テスト → 次の仕事; 作業記録と引き継ぎ</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
+<style>text{font-family:"Noto Sans CJK JP",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .tag{font-size:16px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)}</style></defs>
+<rect width="1000" height="860" rx="18" fill="#f6f8fb" />
+<text x="36" y="50" class="title" text-anchor="start" id="text0">対話から長く使える知識へ</text>
+<text x="36" y="85" class="sub" text-anchor="start" id="text1">引き継げる記録を残し、再利用する経験をレビューする</text>
+<rect x="40" y="140" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="174" class="label" text-anchor="middle" id="text2">対話とツールの根拠</text>
+<text x="230" y="202" class="sub" text-anchor="middle" id="text3">出典と範囲を残す</text>
+<rect x="580" y="140" width="380" height="85" rx="12" fill="#eaf0f7" stroke="#9bb4d0" stroke-width="1.5" />
+<text x="770" y="174" class="label" text-anchor="middle" id="text4">事実を確認して締めくくる</text>
+<text x="770" y="202" class="sub" text-anchor="middle" id="text5">結果 · 根拠 · 残作業</text>
+<rect x="40" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="354" class="label" text-anchor="middle" id="text6">作業記録と引き継ぎ</text>
+<text x="230" y="382" class="sub" text-anchor="middle" id="text7">未完了事項も残せる</text>
+<rect x="580" y="320" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="770" y="354" class="label" text-anchor="middle" id="text8">再利用する経験の候補</text>
+<text x="770" y="382" class="sub" text-anchor="middle" id="text9">結論 · 条件 · 保守場所</text>
+<rect x="580" y="480" width="380" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="770" y="514" class="label" text-anchor="middle" id="text10">保守者がレビュー・検証</text>
+<text x="770" y="542" class="sub" text-anchor="middle" id="text11">採用 · 修正 · 保留</text>
+<rect x="580" y="640" width="380" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="770" y="674" class="label" text-anchor="middle" id="text12">記憶 · SOP · テスト</text>
+<text x="770" y="702" class="sub" text-anchor="middle" id="text13">知識は修正・取り消し可能</text>
+<rect x="40" y="640" width="380" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="230" y="674" class="label" text-anchor="middle" id="text14">次の仕事</text>
+<text x="230" y="702" class="sub" text-anchor="middle" id="text15">適用条件を確かめ、必要なら再検証</text>
+<path d="M420 182H580" class="edge" />
+<path d="M770 225V320" class="edge" />
+<path d="M770 270H230V320" class="edge" />
+<path d="M770 405V480" class="edge" />
+<path d="M770 565V640" class="edge" />
+<text x="800" y="610" class="tag" text-anchor="start" id="text16">採用</text>
+<path d="M580 682H420" class="edge" />
+<path d="M230 405V640" class="edge" />
+<text x="36" y="795" class="sub" text-anchor="start" id="text17">未採用の候補は作業記録に残し、自動で長期知識にはしない。</text>
+<text x="36" y="827" class="sub" text-anchor="start" id="text18">元の対話のアクセス・保持・削除は別に管理する。</text>
+</svg>

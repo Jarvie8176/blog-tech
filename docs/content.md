@@ -22,6 +22,14 @@ Each architecture diagram has a 2320 × 1320 PNG and an editable SVG beside it. 
 
 Language links for articles are generated from real content entries. Each article displays both diagrams in its own language, without links to other language images. Preserve alt text and the conceptual-design caption. The first body mention of Yaaa links to its portfolio project page; introduce Amanuensis and link to its portfolio project page before using the component name in the progress table. Keep progress descriptions in plain language and preserve the October 25, 2026 evidence date until new evidence supports an update.
 
+## Session closeout article
+
+The second article lives at `src/content/posts/{zh,en,ja}/session-closeout.md`, with `translationKey: session-closeout-knowledge`. Public destinations are `/tech/posts/session-closeout/`, `/tech/en/posts/session-closeout/`, and `/tech/ja/posts/session-closeout/`. Each uses `/images/closeout/lifecycle-<language>.png`, a 2000 × 1720 PNG with an editable SVG beside it.
+
+Preserve the distinction between manual five-step SOP practice, historical record assessment, the read-only status display, and the planned execution and knowledge-promotion paths. The six CLI rows are actual output from synthetic fixtures, not scanned personal histories. The experimental receipt is an input to that display, not a released procedure schema or proof of business completion. The 11 tests apply to the offline display, not to end-to-end automatic closeout or independent takeover.
+
+The historical assessment is described in anonymized aggregate form. Public references use the blog's gateway fix; do not publish private issue links, raw journals, host identifiers, or original source records. The article's date does not refresh historical production acceptance. Keep handoff preparation separate from demonstrated takeover, and retain unknown states when evidence is unavailable.
+
 ## Editing and acceptance
 
 1. Update the Chinese source and review which facts, examples, and status dates changed.
