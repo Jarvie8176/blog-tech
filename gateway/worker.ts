@@ -99,6 +99,14 @@ export async function routeRequest(
   }
   // Public content does not need cookies from a Pages origin.
   outgoing.delete('set-cookie');
+  // Pages marks deployment hostnames noindex; the verified production mount
+  // has its own canonical URLs and per-page robots meta (including search/404).
+  if (
+    publicUrl.hostname === 'blog.fnpg.me' &&
+    /^[a-z0-9]+\.blog-tech-81q\.pages\.dev$/.test(origin.hostname)
+  ) {
+    outgoing.delete('x-robots-tag');
+  }
   outgoing.set('x-content-type-options', 'nosniff');
   outgoing.set('referrer-policy', 'strict-origin-when-cross-origin');
   if (!cacheableAsset) outgoing.set('cache-control', 'no-store');

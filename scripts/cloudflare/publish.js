@@ -1,4 +1,4 @@
-/* global fetch, FormData, AbortSignal, setTimeout */
+/* global fetch, FormData, Blob, URL, AbortSignal, setTimeout */
 import process from 'node:process';
 import console from 'node:console';
 import { readdir, readFile, writeFile, appendFile } from 'node:fs/promises';
@@ -125,10 +125,57 @@ if (
   throw new Error('Canonical deployment does not match the verified source');
 }
 const publicUrl = 'https://blog.fnpg.me/tech/';
-const check = await fetch(publicUrl, { signal: AbortSignal.timeout(30000), cache: 'no-store' });
-if (check.status !== 200 || !(await check.text()).includes('lang="zh-Hans"')) {
-  throw new Error('Public gateway health check failed');
+// A release-specific origin prevents cached HTML from a previous Pages alias
+// surviving a publish (including deleted routes and the search entry manifest).
+const deploymentOrigin = new URL(deployment.url);
+if (
+  deploymentOrigin.protocol !== 'https:' ||
+  !/^[a-z0-9]+\.blog-tech-81q\.pages\.dev$/.test(deploymentOrigin.hostname)
+)
+  throw new Error('Unexpected immutable Pages deployment origin');
+const settingsPath = `/accounts/${account}/workers/scripts/blog-tech-gateway/settings`;
+const settings = await api(settingsPath);
+const binding = settings.bindings?.[0];
+if (
+  settings.bindings?.length !== 1 ||
+  binding?.name !== 'TECH_ORIGIN' ||
+  binding.type !== 'plain_text'
+) {
+  throw new Error('Unexpected gateway bindings; review before publishing');
 }
+const gatewaySettings = new FormData();
+gatewaySettings.set(
+  'settings',
+  new Blob(
+    [
+      JSON.stringify({
+        bindings: [{ ...binding, text: deploymentOrigin.origin }],
+      }),
+    ],
+    { type: 'application/json' },
+  ),
+  'settings.json',
+);
+await api(settingsPath, { method: 'PATCH', body: gatewaySettings });
+if ((await api(settingsPath)).bindings?.[0]?.text !== deploymentOrigin.origin) {
+  throw new Error('Gateway origin update did not persist');
+}
+let publicMatches = false;
+for (let attempt = 0; attempt < 12; attempt++) {
+  const check = await fetch(publicUrl, { signal: AbortSignal.timeout(30000), cache: 'no-store' });
+  const html = await check.text();
+  if (
+    check.status === 200 &&
+    html.includes('lang="zh-Hans"') &&
+    html.includes(`/commit/${sha}`) &&
+    !check.headers.get('x-robots-tag')?.includes('noindex')
+  ) {
+    publicMatches = true;
+    break;
+  }
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+}
+if (!publicMatches) throw new Error('Public gateway did not serve the verified source');
 const receipt = {
   source_sha: sha,
   pages_project: projectName,
@@ -136,6 +183,8 @@ const receipt = {
   deployment_url: deployment.url,
   public_url: publicUrl,
   previous_deployment_id: project.canonical_deployment?.id ?? null,
+  gateway_origin: deploymentOrigin.origin,
+  previous_gateway_origin: binding.text,
   files: Object.keys(manifest).length,
   manifest_sha256: createHash('sha256').update(JSON.stringify(manifest)).digest('hex'),
 };

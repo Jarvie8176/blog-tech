@@ -4,6 +4,19 @@ import { routeRequest } from './worker';
 const env = { TECH_ORIGIN: 'https://tech-origin.pages.dev' };
 
 describe('tech path gateway', () => {
+  test('production mount does not inherit the immutable deployment hostname noindex header', async () => {
+    const response = await routeRequest(
+      new Request('https://blog.fnpg.me/tech/'),
+      { TECH_ORIGIN: 'https://12345678.blog-tech-81q.pages.dev' },
+      async () =>
+        new Response('<meta name="robots" content="noindex">', {
+          headers: { 'x-robots-tag': 'noindex' },
+        }),
+    );
+    expect(response.headers.has('x-robots-tag')).toBe(false);
+    expect(await response.text()).toContain('content="noindex"');
+  });
+
   test('revalidates content deletion and search manifests without serving a stale cache', async () => {
     for (const path of [
       '/tech/posts/removed/',
