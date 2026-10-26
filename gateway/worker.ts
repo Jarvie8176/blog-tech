@@ -54,6 +54,11 @@ export async function routeRequest(
   const target = new URL(origin);
   target.pathname = publicUrl.pathname.slice(PREFIX.length);
   target.search = publicUrl.search;
+  const cacheableAsset =
+    target.pathname.startsWith('/_astro/') ||
+    target.pathname.startsWith('/images/') ||
+    (target.pathname.startsWith('/_pagefind/') &&
+      target.pathname !== '/_pagefind/pagefind-entry.json');
   const headers = new Headers();
   for (const name of ['accept', 'accept-encoding', 'if-none-match', 'if-modified-since', 'range']) {
     const value = request.headers.get(name);
@@ -66,6 +71,7 @@ export async function routeRequest(
         method: request.method,
         headers,
         redirect: 'manual',
+        cache: cacheableAsset ? undefined : 'no-store',
       }),
     );
   } catch {
@@ -91,6 +97,7 @@ export async function routeRequest(
   outgoing.delete('set-cookie');
   outgoing.set('x-content-type-options', 'nosniff');
   outgoing.set('referrer-policy', 'strict-origin-when-cross-origin');
+  if (!cacheableAsset) outgoing.set('cache-control', 'no-store');
   return new Response(request.method === 'HEAD' ? null : response.body, {
     status: response.status,
     statusText: response.statusText,
