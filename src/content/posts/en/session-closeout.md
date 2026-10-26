@@ -1,5 +1,5 @@
 ---
-title: 'From AI conversations to lasting knowledge: session closeout in practice'
+title: '[04] From AI conversations to lasting knowledge: session closeout in practice'
 description: 'A blog deployment illustrates session closeout: check facts, preserve evidence, hand off unfinished work, and review lessons before turning them into memory, SOPs, and tests.'
 pubDate: 2026-10-25T19:15:00-07:00
 translationKey: session-closeout-knowledge

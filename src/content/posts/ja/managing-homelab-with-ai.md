@@ -1,5 +1,5 @@
 ---
-title: 'Homelab の管理：手作業での保守から AI による運用へ'
+title: '[02] Homelab の管理：手作業での保守から AI による運用へ'
 description: 'Homelab Ops のサービス、月別の集計、実際の障害から、AI による運用の能力と管理コスト、人が判断・停止・復旧するための条件を考えます。'
 pubDate: 2026-10-25T19:05:00-07:00
 translationKey: homelab-ops-management

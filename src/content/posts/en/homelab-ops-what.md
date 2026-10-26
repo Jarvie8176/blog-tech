@@ -1,5 +1,5 @@
 ---
-title: 'homelab-ops what?'
+title: '[03] homelab-ops what?'
 description: 'How homelab-ops organizes infrastructure facts, access permissions, AI execution, and lasting knowledge, starting with its choices of GitOps, doco-cd, Datasette, and alerting tools.'
 pubDate: 2026-10-25T19:10:00-07:00
 translationKey: homelab-ops-what

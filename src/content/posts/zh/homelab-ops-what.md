@@ -1,5 +1,5 @@
 ---
-title: 'homelab-ops what?'
+title: '[03] homelab-ops what?'
 description: '从 GitOps、doco-cd、Datasette 和告警链路的选型出发，解释 homelab-ops 如何组织基础设施事实、访问权限、AI 执行与长期知识。'
 pubDate: 2026-10-25T19:10:00-07:00
 translationKey: homelab-ops-what

@@ -1,5 +1,5 @@
 ---
-title: 'homelab-ops what?'
+title: '[03] homelab-ops what?'
 description: 'GitOps、doco-cd、Datasette、アラート経路の技術選定を起点に、homelab-ops がインフラの事実、アクセス権限、AI による実行、長期知識をどう整理するかを説明します。'
 pubDate: 2026-10-25T19:10:00-07:00
 translationKey: homelab-ops-what

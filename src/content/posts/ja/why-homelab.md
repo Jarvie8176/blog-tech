@@ -1,5 +1,5 @@
 ---
-title: 'Homelab を持つ理由：Raspberry Pi の照明操作から'
+title: '[01] Homelab を持つ理由：Raspberry Pi の照明操作から'
 description: '2022年の Raspberry Pi による照明操作から、家の自動化と個人サービスへ。維持する価値と負担、AI が進歩しても理解しておきたいことを考えます。'
 pubDate: 2026-10-25T19:00:00-07:00
 translationKey: homelab-ops-why

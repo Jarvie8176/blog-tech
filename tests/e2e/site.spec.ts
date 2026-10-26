@@ -5,7 +5,7 @@ const variants = [
     prefix: '',
     lang: 'zh-Hans',
     heading: 'Yaaa：一个由自己掌握的个人 AI 系统',
-    closeoutHeading: '从 AI 对话到长期知识：Session closeout 的概念与实现',
+    closeoutHeading: '[04] 从 AI 对话到长期知识：Session closeout 的概念与实现',
     query: '知识',
     diagram: 'zh',
   },
@@ -13,7 +13,8 @@ const variants = [
     prefix: '/en',
     lang: 'en',
     heading: 'Yaaa: a personal AI system under your control',
-    closeoutHeading: 'From AI conversations to lasting knowledge: session closeout in practice',
+    closeoutHeading:
+      '[04] From AI conversations to lasting knowledge: session closeout in practice',
     query: 'knowledge',
     diagram: 'en',
   },
@@ -21,7 +22,7 @@ const variants = [
     prefix: '/ja',
     lang: 'ja',
     heading: 'Yaaa：自分で管理できるパーソナル AI システム',
-    closeoutHeading: 'AI との対話から長く使える知識へ：Session closeout の考え方と実装',
+    closeoutHeading: '[04] AI との対話から長く使える知識へ：Session closeout の考え方と実装',
     query: '知識',
     diagram: 'ja',
   },
@@ -131,10 +132,10 @@ test('theme preference is isolated and keyboard-accessible', async ({ page }) =>
   await expect(page.locator('html')).toHaveAttribute('data-theme', selected!);
 });
 
-test('article and language links work without JavaScript', async ({ browser }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+test('article and language links work without JavaScript', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   const page = await context.newPage();
-  await page.goto('http://127.0.0.1:4321/tech/en/posts/yaaa/');
+  await page.goto('/tech/en/posts/yaaa/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Yaaa');
   await expect(page.locator('a[data-lang-target="ja"]')).toHaveAttribute(
     'href',

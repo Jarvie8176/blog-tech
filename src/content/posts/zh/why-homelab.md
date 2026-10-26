@@ -1,5 +1,5 @@
 ---
-title: '为什么要 Homelab：从树莓派上的远程灯控开始'
+title: '[01] 为什么要 Homelab：从树莓派上的远程灯控开始'
 description: '从2022年树莓派上的远程灯控开始，记录家居自动化、个人服务和持续维护的价值，以及AI进步后人仍需理解和掌控什么。'
 pubDate: 2026-10-25T19:00:00-07:00
 translationKey: homelab-ops-why

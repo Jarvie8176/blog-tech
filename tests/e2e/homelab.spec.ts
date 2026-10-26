@@ -6,8 +6,8 @@ const languages = [
     prefix: '',
     lang: 'zh-Hans',
     titles: [
-      '为什么要 Homelab：从树莓派上的远程灯控开始',
-      '如何管理 Homelab：从手动维护到 AI 运维',
+      '[01] 为什么要 Homelab：从树莓派上的远程灯控开始',
+      '[02] 如何管理 Homelab：从手动维护到 AI 运维',
     ],
   },
   {
@@ -15,8 +15,8 @@ const languages = [
     prefix: '/en',
     lang: 'en',
     titles: [
-      'Why I run a homelab: from Raspberry Pi lighting control',
-      'Managing a homelab: from manual maintenance to AI operations',
+      '[01] Why I run a homelab: from Raspberry Pi lighting control',
+      '[02] Managing a homelab: from manual maintenance to AI operations',
     ],
   },
   {
@@ -24,8 +24,8 @@ const languages = [
     prefix: '/ja',
     lang: 'ja',
     titles: [
-      'Homelab を持つ理由：Raspberry Pi の照明操作から',
-      'Homelab の管理：手作業での保守から AI による運用へ',
+      '[01] Homelab を持つ理由：Raspberry Pi の照明操作から',
+      '[02] Homelab の管理：手作業での保守から AI による運用へ',
     ],
   },
 ];
