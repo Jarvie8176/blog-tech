@@ -62,7 +62,7 @@ bun run test:e2e
 
 浏览器检查覆盖桌面和手机尺寸、三语言搜索、已删除与草稿页面排除、偏好隔离与无 JavaScript 阅读。静态检查核对真实构建产物的链接、资源、语言、canonical、RSS、草稿排除及 Pagefind。
 
-PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，Publish Pages 工作流通过 Cloudflare API 发布同一份产物。过期提交与 PR 事件不会触发生产发布。评论服务未启用。Umami 访问统计由公开的 website ID 控制，配置与隐私说明见下文。
+PR 和 main CI 执行完整检查并保存静态产物；main 检查成功后，Publish Pages 工作流通过 Cloudflare API 发布同一份产物，并将网关 TECH_ORIGIN 切到对应的不可变部署地址，核对正式页源码版本，避免旧缓存保留已删除内容。过期提交与 PR 事件不会触发生产发布。评论服务未启用。Umami 访问统计由公开的 website ID 控制，配置与隐私说明见下文。
 
 ## 发布与维护
 
