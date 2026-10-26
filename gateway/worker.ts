@@ -11,6 +11,13 @@ export async function routeRequest(
   upstreamFetch: (request: Request) => Promise<Response> = fetch,
 ): Promise<Response> {
   const publicUrl = new URL(request.url);
+  // Upgrade the public hostname at the edge; local HTTP previews stay usable.
+  if (publicUrl.protocol === 'http:' && publicUrl.hostname === 'blog.fnpg.me') {
+    publicUrl.protocol = 'https:';
+    publicUrl.port = '';
+    if (publicUrl.pathname === PREFIX) publicUrl.pathname = `${PREFIX}/`;
+    return Response.redirect(publicUrl, 308);
+  }
   if (publicUrl.pathname !== PREFIX && !publicUrl.pathname.startsWith(`${PREFIX}/`)) {
     return new Response('Not found', { status: 404 });
   }
