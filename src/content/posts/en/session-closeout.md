@@ -127,3 +127,56 @@ Full automatic closeout is unfinished. Real closeout workflows do not yet publis
 Next, bounded real samples should test states and evidence coverage. Then compare whether an offline checker reduces false conclusions and missing handoff material. A new session that did not participate in the original conversation must attempt takeover using only the saved task, SOP, and evidence. There is no reliable time, token, or takeover-success baseline yet, so I make no savings claim.
 
 On the next similar task, I want an agent to find the applicable method, read its evidence, and know when to verify it again. Session closeout leaves that entry point. Whether the knowledge helps is tested by its next use.
+
+## Appendix: a closeout prompt to copy
+
+This general template is adapted from a draft closeout invocation. Replace the first three fields before giving it to the current agent. Maintain lasting rules in the project's SOP.
+
+```text
+Project and repository: [project, repository, and relevant task entrypoints]
+Closeout SOP: [path or link to the current SOP]
+Write scope: [permitted tasks, record locations, and repositories; retain existing explicit authorization]
+
+Perform session closeout. Read the SOP first; inspect available procedures, parameters, scope, and gates.
+Reuse existing authorization. Stop and record a gated action when its conditions are unmet; do not bypass them.
+If no execution entrypoint exists, use the same SOP to prepare reviewable results and list unperformed actions.
+
+Complete these five steps:
+1. Review and record: state the visible session scope, compacted summaries, and missing context.
+   Check issues, PRs, commits, and evidence; distinguish direct observation, reports, inference, and unknowns.
+   Save goals, actions, decisions and reasons, results, corrections, and remaining work.
+   Handle raw conversations and sensitive material under the existing archive rules.
+2. Update tasks: check relevant issue and parent-project bodies for current status, acceptance, and remaining work.
+   Add only this run's progress; close tasks only when evidence meets acceptance. Preserve unrelated edits.
+3. Disposition artifacts and lessons: classify each as already canonical, worth retaining as reusable knowledge,
+   retained for this case only, or deferred. Give reasons and ownership.
+   Include verification methods, execution order, failed approaches, and environment pitfalls.
+   Verify and redact before submitting to the appropriate home. Not promoting an artifact does not permit deletion.
+4. Hand off remaining work: reuse existing tasks; create one only when no suitable destination exists.
+   Persist dated state, accepted decisions, code and evidence entrypoints, failed approaches, blockers,
+   next action, acceptance conditions, and authorization boundaries.
+   Provide a takeover prompt independent of this chat and save full context in a durable location.
+   Explain if no handoff is needed. Do not create a next session or send messages without an explicit request.
+5. Reuse methods: inspect existing skills, SOPs, and procedures before proposing additions or revisions.
+   Report content acceptance, entrypoint installation, callable execution, and cross-tool acceptance separately.
+
+Publish only within the scope and existing authorization above. Deliver reviewable results by default;
+this template grants no additional merge or deployment authority.
+Read back writes. If merging under existing authority, verify PR state, merge SHA, and target-branch content.
+Save evidence before dependent final status updates. On resume, inspect prior actions to avoid duplicate writes.
+
+Finally report: record and PR links, tasks actually updated, consolidation decisions and locations,
+remaining work and blockers, performed versus unperformed actions, and a takeover prompt or why none is needed.
+Claim completion only for actions confirmed by readback. Preserve unmerged, undeployed, unaccepted, and unknown states.
+```
+
+When an invocation should automatically merge closeout records, the following authorization can be added separately. It covers those records only. A mixed PR containing new methods or implementation follows the authorization and review rules for those changes.
+
+```text
+Additional authorization for this invocation: create a separate PR for the journal/closeout records and
+automatically merge it after repository gates, CI, and required reviews pass.
+Scope: these closeout records only, excluding new operating rules, ADRs, code, scripts, fixtures,
+configuration, inventory, and existing business PRs. Bind the actual repository, PR, and head; inspect the full diff.
+Do not bypass branch protection. Read back PR state, merge SHA, and target-branch content after merging.
+A queued merge or successful request is not a completed merge.
+```

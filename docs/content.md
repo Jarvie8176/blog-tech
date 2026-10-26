@@ -32,6 +32,8 @@ The historical assessment is described in anonymized aggregate form. Public refe
 
 The quantitative snapshot separates 92 discussion comments, 10 purposively reviewed case groups, and seven reread PRs. Five of those case groups were explicitly traced to method-bearing PRs: three merged and two open. The confirmed merged subset contains four substantive operating/acceptance documents (three new, one revised) and one verifier suite (implementation, synthetic tests, CI). Count case groups and artifacts separately; journals, indexes, and links are excluded from the method-artifact count. This is a confirmed lower bound, not an exhaustive inventory, conversion rate, or evidence of independent reuse. Keep all counts, units, status dates, and exclusions aligned across translations.
 
+Each edition ends with a localized, copyable closeout prompt adapted from the author's draft. It uses public placeholders for project, SOP, and write scope; preserves the five steps, evidence limits, artifact disposition, durable handoff, method reuse, and readback; and makes no claim that the planned executor is delivered. Its optional authorization block applies only when explicitly added to an invocation and only to a separate journal/record PR. Keep new methods, ADRs, implementation, scripts, fixtures, configuration, inventory, and existing business PRs outside that grant. These article examples are quoted content, not authorization to merge this article PR or perform closeout operations during editing.
+
 ## Editing and acceptance
 
 1. Update the Chinese source and review which facts, examples, and status dates changed.
