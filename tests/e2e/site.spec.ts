@@ -90,11 +90,15 @@ for (const { prefix, lang, heading, query, diagram } of variants) {
   });
 }
 
-test('missing translations and other blog paths are not synthesized', async ({ page, request }) => {
-  await page.goto('/tech/posts/closeout-notes/');
-  await expect(page.locator('[data-lang-switcher]')).toHaveCount(0);
-  await expect(page.locator('[data-article-languages]')).toHaveCount(0);
-  for (const path of ['/tech/en/posts/closeout-notes/', '/arts/', '/technology/']) {
+test('removed and draft articles and other blog paths are not published', async ({ request }) => {
+  for (const path of [
+    '/tech/posts/closeout-notes/',
+    '/tech/en/posts/closeout-notes/',
+    '/tech/ja/posts/closeout-notes/',
+    '/tech/posts/unpublished-fixture/',
+    '/arts/',
+    '/technology/',
+  ]) {
     expect((await request.get(path)).status()).toBe(404);
   }
 });
