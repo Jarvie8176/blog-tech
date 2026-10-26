@@ -29,19 +29,21 @@ Self-hosted platforms such as [Open WebUI](https://docs.openwebui.com/) and [Lib
 
 ## What has been delivered
 
-As of October 25, 2026, email digest delivery, classification and routing for single requests, and read-only checks of shared Codex and Claude procedures are complete. The long-term memory repository can also be deployed and its caches generated. The remaining gaps are retrieving useful memories across tools in real tasks, recovering multi-turn conversations, safely executing approved actions, automating task closeout, and fully verifying encryption, backups, retention, and deletion.
+As of October 25, 2026, the email ingestion, triage, and digest delivery path works. Single-request handling within information triage and read-only paths for shared Codex and Claude procedures have also been checked. The long-term memory repository can be deployed and its caches generated. Gaps in Yaaa as a whole remain: retrieving useful memories across tools in real tasks, general-assistant multi-turn conversations, safely executing approved actions, automating closeout, and fully verifying encryption, backups, retention, and deletion.
 
-Amanuensis is the component I use to collect email, sort it by importance, and deliver digests. The table separates what works from what remains, with the date of the latest record.
+[Amanuensis](https://portfolio.fnpg.me/projects/amanuensis/) is Yaaa's information-triage and attention-aware delivery subsystem. It gathers information from email and other sources, judges relevance against plans and context, and chooses immediate delivery, a digest, a quiet hold, or suppression with a record. Its reasoning and interactions stay within information triage; general-purpose conversation, long-term memory, and privileged actions such as changing a calendar stay outside its scope.
 
-| Area                                | What works now                                                                                          | What remains                                                                                  | Latest record               |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------- |
-| Email processing (Amanuensis)       | Collecting, classifying, and delivering email digests                                                   | Connecting sources beyond email                                                               | 2026-07-08                  |
-| Single-request conversations        | Classifying requests, selecting a processing route, and escalating when needed                          | Recovering multi-turn conversations and covering more real answers                            | 2026-07-12                  |
-| Long-term memory                    | Deploying the Git memory repository, generating caches, and checking that they stay current             | Confirming that different tools retrieve the memories needed in real tasks                    | 2026-10-25                  |
-| Shared procedures                   | Read-only checks through the official Codex and Claude paths passed; procedure directories can be found | Verifying actual actions; read-only checks do not establish that writes work                  | 2026-10-08; 2026-10-25      |
-| Executing approved actions          | Defining what an approval contains and what must be checked before execution                            | Running and verifying the complete approval-to-execution flow                                 | 2026-10-21                  |
-| Task closeout                       | A five-step guide and a chosen implementation direction                                                 | Running an offline trial to collect results, verification evidence, and outstanding work      | 2026-10-25                  |
-| Encryption, retention, and deletion | Designing layered encryption for raw records                                                            | Verifying memory content encryption, backup recovery, retention limits, and complete deletion | Records reviewed 2026-10-25 |
+The portfolio's [example walkthrough](https://portfolio.fnpg.me/projects/amanuensis/walkthrough/) uses records sampled and reconstructed from the live system for presentation, showing ingestion, triage, delivery checks, and receipts. The table separates what works from what remains, with the date of the latest record.
+
+| Area                                      | What works now                                                                                          | What remains                                                                                                   | Latest record               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Email processing (Amanuensis)             | Collecting email, classifying it in context, and choosing when to notify or deliver a digest            | Confirming each other source's actual integration and acceptance scope                                         | 2026-07-08                  |
+| Single requests within information triage | Classifying triage requests, selecting a route, and escalating when needed                              | Verifying multi-turn recovery and real answer coverage; this does not establish general-assistant conversation | 2026-07-12                  |
+| Long-term memory                          | Deploying the Git memory repository, generating caches, and checking that they stay current             | Confirming that different tools retrieve the memories needed in real tasks                                     | 2026-10-25                  |
+| Shared procedures                         | Read-only checks through the official Codex and Claude paths passed; procedure directories can be found | Verifying actual actions; read-only checks do not establish that writes work                                   | 2026-10-08; 2026-10-25      |
+| Executing approved actions                | Defining what an approval contains and what must be checked before execution                            | Running and verifying the complete approval-to-execution flow                                                  | 2026-10-21                  |
+| Task closeout                             | A five-step guide and a chosen implementation direction                                                 | Running an offline trial to collect results, verification evidence, and outstanding work                       | 2026-10-25                  |
+| Encryption, retention, and deletion       | Designing layered encryption for raw records                                                            | Verifying memory content encryption, backup recovery, retention limits, and complete deletion                  | Records reviewed 2026-10-25 |
 
 The structured routing rules, approval data, and review parameters below are **proposed improvements**, illustrating the intended behavior.
 
@@ -49,9 +51,13 @@ The structured routing rules, approval data, and review parameters below are **p
 
 Ingestion first records the source identity and time. Following my request, the conversation tool reads the associated calendar and prepares a proposal. Ingestion and summarization can run asynchronously; conversation starts when needed. This is Yaaa's federated architecture: components keep their own operating rhythms and cooperate through explicit inputs and outputs.
 
+In this illustrative scenario, Amanuensis handles gathering, triage, and notifications. Checking the calendar on request, planning a reschedule, and making changes belong to the general conversation and action components.
+
 ![Yaaa architecture: handling current tasks and reviewing changes for future work](/images/yaaa/overview-en.png)
 
 _The diagram shows the overall design. Delivered scope is listed in the status table._
+
+[Amanuensis's technical explanation](https://portfolio.fnpg.me/projects/amanuensis/technical/) already distinguishes inbound model routing from outbound audience and sensitivity checks. The sensitivity propagation and structured-source rules below are improvements for connecting more components through Yaaa.
 
 If the email is highly sensitive, its summary, retrieved excerpts, and combined context must inherit **at least the highest sensitivity of all their actual sources**. Missing or unresolved provenance should lead to high-sensitivity handling or quarantine. Shortening a summary or making it less specific cannot lower its classification; declassification requires a separate, explicit policy and review.
 
@@ -79,9 +85,9 @@ Here, `sources` contains validated pairs of identifiers, not paths supplied by a
 
 The assistant may propose moving the appointment to Tuesday afternoon. The executor needs the account, event, new time, and whether the other party should be notified. Approval should bind to the content the user actually reviewed.
 
-![Approval flow: review a specific action, issue approval, check it before execution, claim a one-time nonce, execute, and record each outcome; failed checks stop execution and duplicate requests only look up receipts](/images/yaaa/approval-flow-en.png)
+![Approval flow: propose a change, review and confirm, check whether it can proceed, act, and show the outcome; otherwise stop and explain why](/images/yaaa/approval-flow-en.png)
 
-_This is the intended approval flow; end-to-end acceptance is still pending. Changes to the action or target version require fresh confirmation. Duplicate submissions must not execute again._
+_The diagram shows the steps a user sees. Changes require fresh confirmation, and repeated requests must not repeat the action. The complete flow still awaits validation._
 
 The intended shape is shown below. Identifiers and signature values are illustrative:
 
@@ -124,7 +130,9 @@ Deletion must propagate through source relationships to summaries, indexes, and 
 
 At closeout, preserve action receipts, reasons for decisions, and unfinished work, then identify reusable candidates. An error can become a test case, a stable sequence can become an SOP, and a lasting fact can become a memory candidate. Accepted changes should remain traceable, revisable, and reversible.
 
-In a personal system, the reviewer is usually me. Amanuensis's `must / should / fyi / ambient / drop` levels can prioritize attention, while permission to automate depends on the change's impact. The proposed approach is:
+In a personal system, the reviewer is usually me. Amanuensis's five tiers originally control delivery timing: `must` interrupts immediately; `should` and `fyi` enter the next digest; `ambient` stays quiet and browsable; `drop` is suppressed but recorded. Here I borrow the levels to prioritize review, without treating a triage label as permission to automate.
+
+Its [feedback flow](https://portfolio.fnpg.me/projects/amanuensis/technical/) turns classification corrections into candidate rules, reviewed by a human before affecting later triage. Extending a similar approach to long-term knowledge and SOPs still requires separate implementation and verification in Yaaa. The proposed approach is:
 
 | Change                                                                                        | Handling                                                                                                     |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |

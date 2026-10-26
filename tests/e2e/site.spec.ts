@@ -34,7 +34,7 @@ for (const { prefix, lang, heading, query, diagram } of variants) {
     await expect(page.locator('article pre')).toHaveCount(2);
     for (const [name, width, height] of [
       ['overview', 2320, 1320],
-      ['approval-flow', 1920, 2360],
+      ['approval-flow', 1680, 1920],
     ] as const) {
       const image = page.locator(`article img[src="/tech/images/yaaa/${name}-${diagram}.png"]`);
       await expect(image).toHaveCount(1);

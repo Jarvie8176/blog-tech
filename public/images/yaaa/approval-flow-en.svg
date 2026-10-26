@@ -1,56 +1,39 @@
 <?xml version='1.0' encoding='utf-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1180" viewBox="0 0 960 1180" role="img" aria-labelledby="title desc" xml:lang="en">
-<title id="title">From a proposal to a specific approval</title><desc id="desc">Prepare the specific action → Approve this action? → Issue approval independently → Is approval still valid? → Claim nonce once? → Execute the approved action → Record each outcome</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="960" viewBox="0 0 840 960" role="img" aria-labelledby="title desc" xml:lang="en">
+<title id="title">From confirmation to action</title><desc id="desc">Assistant proposes a change → I review and confirm → Can it proceed now? → Make the confirmed change → Show me the outcome; Do not proceed yet: Refuse or defer</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
-<style>text{font-family:"DejaVu Sans",sans-serif;fill:#20334a} .title{font-size:27px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
-<rect width="960" height="1180" rx="18" fill="#f6f8fb" />
-<text x="36" y="48" class="title" id="text0">From a proposal to a specific approval</text><text x="36" y="80" class="sub" id="text1">Intended flow · End-to-end acceptance is pending</text>
-<rect x="60" y="120" width="510" height="80" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="152" text-anchor="middle" class="label" id="text2">Prepare the specific action</text>
-<text x="315.0" y="178" text-anchor="middle" class="sub" id="text3">Account · event · time · recipient · message</text>
-<path d="M315 215L570 280L315 345L60 280Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="277" text-anchor="middle" class="label" id="text4">Approve this action?</text>
-<text x="315" y="304" text-anchor="middle" class="sub" id="text5">Review the exact same content</text>
-<rect x="60" y="380" width="510" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="412" text-anchor="middle" class="label" id="text6">Issue approval independently</text>
-<text x="315.0" y="438" text-anchor="middle" class="sub" id="text7">Sign action hash, expiry, nonce, and scope</text>
-<path d="M315 490L570 555L315 620L60 555Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="552" text-anchor="middle" class="label" id="text8">Is approval still valid?</text>
-<text x="315" y="579" text-anchor="middle" class="sub" id="text9">Signature · expiry · policy · version</text>
-<path d="M315 675L570 740L315 805L60 740Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="737" text-anchor="middle" class="label" id="text10">Claim nonce once?</text>
-<text x="315" y="764" text-anchor="middle" class="sub" id="text11">Claim atomically before execution</text>
-<rect x="60" y="860" width="510" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
-<text x="315.0" y="892" text-anchor="middle" class="label" id="text12">Execute the approved action</text>
-<text x="315.0" y="918" text-anchor="middle" class="sub" id="text13">Use a controlled call and an idempotency key</text>
-<rect x="60" y="1000" width="510" height="110" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="1032" text-anchor="middle" class="label" id="text14">Record each outcome</text>
-<text x="315.0" y="1058" text-anchor="middle" class="sub" id="text15">Update and notification: track separately</text>
-<text x="315.0" y="1083" text-anchor="middle" class="sub" id="text16">Retry only unfinished parts</text>
-<rect x="650" y="240" width="274" height="80" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
-<text x="787.0" y="272" text-anchor="middle" class="sub" id="text17">Refuse or defer</text>
-<text x="787.0" y="298" text-anchor="middle" class="sub" id="text18">Explain why; do not execute</text>
-<rect x="650" y="515" width="274" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
-<text x="787.0" y="547" text-anchor="middle" class="sub" id="text19">Refuse or reconfirm</text>
-<text x="787.0" y="573" text-anchor="middle" class="sub" id="text20">Changed, expired, or invalid</text>
-<rect x="650" y="695" width="274" height="110" rx="12" fill="#eaf0f7" stroke="#bac9d9" stroke-width="1.5" />
-<text x="787.0" y="727" text-anchor="middle" class="sub" id="text21">Look up the receipt</text>
-<text x="787.0" y="753" text-anchor="middle" class="sub" id="text22">Claimed or in progress</text>
-<text x="787.0" y="778" text-anchor="middle" class="sub" id="text23">Do not execute again</text>
-<path d="M315 200V215" class="edge" />
-<path d="M315 345V380" class="edge" />
-<text x="350" y="367" text-anchor="start" class="tag" id="text24">Approve</text>
-<path d="M315 465V490" class="edge" />
-<path d="M315 620V675" class="edge" />
-<text x="350" y="650" text-anchor="start" class="tag" id="text25">Valid</text>
-<path d="M315 805V860" class="edge" />
-<text x="350" y="838" text-anchor="start" class="tag" id="text26">First claim</text>
-<path d="M315 945V1000" class="edge" />
-<path d="M570 280H650" class="edge" />
-<text x="610" y="268" text-anchor="middle" class="tag" id="text27">No</text>
-<path d="M570 555H650" class="edge" />
-<text x="610" y="543" text-anchor="middle" class="tag" id="text28">Invalid</text>
-<path d="M570 740H650" class="edge" />
-<text x="610" y="728" text-anchor="middle" class="tag" id="text29">Repeat</text>
-<text x="36" y="1154" text-anchor="start" class="sub" id="text30">Changed action or target version requires fresh confirmation; retain reasons.</text>
+<style>text{font-family:"DejaVu Sans",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:23px;font-weight:600} .sub{font-size:18px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
+<rect width="840" height="960" rx="18" fill="#f6f8fb" />
+<text x="36" y="48" class="title" text-anchor="start" id="text0">From confirmation to action</text>
+<text x="36" y="82" class="sub" text-anchor="start" id="text1">Design sketch · The full flow still needs validation</text>
+<rect x="40" y="120" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="154" class="label" text-anchor="middle" id="text2">Assistant proposes a change</text>
+<text x="260" y="182" class="sub" text-anchor="middle" id="text3" style="font-size:16.74px">Which event, what changes, and who to notify</text>
+<rect x="40" y="260" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="294" class="label" text-anchor="middle" id="text4">I review and confirm</text>
+<text x="260" y="322" class="sub" text-anchor="middle" id="text5">Approve this specific change</text>
+<path d="M260 390L480 465L260 540L40 465Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
+<text x="260" y="460" class="label" text-anchor="middle" id="text6">Can it proceed now?</text>
+<text x="260" y="489" class="sub" text-anchor="middle" id="text7">Still approved, unchanged</text>
+<rect x="40" y="610" width="440" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="260" y="644" class="label" text-anchor="middle" id="text8">Make the confirmed change</text>
+<text x="260" y="672" class="sub" text-anchor="middle" id="text9">Stay within what I approved</text>
+<rect x="40" y="750" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="784" class="label" text-anchor="middle" id="text10">Show me the outcome</text>
+<text x="260" y="812" class="sub" text-anchor="middle" id="text11" style="font-size:17.39px">What worked, what failed, and what remains</text>
+<rect x="540" y="405" width="270" height="125" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="675" y="440" class="label" text-anchor="middle" id="text12" style="font-size:21.59px">Do not proceed yet</text>
+<text x="675" y="473" class="sub" text-anchor="middle" id="text13">Refuse or defer</text>
+<text x="675" y="503" class="sub" text-anchor="middle" id="text14" style="font-size:14.16px">Explain why; ask again if needed</text>
+<path d="M260 205V260" class="edge" />
+<path d="M260 345V390" class="edge" />
+<path d="M260 540V610" class="edge" />
+<text x="290" y="580" class="tag" text-anchor="start" id="text15">Yes</text>
+<path d="M260 695V750" class="edge" />
+<path d="M480 302H675V405" class="edge" />
+<text x="575" y="289" class="tag" text-anchor="middle" id="text16">No approval</text>
+<path d="M480 465H540" class="edge" />
+<text x="510" y="450" class="tag" text-anchor="middle" id="text17">No</text>
+<text x="36" y="908" class="sub" text-anchor="start" id="text18">If the change or situation changes, confirm again.</text>
+<text x="36" y="940" class="sub" text-anchor="start" id="text19">Repeated requests only look up existing results.</text>
 </svg>

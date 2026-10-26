@@ -1,56 +1,39 @@
 <?xml version='1.0' encoding='utf-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1180" viewBox="0 0 960 1180" role="img" aria-labelledby="title desc" xml:lang="zh">
-<title id="title">从修改建议到一次具体批准</title><desc id="desc">整理具体操作 → 用户确认这次操作？ → 独立签发批准 → 批准仍有效？ → nonce 原子领取成功？ → 执行已批准的内容 → 分别记录修改与通知结果</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="960" viewBox="0 0 840 960" role="img" aria-labelledby="title desc" xml:lang="zh">
+<title id="title">确认后，助理怎样执行</title><desc id="desc">助理列出具体改动 → 我核对并确认 → 现在可以执行？ → 执行这次确认的改动 → 告诉我处理结果; 先不执行: 拒绝或延后</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#52657c" /></marker>
-<style>text{font-family:"Noto Sans CJK SC",sans-serif;fill:#20334a} .title{font-size:27px;font-weight:700} .label{font-size:22px;font-weight:600} .sub{font-size:17px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
-<rect width="960" height="1180" rx="18" fill="#f6f8fb" />
-<text x="36" y="48" class="title" id="text0">从修改建议到一次具体批准</text><text x="36" y="80" class="sub" id="text1">目标流程 · 完整批准链尚待端到端验收</text>
-<rect x="60" y="120" width="510" height="80" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="152" text-anchor="middle" class="label" id="text2">整理具体操作</text>
-<text x="315.0" y="178" text-anchor="middle" class="sub" id="text3">账户 · 事件 · 时间 · 收件人 · 正文</text>
-<path d="M315 215L570 280L315 345L60 280Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="277" text-anchor="middle" class="label" id="text4">用户确认这次操作？</text>
-<text x="315" y="304" text-anchor="middle" class="sub" id="text5">核对同一份具体内容</text>
-<rect x="60" y="380" width="510" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="412" text-anchor="middle" class="label" id="text6">独立签发批准</text>
-<text x="315.0" y="438" text-anchor="middle" class="sub" id="text7">签名绑定动作哈希、期限、nonce 与范围</text>
-<path d="M315 490L570 555L315 620L60 555Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="552" text-anchor="middle" class="label" id="text8">批准仍有效？</text>
-<text x="315" y="579" text-anchor="middle" class="sub" id="text9">签名 · 有效期 · 策略 · 目标版本</text>
-<path d="M315 675L570 740L315 805L60 740Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
-<text x="315" y="737" text-anchor="middle" class="label" id="text10">nonce 原子领取成功？</text>
-<text x="315" y="764" text-anchor="middle" class="sub" id="text11">首次请求才能继续</text>
-<rect x="60" y="860" width="510" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
-<text x="315.0" y="892" text-anchor="middle" class="label" id="text12">执行已批准的内容</text>
-<text x="315.0" y="918" text-anchor="middle" class="sub" id="text13">通过受控调用执行，并使用幂等标识</text>
-<rect x="60" y="1000" width="510" height="110" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
-<text x="315.0" y="1032" text-anchor="middle" class="label" id="text14">分别记录修改与通知结果</text>
-<text x="315.0" y="1058" text-anchor="middle" class="sub" id="text15">成功 · 失败 · 待确认</text>
-<text x="315.0" y="1083" text-anchor="middle" class="sub" id="text16">重试只处理未完成部分</text>
-<rect x="650" y="240" width="274" height="80" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
-<text x="787.0" y="272" text-anchor="middle" class="sub" id="text17">拒绝或延后</text>
-<text x="787.0" y="298" text-anchor="middle" class="sub" id="text18">说明原因，不执行</text>
-<rect x="650" y="515" width="274" height="85" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
-<text x="787.0" y="547" text-anchor="middle" class="sub" id="text19">拒绝或重新确认</text>
-<text x="787.0" y="573" text-anchor="middle" class="sub" id="text20">内容变化、过期或条件不符</text>
-<rect x="650" y="695" width="274" height="110" rx="12" fill="#eaf0f7" stroke="#bac9d9" stroke-width="1.5" />
-<text x="787.0" y="727" text-anchor="middle" class="sub" id="text21">查询已有回执</text>
-<text x="787.0" y="753" text-anchor="middle" class="sub" id="text22">已使用或处理中</text>
-<text x="787.0" y="778" text-anchor="middle" class="sub" id="text23">不重复执行</text>
-<path d="M315 200V215" class="edge" />
-<path d="M315 345V380" class="edge" />
-<text x="350" y="367" text-anchor="start" class="tag" id="text24">确认</text>
-<path d="M315 465V490" class="edge" />
-<path d="M315 620V675" class="edge" />
-<text x="350" y="650" text-anchor="start" class="tag" id="text25">通过</text>
-<path d="M315 805V860" class="edge" />
-<text x="350" y="838" text-anchor="start" class="tag" id="text26">首次领取</text>
-<path d="M315 945V1000" class="edge" />
-<path d="M570 280H650" class="edge" />
-<text x="610" y="268" text-anchor="middle" class="tag" id="text27">未确认</text>
-<path d="M570 555H650" class="edge" />
-<text x="610" y="543" text-anchor="middle" class="tag" id="text28">不符</text>
-<path d="M570 740H650" class="edge" />
-<text x="610" y="728" text-anchor="middle" class="tag" id="text29">重复</text>
-<text x="36" y="1154" text-anchor="start" class="sub" id="text30">批准内容或目标版本改变，需要重新确认；每次决定保留理由。</text>
+<style>text{font-family:"Noto Sans CJK SC",sans-serif;fill:#20334a} .title{font-size:28px;font-weight:700} .label{font-size:23px;font-weight:600} .sub{font-size:18px;fill:#52657c} .edge{fill:none;stroke:#52657c;stroke-width:2;marker-end:url(#arrow)} .tag{font-size:16px;fill:#52657c}</style></defs>
+<rect width="840" height="960" rx="18" fill="#f6f8fb" />
+<text x="36" y="48" class="title" text-anchor="start" id="text0">确认后，助理怎样执行</text>
+<text x="36" y="82" class="sub" text-anchor="start" id="text1">设计示意 · 完整流程仍待验证</text>
+<rect x="40" y="120" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="154" class="label" text-anchor="middle" id="text2">助理列出具体改动</text>
+<text x="260" y="182" class="sub" text-anchor="middle" id="text3">改哪项安排、改成什么、是否通知对方</text>
+<rect x="40" y="260" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="294" class="label" text-anchor="middle" id="text4">我核对并确认</text>
+<text x="260" y="322" class="sub" text-anchor="middle" id="text5">确认这一次的具体内容</text>
+<path d="M260 390L480 465L260 540L40 465Z" fill="#eaf0f7" stroke="#4268a0" stroke-width="1.5" />
+<text x="260" y="460" class="label" text-anchor="middle" id="text6">现在可以执行？</text>
+<text x="260" y="489" class="sub" text-anchor="middle" id="text7">确认有效，情况未变</text>
+<rect x="40" y="610" width="440" height="85" rx="12" fill="#edf3ed" stroke="#98b49a" stroke-width="1.5" />
+<text x="260" y="644" class="label" text-anchor="middle" id="text8">执行这次确认的改动</text>
+<text x="260" y="672" class="sub" text-anchor="middle" id="text9">只处理已确认的范围</text>
+<rect x="40" y="750" width="440" height="85" rx="12" fill="#fff" stroke="#bac9d9" stroke-width="1.5" />
+<text x="260" y="784" class="label" text-anchor="middle" id="text10">告诉我处理结果</text>
+<text x="260" y="812" class="sub" text-anchor="middle" id="text11">哪些成功、哪些失败、还有什么没完成</text>
+<rect x="540" y="405" width="270" height="125" rx="12" fill="#fff4df" stroke="#d6b570" stroke-width="1.5" />
+<text x="675" y="440" class="label" text-anchor="middle" id="text12">先不执行</text>
+<text x="675" y="473" class="sub" text-anchor="middle" id="text13">拒绝或延后</text>
+<text x="675" y="503" class="sub" text-anchor="middle" id="text14">说明原因，必要时重新确认</text>
+<path d="M260 205V260" class="edge" />
+<path d="M260 345V390" class="edge" />
+<path d="M260 540V610" class="edge" />
+<text x="290" y="580" class="tag" text-anchor="start" id="text15">可以</text>
+<path d="M260 695V750" class="edge" />
+<path d="M480 302H675V405" class="edge" />
+<text x="575" y="289" class="tag" text-anchor="middle" id="text16">未确认</text>
+<path d="M480 465H540" class="edge" />
+<text x="510" y="450" class="tag" text-anchor="middle" id="text17">不能</text>
+<text x="36" y="908" class="sub" text-anchor="start" id="text18">改动内容或情况变了，要重新确认。</text>
+<text x="36" y="940" class="sub" text-anchor="start" id="text19">同一请求重复提交，只查看已有结果。</text>
 </svg>
