@@ -85,7 +85,7 @@ Here, `sources` contains validated pairs of identifiers, not paths supplied by a
 
 The assistant may propose moving the appointment to Tuesday afternoon. The executor needs the account, event, new time, and whether the other party should be notified. Approval should bind to the content the user actually reviewed.
 
-![Approval flow: propose a change, review and confirm, check whether it can proceed, act, and show the outcome; otherwise stop and explain why](/images/yaaa/approval-flow-en.png)
+![Approval flow: the assistant proposes a change, the user reviews and approves it, the system checks whether it can proceed, then executes and reports the outcome; otherwise it stops and explains why](/images/yaaa/approval-flow-en.png)
 
 _The diagram shows the steps a user sees. Changes require fresh confirmation, and repeated requests must not repeat the action. The complete flow still awaits validation._
 
