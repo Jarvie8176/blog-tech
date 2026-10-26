@@ -34,6 +34,16 @@ The mold also needs to distinguish where flexibility is useful. Interface copy a
 
 I want working conditions that someone else can use: with the goal, inputs, allowed changes, and acceptance method available, work can continue.
 
+## How is this different from making a wish to AI?
+
+“Audit PR #xxx” can be brief because the PR already points to changes, related requirements, design notes, and check results. The model can gather more context, choose methods, and add tests. A short request does not mean the whole process lacks requirements or constraints, nor does it require a person to specify every detail perfectly in advance.
+
+By “making a wish,” I mean expressing a desired outcome and accepting it solely because the model says “done.” Here, the work leaves inspectable artifacts: a PR fixes the changes, reproductions and tests check behavior, repeated adversarial review looks for omissions, and actual use supplies more feedback. Insufficient evidence calls for investigation. Misunderstood requirements call for revised requirements or a different design. The model’s completion report is itself a claim to verify.
+
+Nor must a person build the entire mold alone before AI can start. AI can help discover requirements, compare options, formulate constraints, and bring a question to the point where a decision is possible. I need to understand what is being decided, which requirements are confirmed, and what accepting a trade-off would change. Unconfirmed requirements need further discovery; more implementation cannot settle them by itself.
+
+Tokens and electricity buy the labor of analysis, implementation, and repeated checking. Decisions and feedback from use keep correcting the goal and its effects. The starting point can be vague, provided the process turns that uncertainty into requirements we can confirm and results we can test.
+
 ## Let multiple agents challenge the implementation
 
 Review can run in parallel too. For changes that deserve close inspection, I ask several agents to look for counterexamples from different perspectives: concurrency, resource use, permissions and data exposure, recovery, or the producers and consumers of an interface.
@@ -187,3 +197,9 @@ Human attention belongs on understanding decision points and confirming requirem
 Treating AI as a fluid intelligence means giving it room to work while continuing to inspect the mold. It can fill in implementation details, find errors, and help redesign that mold. People need to retain an understanding of goals, constraints, acceptance, and action boundaries, and be able to intervene when the result drifts from its purpose.
 
 The rhythm I want for Homelab Ops is to describe the required shape, let AI make sustained progress, inspect the result through evidence, and bring feedback into the next iteration. When there are too many PRs to review, the process that funnels implementation back to a person may itself need redesign.
+
+## Next: What if secrets leak?
+
+Delegating implementation and operations to cloud AI raises a concrete question: services need credentials, but how much do models and tools need to see? Configuration, command arguments, logs, and task context can all become routes for secrets to escape. Careful review also needs operating practices that reduce unnecessary exposure.
+
+The next article, “What if secrets leak?”, will introduce the homelab’s own `envctl`, [age](https://github.com/FiloSottile/age) for public-key encryption, and [SOPS](https://getsops.io/docs/) for managing encrypted configuration files. It will explain how their roles fit together to store credentials as ciphertext and make them available to processes when needed. File encryption does not prevent a running program or its output from exposing a secret. We will also examine how to establish the affected scope and credential consumers, and the decisions involved in revocation, rotation, and service recovery.
