@@ -1,7 +1,8 @@
 ---
 title: '[07] envctl design and boundaries'
-description: 'Where envctl fits alongside 1Password, SOPS and Compose secrets, separating released editing safeguards from a proposed workflow and agent mode.'
+description: 'Local dotenv editing motivates envctl’s components, credential workflow and place alongside 1Password, SOPS and Compose secrets.'
 pubDate: 2026-10-26T18:38:15-07:00
+updatedDate: 2026-10-26T18:52:41-07:00
 translationKey: homelab-ops-envctl
 categories: [Homelab Ops]
 tags: [homelab, envctl, secrets, design]
@@ -10,7 +11,7 @@ toc: true
 
 _envctl handles local dotenv editing, snapshots and execution. It improves routine credential handling; [the previous article](/en/posts/secrets-and-credentials/) addresses diagnostic reads and propagation into knowledge._
 
-[envctl/bakctl v0.1.0](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0) packages existing local tools independently. Its main role is modifying carriers and restoring files safely. It does not isolate secrets from an agent with equivalent permissions. Implemented behavior and proposed integration are separate below.
+[envctl/bakctl v0.1.0](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0) packages existing local tools independently. It joins editing by key, encryption, snapshots and restoration for an existing local dotenv workflow.
 
 ## Why keep local carriers
 
@@ -31,13 +32,13 @@ Tasks accepting a live-source dependency can use `op run`. For an existing SOPS 
 
 Container consumers can also use Compose `secrets:` to give files to selected services, keeping values out of container environments. That controls consumption; SOPS controls storage; envctl handles some editing operations. Choosing one does not require all of them. Applications must support file input, and ordinary Compose mounts neither encrypt source files nor stop Docker administrators reading them. [Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/)
 
-I retain envctl for existing dotenv editing needs. Consumers without that need can omit it. It does not replace issuance, rotation, permission isolation or output controls.
+I retain envctl for existing dotenv editing needs. Consumers without that need can omit it. Issuance, rotation and execution permissions have their own interfaces.
 
 ## Current components and defaults
 
 ![Credential stack and envctl logical components](/images/secrets/components-en.png)
 
-_Logical responsibilities within the current single script, not separately delivered modules or services._
+_The current single script groups configuration, editing, storage, backups and execution by responsibility._
 
 | Responsibility           | Work                                                              |
 | ------------------------ | ----------------------------------------------------------------- |
@@ -47,23 +48,23 @@ _Logical responsibilities within the current single script, not separately deliv
 | Backup adapter           | Use bakctl for snapshots, history and restoration                 |
 | Runner and output        | Inject process environments or output requested keys and values   |
 
-v0.1.0 decrypts candidate ciphertext for a round-trip check before atomic replacement, with mutation locking and input validation. Temporary files and bakctl snapshots of encrypted targets remain ciphertext, with synthetic tests covering these paths. These safeguards reduce write damage; they do not guarantee safe reads afterward. [Release security model](https://github.com/Jarvie8176/envctl/blob/v0.1.0/docs/security-model.md)
+v0.1.0 decrypts candidate ciphertext for a round-trip check before atomic replacement, with mutation locking and input validation. Temporary files and bakctl snapshots of encrypted targets remain ciphertext, with synthetic tests covering these paths. This work focuses on write integrity. [Release security model](https://github.com/Jarvie8176/envctl/blob/v0.1.0/docs/security-model.md)
 
 Three defaults matter: the historical target is plaintext `~/cc/.env`; only a terminal `.enc` suffix enables automatic encryption; `exec` inherits the parent environment and injects every parsed variable. `get/export` deliberately print values; `list` prints keys. Purpose-specific files reduce injection scope, but there is no per-command variable allowlist or same-user isolation.
 
-## Five-step target design Not a runnable tutorial
+## Designing five steps from an empty item to execution
 
-This is integration to implement and verify. **v0.1.0 does not ship the complete workflow, a safe importer or a business-check script.** The reference `op://demo-vault/demo-service/credential` and key `DEMO_API_TOKEN` are imaginary. Local validation and response constraints in the diagram still need implementation.
+I plan to connect the existing capabilities into this flow. envctl already provides stdin editing and process injection; the safe importer, business-check script and shared response format still need writing. Consider the imaginary reference `op://demo-vault/demo-service/credential` and key `DEMO_API_TOKEN`:
 
 ![Five-step target design for creating and injecting credentials](/images/secrets/use-case-en.png)
 
-1. **The agent prepares foundations.** Prepare op, SOPS, age and paired tools on the authorized executor. Check actual versions, recipients, permissions and recovery, using disposable identities and synthetic values. First op access still needs authorized bootstrap. Giving the agent those identities plus arbitrary shell access provides no secret isolation.
-2. **The agent creates an empty item.** Record the service, purpose, consumers and required fields in a specified vault, returning an item reference. Empty fields and an existing stub do not prove usable credentials. [1Password item interface](https://www.1password.dev/cli/reference/management-commands/item)
+1. **The agent prepares foundations.** Prepare op, SOPS, age and paired tools on the authorized executor. Check actual versions, recipients, permissions and recovery, using disposable identities and synthetic values. First op access uses the existing authorized bootstrap path.
+2. **The agent creates an empty item.** Record the service, purpose, consumers and required fields in a specified vault, returning an item reference. Leave secret fields for the user and check their content before import. [1Password item interface](https://www.1password.dev/cli/reference/management-commands/item)
 3. **The human fills credentials.** Confirm permissions and expiry at the issuer, then enter the value directly in 1Password. Report completion without copying it through chat.
 4. **The agent requests controlled import.** Supply only a reference, target key and explicit encrypted file. A trusted local importer verifies retrieval, field presence, nonempty content and format before writing through stdin. Failures preserve the previous value and return status only. Piping op reads directly into a setter can write empty input before upstream failure is known; pipefail cannot undo that write, and ciphertext round-trip checks cannot replace input validation.
 5. **The agent requests controlled execution.** The business process uses credentials internally and returns agreed status fields. Keep values out of authentication arguments, debug logs, raw responses and exceptions. Synthetic canaries should check stdout, stderr, arguments and artifacts across success and failure, plus original-carrier preservation.
 
-This reduces mistakes along a planned path. An arbitrary program with equivalent permissions can still read or print values. Isolation, exploratory escalation and rotation require the [execution and response boundaries discussed previously](/en/posts/secrets-and-credentials/).
+These steps address values in routine use. The [previous article](/en/posts/secrets-and-credentials/) covers exploratory troubleshooting and the trade-offs after exposure.
 
 ## Use four complexity questions to choose copies
 
@@ -74,12 +75,12 @@ A credential may exist at the source, in a service carrier, a local file and boo
 - **What maintenance is added?** Record source references, consumers, generation and deployment versions, update time, permissions and update ownership. Check real authenticated actions without publishing secret hashes as proof.
 - **What is lost by removing it?** Removing caching restores live-source dependence; removing envctl loses editing and snapshot conventions while SOPS injection remains. Decide per consumer.
 
-A complete copy inventory and staleness checks are not unified yet. Consolidate unnecessary layers and expose failed updates, undeployed changes and continued old-value use. Known lineage alone does not close rotation.
+I still need to complete the copy inventory and staleness checks, consolidate unnecessary layers and expose failed updates, undeployed changes and continued old-value use.
 
-## Released capabilities and proposed constraints
+## What I want to change next
 
-Released work includes paired CLIs, editing, snapshots and v0.1.0 write protections. A general op importer, five-step acceptance, unified output contracts and runtime isolation remain unfinished.
+v0.1.0 packages the paired CLIs, editing, snapshots and write protections. Next come a general op importer, business checks across the five-step flow and a shared response format.
 
-Agent mode is also a proposal: require an explicit encrypted file, reject get/export, inject only declared variables, filter inherited environments, and restrict executable actions and returned fields. Fewer variables cannot stop arbitrary programs printing them; enforcement also needs independent permissions. **v0.1.0 has no agent mode.**
+I also want an agent mode: require an explicit encrypted file, reject get/export, inject only declared variables, filter inherited environments, and restrict actions and returned fields. That would reduce casual value reads; arbitrary programs still need independent execution permissions controlling their reads and output.
 
-Use the [fixed-release README instructions](https://github.com/Jarvie8176/envctl#install-a-fixed-release) and [Releases](https://github.com/Jarvie8176/envctl/releases). For existing installations, follow the [integration and adoption contract](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md), validating in a separate prefix before switching consumers. Keep envctl and bakctl on the same release and check actual executables. Source changes do not update copies elsewhere; tool availability does not prove credential activation or old-access invalidation.
+Use the [fixed-release README instructions](https://github.com/Jarvie8176/envctl#install-a-fixed-release) and [Releases](https://github.com/Jarvie8176/envctl/releases). For existing installations, follow the [integration and adoption contract](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md), validating in a separate prefix before switching consumers. Keep envctl and bakctl on the same release and check actual executables. Update copied installations on each node, then check the actual business authentication after switching.
