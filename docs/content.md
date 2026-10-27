@@ -68,7 +68,7 @@ The six diagrams live in `public/images/fleet-sync/`, with Mermaid sources, outl
 
 ### ADR mechanism article
 
-Article `[10]` is the Chinese edition at `src/content/posts/zh/adr-mechanism.md`, with `translationKey: homelab-ops-adr-mechanism` and public path `/tech/posts/adr-mechanism/`. No translated entries are published yet. The approved article uses selected real ADR fields and repository references, with the previously authorized English ADR-0049/0059 examples on the public Gist; research downloads and raw issue/PR records stay outside this repository.
+Article `[10]` is the Chinese edition at `src/content/posts/zh/adr-mechanism.md`, with `translationKey: homelab-ops-adr-mechanism` and public path `/tech/posts/adr-mechanism/`. No translated entries are published yet. The approved article uses selected real ADR fields and plain-text ADR/PR/issue identifiers, with the previously authorized English ADR-0049/0059 examples on the public Gist; links to the homelab-ops repository are omitted, and research downloads and raw issue/PR records stay outside this repository.
 
 Keep numbering (`id: pending`), decision status and deployment evidence distinct. The October 26, 2026 snapshot of ADR-0071 remains `proposed` even though creation and numbering PRs merged and the linked incident records playback acceptance. Issue #2231 tracks lifecycle drift; it is not evidence of a completed automatic acceptance workflow. PR #2353 illustrates a separate still-open proposal. The partial-supersession scope index is a proposed extension, not delivered functionality.
 
