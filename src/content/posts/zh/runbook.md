@@ -2,7 +2,7 @@
 title: '[08] 一个人如何管理几十个 Homelab 服务'
 description: '用 Runbook 连接人类判断、AI agent 和服务执行，通过共享上下文、版本化脚本与独立验收，让日常运维可理解、可重复、可验证。'
 pubDate: 2026-10-26T21:35:21-07:00
-updatedDate: 2026-10-26T22:42:08-07:00
+updatedDate: 2026-10-26T22:49:51-07:00
 translationKey: homelab-ops-runbook
 categories: [Homelab Ops]
 tags: [homelab, AI, runbook, automation, workflow]
@@ -91,7 +91,9 @@ Runbook 接入服务也有不同方式。操作脚本可以通过 SSH、命令�
 
 ## Calibre-Web 的 Runbook 示例
 
-Calibre-Web 可以把这些关系讲得更具体。它由 doco-cd 管理，应用配置、书库元数据和电子书文件分别挂载到 `/config`、`/library` 和 `/storage`。它还有两个初始化服务：`calibre-library-init` 处理初始书库，`calibre-config-init` 处理应用配置，然后才启动 `calibre-web`。旧主机、迁移过程和修复经过已经移入 `history.md`。
+[Calibre](https://calibre-ebook.com/about) 是一款免费开源的电子书管理软件，可以整理书名、作者、封面等信息，转换电子书格式，并把书传到阅读器。[Calibre-Web](https://github.com/janeczku/calibre-web) 是使用 Calibre 书库数据库的独立 Web 应用，让人通过浏览器浏览、阅读和下载书籍。本文维护的是 Calibre-Web 服务，升级时需要同时保护书库记录和实际的电子书文件。
+
+在我的 Homelab 中，Calibre-Web 由 doco-cd 管理，应用配置、书库元数据和电子书文件分别挂载到 `/config`、`/library` 和 `/storage`。它还有两个初始化服务：`calibre-library-init` 处理初始书库，`calibre-config-init` 处理应用配置，然后才启动 `calibre-web`。旧主机、迁移过程和修复经过已经移入 `history.md`。
 
 假设这次任务是“升级 Calibre-Web，保留原来的书库”。下面是一份面向这项任务的 README 示例：部署关系和数据约束来自现有 runbook，操作与验收部分是为本文补全的示例流程；主机和宿主机路径通过清单查找，不在这里复制。
 
