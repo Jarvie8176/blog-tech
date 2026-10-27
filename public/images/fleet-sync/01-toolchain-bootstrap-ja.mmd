@@ -1,0 +1,16 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans CJK JP, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    startNode["ノードと実行ユーザーを選択"] --> reachable{"SSH 接続可能？"}
+    reachable -->|いいえ| skipped["報告してスキップ"]
+    reachable -->|はい| ship["SSH でインストーラーを送信"]
+    ship --> stage["インストーラー実行
+依存関係を確認"]
+    stage --> platform["環境と既存ツールを識別"]
+    platform --> present{"導入が必要？"}
+    present -->|いいえ| keep["既存ツールを維持"]
+    present -->|はい| install["環境に合う成果物を導入"]
+    install --> entry["PATH とコマンド入口を設定"]
+    keep --> entry
+    entry --> report["verify：版または MISSING"]
+    report -.-> acceptance["別途受け入れ確認：
+実ユーザーで作業を検証"]

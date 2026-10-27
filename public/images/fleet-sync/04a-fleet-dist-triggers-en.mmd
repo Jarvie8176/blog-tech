@@ -1,0 +1,10 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    pushEvent["GitHub push"] --> bridge["Bridge: verify signature
+Parse repo"]
+    bridge --> ntfy["ntfy publishes hint"]
+    ntfy --> subscribe["Subscriber receives repo name"]
+    subscribe --> task["Node runs pull-repo"]
+    timer["Node timer
+About every 15 min
+Walk manifest"] --> task

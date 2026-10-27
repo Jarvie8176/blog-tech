@@ -1,0 +1,17 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    startNode["Choose node and user"] --> reachable{"SSH reachable?"}
+    reachable -->|No| skipped["Report and skip"]
+    reachable -->|Yes| ship["Send installer via SSH"]
+    ship --> stage["Run installer
+Check dependencies"]
+    stage --> platform["Detect platform
+and existing tools"]
+    platform --> present{"Install needed?"}
+    present -->|No| keep["Keep existing tools"]
+    present -->|Yes| install["Install matching artifact"]
+    install --> entry["Set PATH / entry points"]
+    keep --> entry
+    entry --> report["verify: version or MISSING"]
+    report -.-> acceptance["Separate acceptance:
+run task as actual user"]

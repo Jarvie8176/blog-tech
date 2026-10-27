@@ -1,0 +1,17 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    manifest{"Repo configured?"}
+    manifest -->|No| ignore["Ignore"]
+    manifest -->|Yes| repoLock["Acquire per-repo lock"]
+    repoLock --> fetch["git fetch origin main"]
+    fetch --> fetched{"Fetch succeeded?"}
+    fetched -->|Yes| update["Reset to origin/main"]
+    fetched -->|No| retain["Keep old content
+fetch_ok=0 / in_sync=0"]
+    update --> hook["Run apply hooks"]
+    retain --> hook
+    hook --> result["Record three states"]
+    result --> localMetrics["Write textfile atomically"]
+    localMetrics --> alloy["Monitoring collection"]
+    classDef fail fill:#fff0ed,stroke:#b66352,color:#5e3028;
+    class retain fail;
