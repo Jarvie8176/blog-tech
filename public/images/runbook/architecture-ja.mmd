@@ -1,0 +1,21 @@
+flowchart TB
+  human["人の操作者"] -->|"読んで確認"| docs["Runbook と操作入口"]
+  agent["AI エージェント"] -->|"必要に応じて読む"| docs
+  docs -.->|"スクリプト入口"| terminal["人・AI の端末 / CLI"]
+  docs -.->|"登録済み操作"| dispatcher["AI の MCP 入口"]
+  docs -.->|"設定の入口"| change["人・AI が PR を作成"]
+  terminal -->|"引数と前提を確認"| script["バージョン管理した<br/>スクリプト"]
+  dispatcher -->|"引数・範囲・gate を確認"| script
+  change -->|"チェックと許可に基づくマージ"| controller["doco-cd などの<br/>コントローラー"]
+  script -->|"SSH / CLI / サービス API"| service["対象サービスと実行環境"]
+  controller -->|"設定を取得してデプロイ"| service
+  service -->|"状態とアプリの結果"| verify["独立した検証"]
+  verify -->|"証拠を記録"| receipt["人・AI が実行記録を確認"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef source fill:#f0fdfa,stroke:#0f766e,color:#134e4a;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class human,agent actor;
+  class docs source;
+  class terminal,dispatcher,change,script,controller,service operation;
+  class verify,receipt result;
