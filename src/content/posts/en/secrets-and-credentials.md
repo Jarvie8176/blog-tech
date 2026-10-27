@@ -57,7 +57,11 @@ The deployment controller’s own startup credentials have a bootstrap problem: 
 
 ## How envctl connects the components
 
-`envctl` began as a dotenv tool for this homelab. It now has an independent [public repository](https://github.com/Jarvie8176/envctl) and a [v0.1.0 release](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0). It connects editing, SOPS calls, backups and process execution, and ships with its file-snapshot companion `bakctl`. Other tools handle 1Password integration and node distribution. Moving existing installations to the public version requires separate acceptance.
+`envctl` began as a dotenv tool for this homelab. Its independent public repository is [Jarvie8176/envctl](https://github.com/Jarvie8176/envctl), with a [v0.1.0 release](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0). It connects editing, SOPS calls, backups and process execution, and ships with its file-snapshot companion `bakctl`. Other tools handle 1Password integration and node distribution. Moving existing installations to the public version requires separate acceptance.
+
+Use the repository’s [fixed-release installation instructions](https://github.com/Jarvie8176/envctl#install-a-fixed-release) to obtain the paired tools, and check versions, artifacts and checksums against [Releases](https://github.com/Jarvie8176/envctl/releases). This article describes v0.1.0 behavior; the public repository maintains instructions and changes for later versions.
+
+For an existing installation, follow the [integration and adoption contract](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md): validate in a separate installation prefix before switching consumers. Keep envctl and bakctl on the same release and check the actual executables. Updating a source checkout does not update copied installations on other nodes.
 
 ![Credential stack and envctl components: 1Password and envsync provide service carriers; envctl connects configuration, document editing, storage, SOPS, bakctl and process execution](/images/secrets/components-en.png)
 
@@ -150,6 +154,6 @@ One HTTP success cannot establish all of these. A healthy container may fail to 
 
 As of October 26, 2026, envctl/bakctl are used in this environment, and envsync with service-level SOPS carriers has been implemented. Public v0.1.0 adds ciphertext round-trip checks, mutation locking and input validation, with temporary identities and synthetic values covering encrypted paths. The plaintext default, whole-file environment injection and value output by get/export remain. Deployment bootstrap also includes permission-restricted plaintext configuration.
 
-A general safe importer from 1Password to envctl, end-to-end acceptance of the five-step use case, runtime credential isolation and some rotation follow-ups remain. Release-metadata cleanup, migration of existing installations and actual-node verification also remain in progress for the first public release. An available package does not establish that older nodes have upgraded or that business credentials have been activated and revoked correctly.
+A general safe importer from 1Password to envctl, end-to-end acceptance of the five-step use case, runtime credential isolation and some rotation follow-ups remain. The [envctl repository](https://github.com/Jarvie8176/envctl) maintains public package versions and change records. Migration of older installations, the version running on each node, and actual activation or invalidation of business credentials each require separate verification.
 
 I want an inspectable chain of responsibility: the human confirms purpose, permissions and interruption trade-offs; the agent prepares and progresses within authorization; local tools handle values and execute; verification checks actual activation and invalidation; and [session closeout](/en/posts/session-closeout/) retains redacted results, remaining work and reusable methods. The next task can reuse a checked path while keeping its unfinished parts visible.

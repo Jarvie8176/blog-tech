@@ -57,7 +57,11 @@ _把运维交给 AI 以后，凭据如何保存、进入进程、出现在输出
 
 ## envctl 怎样把组件接起来
 
-`envctl` 最初是这套 Homelab 的自用 dotenv 工具，现在已有独立的[公开仓库](https://github.com/Jarvie8176/envctl)和 [v0.1.0 发布](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0)。它把编辑、SOPS 调用、备份和进程执行连接起来，与文件快照工具 `bakctl` 配对分发。1Password 接入和节点分发由外部工具承担，原有节点迁移到公开版本也需要分别验收。
+`envctl` 最初是这套 Homelab 的自用 dotenv 工具，现在已有独立公开仓库 [Jarvie8176/envctl](https://github.com/Jarvie8176/envctl)和 [v0.1.0 发布](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0)。它把编辑、SOPS 调用、备份和进程执行连接起来，与文件快照工具 `bakctl` 配对分发。1Password 接入和节点分发由外部工具承担，原有节点迁移到公开版本也需要分别验收。
+
+读者可从仓库的[固定版本安装说明](https://github.com/Jarvie8176/envctl#install-a-fixed-release)取得配对工具，按 [Releases](https://github.com/Jarvie8176/envctl/releases) 核对版本、产物和校验摘要。本文讨论 v0.1.0 的行为；后续版本与安装步骤以公开仓库为准。
+
+已有安装可以按[集成与迁移约定](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md)先在独立安装前缀验证，再切换消费者。envctl 与 bakctl 应保持同一发布版本，并核对实际执行文件；更新一个源码 checkout 不会自动更新其他节点上的复制版本。
 
 ![凭据栈与 envctl 逻辑组件：1Password 和 envsync 提供服务级载体；envctl 连接配置、键值编辑、存储、SOPS、bakctl 与进程执行](/images/secrets/components-zh.png)
 
@@ -150,6 +154,6 @@ SOPS 的 `updatekeys` 调整接收者，`rotate` 更新文件数据密钥，两�
 
 截至 2026 年 10 月 26 日，envctl/bakctl 已用于这套环境，envsync 和服务级 SOPS carrier 也已有实现。公开 v0.1.0 增加了候选密文回读、写入互斥与输入检查，并以临时 identity 和合成值覆盖加密路径。工具仍保留明文默认值、整份选中文件的环境注入和 get/export 的值输出；部署引导还存在受权限控制的明文配置。
 
-通用的 1Password 到 envctl 安全导入入口、五步 use case 的贯通验收、运行时凭据隔离和部分轮换后续仍需补齐。公开首版的发布元数据清理、原有安装迁移与实际节点验证也仍在跟进。已经有公开工具包，不意味着旧节点已经升级，也不能替代业务凭据的生效与失效检查。
+通用的 1Password 到 envctl 安全导入入口、五步 use case 的贯通验收、运行时凭据隔离和部分轮换后续仍需补齐。公开工具包的版本与变更记录由 [envctl 仓库](https://github.com/Jarvie8176/envctl)维护。原有安装是否迁移、实际节点使用哪个版本，以及业务凭据是否生效或失效，都需要分别验证。
 
 我希望沉淀下来的，是能够检查的责任链：人确认用途、权限和中断取舍；agent 在授权范围内准备和推进；本地工具处理值与执行；验证检查真实生效和失效；[会话收尾](/posts/session-closeout/)留下脱敏的结果、遗留与方法。这样，下一次需要凭据时，可以复用已经检查过的路径，也能够知道哪一段还需要继续改进。
