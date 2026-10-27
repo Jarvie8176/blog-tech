@@ -1,0 +1,10 @@
+flowchart TB
+    proposed["proposed 讨论中的提案"]
+    accepted["accepted 已接受的决定"]
+    rejected["rejected 未采用的提案"]
+    deprecated["deprecated 已弃用"]
+    superseded["superseded by ADR-NNNN 已被后继替代"]
+    proposed -->|"评审接受"| accepted
+    proposed -->|"评审否决"| rejected
+    accepted -->|"不再适用"| deprecated
+    accepted -->|"新决定替代"| superseded

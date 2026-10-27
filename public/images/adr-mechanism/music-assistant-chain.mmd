@@ -1,0 +1,7 @@
+flowchart TB
+    adrNine["ADR-0009 已被 0071 替代"]
+    adrTwentyEight["ADR-0028 已被 0071 替代"]
+    adrSeventyOne["ADR-0071 状态仍为 proposed"]
+    adrNine -->|"0028 记录替代 0009"| adrTwentyEight
+    adrTwentyEight -->|"0071 记录替代 0028"| adrSeventyOne
+    adrNine -.->|"superseded-by 直接指向链尾"| adrSeventyOne

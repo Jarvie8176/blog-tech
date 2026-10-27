@@ -55,6 +55,8 @@ Yaaa 导读已包含完整中文稿、对应日英编辑译文及三语架构图
 
 后续篇目包括 [06] 秘密泄露怎么办、[07] envctl 的设计与边界、[08] Runbook 运维协作，以及 [09] Fleet Sync 工具链分发。[09] 先发布中文稿，包含六张架构与流程图，说明异构节点同步的机制及当前实现边界；图示支持无 JavaScript 阅读和窄屏横向滚动。
 
+[10] Homelab Ops 的 ADR 机制与决策演进发布中文稿，介绍 MADR Light、记录结构、pending 与生命周期、真实替代链及自动编号和 CI。三张静态图支持无 JavaScript 阅读；局部替代范围索引明确作为改进建议。完整的 ADR-0049、ADR-0059 英文样本链接到已公开 Gist。
+
 两篇开题文章已提供中、日、英版本，分别讨论为什么拥有 Homelab，以及如何从手动维护转向 AI 运维。专题入口为各语言的 `/topics/homelab-ops/`，侧栏和专题总览共用该入口。
 
 量化部分提供月度规模、相对增幅和月度活动三类图表，每类均有中日英 PNG/SVG，位于 `public/images/homelab-ops/`。公开聚合数据为 `public/data/homelab-ops-monthly.csv`；`scripts/charts/homelab.py` 可离线重绘，不参与正常站点构建。维护口径见 [内容维护](docs/content.md#homelab-ops)。
