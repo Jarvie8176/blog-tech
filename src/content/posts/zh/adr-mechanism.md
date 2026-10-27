@@ -45,7 +45,7 @@ homelab-ops 在 ADR-0026 中把自己的模板称为 MADR Light：保留 Context
 
 模板之外，还需要处理决定的变化。早期仓库会在旧 ADR 后追加 Amendment。ADR-0026 记录了这种做法的问题：照片管线的一份 ADR 已经出现正文与多次修订相互矛盾的情况。读者必须把原决定和后续补丁重新组合，才能得到应该遵循的版本。
 
-因此，项目为这套变体增加了几项约定：已接受决策的正文实质变更通过新 ADR 表达；完整替代形成线性链；局部替代明确标注影响范围；编号、索引和关系维护交给工具。这些属于 homelab-ops 的工程选择，并非 MADR 模板要求所有项目照做。[ADR-0026](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0026-madr-supersede-discipline.md)
+因此，项目为这套变体增加了几项约定：已接受决策的正文实质变更通过新 ADR 表达；完整替代形成线性链；局部替代明确标注影响范围；编号、索引和关系维护交给工具。这些属于 homelab-ops 的工程选择，并非 MADR 模板要求所有项目照做（ADR-0026）。
 
 ## 一份 homelab-ops ADR 的结构
 
@@ -106,7 +106,7 @@ ADR 的生命周期表达一项决定如何被对待：`proposed` 是提案，`a
 
 `rejected` 与 `deprecated` 保留了不同的历史：前者没有成为已接受的方案，后者曾经有效而后来不再适用。`superseded` 则进一步给出替代记录，让读者知道应该去哪里继续阅读。保留这些状态，能避免同一方案在缺少历史背景时被反复提出。
 
-[ADR-0042](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0042-monitoring-presentation-perses.md)是一个真实的 rejected 例子：它曾提出采用 Perses 作为监控展示终态，文首记录了 2026 年 6 月 30 日被拒绝，并注明从未进入 accepted。后续方向由 ADR-0051 继续记录。它保存了一次未被采用的选择，而非一项后来失效的既定方案。
+ADR-0042 是一个真实的 rejected 例子：它曾提出采用 Perses 作为监控展示终态，文首记录了 2026 年 6 月 30 日被拒绝，并注明从未进入 accepted。后续方向由 ADR-0051 继续记录。它保存了一次未被采用的选择，而非一项后来失效的既定方案。
 
 ### pending 表示等待编号
 
@@ -148,7 +148,7 @@ homelab-ops 为完整替代设置了线性关系：新 ADR 的 `supersedes` 只�
 
 Music Assistant 在仓库中形成了真实的三代链：ADR-0009 → ADR-0028 → ADR-0071。以下关系与状态以 2026 年 10 月 26 日核对的记录为准。
 
-[ADR-0009](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0009-music-assistant-host.md)选择将服务部署在 a1989 的 macOS 容器环境中，并接受相应限制。[ADR-0028](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0028-music-assistant-orbstack-bind-workaround.md)随后整理端口绑定兼容问题，把网络方面的调整从旧 Amendment 提取为独立记录。到了 [ADR-0071](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0071-music-assistant-host-tp-server.md)，播放后端与网络要求已经变化，记录中的选择转为 Linux 主机 tp-server、host 网络和 Soloist 后端。
+ADR-0009 选择将服务部署在 a1989 的 macOS 容器环境中，并接受相应限制。ADR-0028 随后整理端口绑定兼容问题，把网络方面的调整从旧 Amendment 提取为独立记录。到了 ADR-0071，播放后端与网络要求已经变化，记录中的选择转为 Linux 主机 tp-server、host 网络和 Soloist 后端。
 
 当前文件中的关系链已经延伸到 0071：0009 和 0028 均标为 `superseded by ADR-0071`，并直接指向 0071。但 0071 的 front matter 仍写着 `status: proposed`。图中保留这个实际状态：
 
@@ -176,13 +176,13 @@ Music Assistant 在仓库中形成了真实的三代链：ADR-0009 → ADR-0028 
 
 这个实例还保留了早期规则迁移的痕迹：0028 的正文只调整网络行和对应后果，其他决定沿用 0009，元数据却使用了完整替代关系。它来自旧 Amendment 的整理，今天遇到类似范围的变更，应采用下一节的局部替代机制。
 
-0071 的 proposed 值还揭示了生命周期维护的现实问题。它的[创建 PR #2308](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2308)和[编号 PR #2311](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2311)均已合并；[迁移 epic #2306](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2306#issuecomment-6013885010)保存了实施记录，[incident #2297](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2297#issuecomment-6014588343)记录了 10 月 6 日在恢复、重新配置后的实例上确认 Spotify 播放出声。实际工作已经推进，状态字段没有同步。读取工具能发现这个差异，修正它则需要回到决策依据，而不能仅凭 proposed 推断迁移还没开始。
+0071 的 proposed 值还揭示了生命周期维护的现实问题。它的创建 PR #2308 和编号 PR #2311 均已合并；迁移 epic #2306 保存了实施记录，incident #2297 记录了 10 月 6 日在恢复、重新配置后的实例上确认 Spotify 播放出声。实际工作已经推进，状态字段没有同步。读取工具能发现这个差异，修正它则需要回到决策依据，而不能仅凭 proposed 推断迁移还没开始。
 
 查询结果会如实保留这个差异：`chain-of 0009` 返回 `0009,0028,0071`，`terminal-of 0009` 返回 `0071`；而 `status-of 0071` 返回 `proposed`，`is-active 0071` 的退出码为 `1`。链尾位置与 accepted 状态是两个独立的查询结果。
 
 ### 局部替代保留未变更的范围
 
-如果只改变原决定的一部分，把整份 ADR 标为失效就会误伤仍然有效的内容。[ADR-0056](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0056-workstream-repeatable-pipeline.md)调整的是 ADR-0034 的 workstream 定义及相关约束，其他分类继续有效。因此它创建独立 ADR，并在旧记录对应位置添加范围注释；旧记录保持 accepted，完整替代的 `supersedes` 字段留空。
+如果只改变原决定的一部分，把整份 ADR 标为失效就会误伤仍然有效的内容。ADR-0056 调整的是 ADR-0034 的 workstream 定义及相关约束，其他分类继续有效。因此它创建独立 ADR，并在旧记录对应位置添加范围注释；旧记录保持 accepted，完整替代的 `supersedes` 字段留空。
 
 这种做法维持了完整替代链的简单结构，却让局部关系留在正文中。进一步的改进方向，是增加可查询的范围索引，让工具回答“这一部分现在由哪份 ADR 定义”。下面是尚未实现的设计建议。
 
@@ -213,11 +213,11 @@ python3 tools/adr-new.py example-topic
 python3 tools/adr-new.py --supersedes NNNN replacement-topic
 ```
 
-第二行的 `NNNN` 是待替代的真实 ADR 编号。生成器先检查目标状态，但它读取的是本地索引；PR 检查还会依据合并基线再验证一次，防止起草之后主分支已经发生变化。[草稿生成器](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-new.py)
+第二行的 `NNNN` 是待替代的真实 ADR 编号。生成器先检查目标状态，但它读取的是本地索引；PR 检查还会依据合并基线再验证一次，防止起草之后主分支已经发生变化。
 
 pending 文件合入 `main` 后，`adr-assign.yml` 串行执行编号任务，按文件首次引入时间排序，再从当前最大编号开始递增分配。同一时间的文件按文件名排序，使分配顺序可重复。
 
-编号器重命名文件，替换 `id` 和新主题的链根占位符，更新标题，并改写仓库内的 pending 路径及 `ADR-<uuid>` 引用。稳定 UUID 保留，决策状态也保留：取得编号不会自动把 proposed 改为 accepted。[编号工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-assign.yml)与[变换函数库](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-assign-lib.sh)
+编号器重命名文件，替换 `id` 和新主题的链根占位符，更新标题，并改写仓库内的 pending 路径及 `ADR-<uuid>` 引用。稳定 UUID 保留，决策状态也保留：取得编号不会自动把 proposed 改为 accepted。
 
 ### 替代链与引用怎样自动维护
 
@@ -225,7 +225,7 @@ pending 文件合入 `main` 后，`adr-assign.yml` 串行执行编号任务，�
 
 随后，`adr-supersede-sweep.py` 扫描指定范围内的 runbook、文档和 ADR 引用，在旧引用旁加入包含后继编号的 HTML 注释。它保留原链接，提示作者或读取源码的 agent 检查适用性；这些注释通常不会出现在渲染后的正文中，也不表示脚本已经替人判断了引用是否应当删除或改写。
 
-最后，`adr-chain-gen.py` 从 front matter 重建 `.terminal-map.json`，计算链根、成员和终点，并检查分叉与环；`adr-readme-gen.py` 据此更新阅读索引。派生文件的职责是提供可查询、可浏览的入口，决策内容仍保存在 ADR 中。[链维护脚本](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-supersede.py)、[引用扫描脚本](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-supersede-sweep.py)与[链索引生成器](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-chain-gen.py)
+最后，`adr-chain-gen.py` 从 front matter 重建 `.terminal-map.json`，计算链根、成员和终点，并检查分叉与环；`adr-readme-gen.py` 据此更新阅读索引。派生文件的职责是提供可查询、可浏览的入口，决策内容仍保存在 ADR 中。
 
 ### 两次 PR 怎样完成一次编号
 
@@ -243,7 +243,7 @@ pending 文件合入 `main` 后，`adr-assign.yml` 串行执行编号任务，�
 
 [查看矢量图](/images/adr-mechanism/numbering-flow.svg) · [Mermaid 源文件](/images/adr-mechanism/numbering-flow.mmd)
 
-自动变换通过 PR 留下 diff，也保留审查与 CI 入口。工作流会尝试开启自动合并；不可用时则等待人工合并。串行执行降低分配时的竞争，但生成 PR 和合并 PR 是两个阶段，仍要通过 PR 检查确认结果。没有 pending 文件时，编号任务直接退出；校验失败时不创建编号 PR，修复后可以重新触发。[编号工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-assign.yml)
+自动变换通过 PR 留下 diff，也保留审查与 CI 入口。工作流会尝试开启自动合并；不可用时则等待人工合并。串行执行降低分配时的竞争，但生成 PR 和合并 PR 是两个阶段，仍要通过 PR 检查确认结果。没有 pending 文件时，编号任务直接退出；校验失败时不创建编号 PR，修复后可以重新触发。
 
 ### CI 分层检查哪些约束
 
@@ -258,17 +258,17 @@ PR 工作流把检查组合成 `adr-corpus`。普通 PR 阶段允许 pending 文
 
 关系与正文检查需要对照 PR 的有效合并基线，才能区分本次修改与主分支已有变化。派生文件则通过重新生成并比较 Git diff 检查；发现差异，作者需要提交与 ADR 一致的生成结果。
 
-`adr-corpus` 每个 PR 都运行。与 ADR 无关的改动会快速通过，而不是让整个工作流因路径过滤被跳过；这是为了让必需检查始终返回结果，避免无关 PR 一直等待一个不会出现的检查。[ADR 检查工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-pr-check.yml)
+`adr-corpus` 每个 PR 都运行。与 ADR 无关的改动会快速通过，而不是让整个工作流因路径过滤被跳过；这是为了让必需检查始终返回结果，避免无关 PR 一直等待一个不会出现的检查。
 
 ### 为什么状态会停在 proposed
 
 自动编号与决策接受是分开的。当前工作流发现 `supersedes` 就会维护替代链，没有额外要求新记录已 accepted；R1 检查的是前任在基线上的状态。于是，链和编号可以更新，新记录仍保留 proposed，Music Assistant 的例子就呈现了这种结果。
 
-另一类情况发生在 PR 尚未合并时。截至 2026 年 10 月 26 日，[浏览器迁移 PR #2353](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2353)仍开放：Helium ADR 同时是 `id: pending` 和 `status: proposed`，D1–D7 子决策仍待 operator 确认。方向已有讨论，具体取舍与主分支中的记录尚未完成收敛。
+另一类情况发生在 PR 尚未合并时。截至 2026 年 10 月 26 日，浏览器迁移 PR #2353 仍开放：Helium ADR 同时是 `id: pending` 和 `status: proposed`，D1–D7 子决策仍待 operator 确认。方向已有讨论，具体取舍与主分支中的记录尚未完成收敛。
 
 因此，看到 proposed 时，需要区分三种情况：决定尚待确认；接受状态的更新尚待合并；相关 PR 已合并，但状态字段没有更新。合并一份仍写着 proposed 的草稿，不会自动产生 accepted。
 
-状态字段与实际决定脱节的问题，已经由 [#2231 ADR 生命周期字段失维](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2231)跟踪。它在当时的快照中列出 14 个 proposed，其中多项已有生产执行证据。[复核评论](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2231#issuecomment-5705171531)确认了后继状态检查的缺口，并提出先核对历史决定、再增加机械检查。截至本文核对时，该 issue 仍开放，等待相应的生命周期确认。
+状态字段与实际决定脱节的问题，已经由 #2231 ADR 生命周期字段失维跟踪。它在当时的快照中列出 14 个 proposed，其中多项已有生产执行证据。复核评论确认了后继状态检查的缺口，并提出先核对历史决定、再增加机械检查。截至本文核对时，该 issue 仍开放，等待相应的生命周期确认。
 
 这项修复需要按顺序推进。复核时，新的“后继不得仍为 proposed”约束会命中 0032、0033、0046 等既有记录；直接启用，会先让历史数据阻塞检查。应依据决策证据完成状态修正，再加入检查和回归用例，并写明 proposed 的流程含义。生产中已经运行是一条核对线索，不能直接触发批量 accepted。
 
@@ -286,7 +286,7 @@ python3 tools/adr-chain-query.py status-of 0059
 python3 tools/adr-chain-query.py is-active 0059
 ```
 
-第一个命令定位链尾，第二个读取记录状态，第三个用退出码判断状态是否为 `accepted`。小范围查询让 agent 可以先定位，再读取必要的正文，无需把完整索引和所有历史记录都塞进上下文。[链查询工具](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-chain-query.py)
+第一个命令定位链尾，第二个读取记录状态，第三个用退出码判断状态是否为 `accepted`。小范围查询让 agent 可以先定位，再读取必要的正文，无需把完整索引和所有历史记录都塞进上下文。
 
 读取时仍要分开回答三个问题：链尾在哪里，记录是否已标为 accepted，实际系统是否已经落实。README 的 Active 分组也包含 proposed，不能仅凭分组判断接受状态。局部替代目前通过范围注释表达，未来的范围索引应把这些阅读入口一并返回。
 
