@@ -1,0 +1,17 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans CJK JP, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    manifest{"repo の設定あり？"}
+    manifest -->|いいえ| ignore["無視"]
+    manifest -->|はい| repoLock["repo ごとのロックを取得"]
+    repoLock --> fetch["git fetch origin main"]
+    fetch --> fetched{"fetch 成功？"}
+    fetched -->|はい| update["origin/main に reset"]
+    fetched -->|いいえ| retain["古い内容を保持
+fetch_ok=0 / in_sync=0"]
+    update --> hook["apply hooks を実行"]
+    retain --> hook
+    hook --> result["三つの状態を記録"]
+    result --> localMetrics["textfile を原子的に書き込み"]
+    localMetrics --> alloy["監視で収集"]
+    classDef fail fill:#fff0ed,stroke:#b66352,color:#5e3028;
+    class retain fail;

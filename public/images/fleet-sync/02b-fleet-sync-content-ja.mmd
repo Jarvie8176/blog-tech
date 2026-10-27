@@ -1,0 +1,6 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans CJK JP, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart LR
+    gitOrigin["GitHub main"] <-->|"HTTPS fetch
+要求 / Git の内容"| agentNode["任意のノードの agent"]
+    agentNode -->|"reset"| checkout["origin/main に対応する
+ローカル作業ツリー"]

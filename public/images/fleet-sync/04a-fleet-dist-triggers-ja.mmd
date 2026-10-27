@@ -1,0 +1,10 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans CJK JP, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    pushEvent["GitHub push"] --> bridge["Bridge：署名を検証
+repo を解析"]
+    bridge --> ntfy["ntfy が通知を配信"]
+    ntfy --> subscribe["ノードの購読で repo 名を受信"]
+    subscribe --> task["ノードが pull-repo を実行"]
+    timer["ノードの timer
+約 15 分ごと
+manifest を走査"] --> task
