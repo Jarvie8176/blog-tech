@@ -1,0 +1,24 @@
+flowchart TB
+  goal["目標と許可範囲を決める"] --> read["Runbook と現状を確認"]
+  read --> ready{"適用・実行できる？"}
+  ready -->|"いいえ"| hold["変更を止め、根拠を補う"]
+  hold -.->|"条件が整ったら再確認"| read
+  ready -->|"はい"| route{"実行経路は？"}
+  route -->|"直接操作"| invoke["スクリプトか<br/>登録済み操作を呼ぶ"]
+  route -->|"設定から反映"| merge["チェックと許可に基づき PR をマージ"]
+  merge --> reconcile["コントローラーの<br/>反映を待つ"]
+  invoke --> verify["バージョン・アプリ・<br/>データを確認"]
+  reconcile --> verify
+  verify --> accepted{"受け入れ条件を満たす？"}
+  accepted -->|"いいえ・証拠不足"| recover["証拠を保存し<br/>許可範囲で調査・復旧"]
+  accepted -->|"はい"| record["結果・説明・タスクを更新"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef decision fill:#fffbeb,stroke:#b45309,color:#78350f;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef stopped fill:#fff1f2,stroke:#be123c,color:#881337;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class goal actor;
+  class ready,route,accepted decision;
+  class read,invoke,merge,reconcile,verify operation;
+  class hold,recover stopped;
+  class record result;

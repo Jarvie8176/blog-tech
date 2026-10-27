@@ -1,0 +1,21 @@
+flowchart TB
+  human["Human operator"] -->|"Read and check"| docs["Runbook instructions"]
+  agent["AI agent"] -->|"Read as needed"| docs
+  docs -.->|"Script entry"| terminal["Human / agent CLI"]
+  docs -.->|"Registered operation"| dispatcher["Agent MCP entry"]
+  docs -.->|"Config entry"| change["Human / agent PR"]
+  terminal -->|"Arguments / preconditions"| script["Versioned scripts"]
+  dispatcher -->|"Arguments / scope / gate"| script
+  change -->|"Checked, authorized merge"| controller["Controller such as doco-cd"]
+  script -->|"SSH / CLI / service API"| service["Services and runtime"]
+  controller -->|"Pull and deploy config"| service
+  service -->|"State and application results"| verify["Independent checks"]
+  verify -->|"Record evidence"| receipt["Human / agent review"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef source fill:#f0fdfa,stroke:#0f766e,color:#134e4a;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class human,agent actor;
+  class docs source;
+  class terminal,dispatcher,change,script,controller,service operation;
+  class verify,receipt result;

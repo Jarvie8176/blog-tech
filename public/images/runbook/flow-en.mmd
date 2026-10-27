@@ -1,0 +1,24 @@
+flowchart TB
+  goal["Set goal and authority"] --> read["Read runbook; check state"]
+  read --> ready{"Applicable and executable?"}
+  ready -->|"No"| hold["Stop changes; fill gaps"]
+  hold -.->|"Recheck when ready"| read
+  ready -->|"Yes"| route{"Execution path?"}
+  route -->|"Direct operation"| invoke["Call script / procedure"]
+  route -->|"From configuration"| merge["Check and authorize PR merge"]
+  merge --> reconcile["Wait for target deployment"]
+  invoke --> verify["Check version, app and data"]
+  reconcile --> verify
+  verify --> accepted{"Acceptance passed?"}
+  accepted -->|"No / insufficient evidence"| recover["Keep evidence; troubleshoot or recover within authority"]
+  accepted -->|"Yes"| record["Record results; update docs and task"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef decision fill:#fffbeb,stroke:#b45309,color:#78350f;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef stopped fill:#fff1f2,stroke:#be123c,color:#881337;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class goal actor;
+  class ready,route,accepted decision;
+  class read,invoke,merge,reconcile,verify operation;
+  class hold,recover stopped;
+  class record result;
