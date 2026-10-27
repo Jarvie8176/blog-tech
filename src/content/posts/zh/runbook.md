@@ -1,8 +1,8 @@
 ---
 title: '[08] 一个人如何管理几十个 Homelab 服务'
-description: '用 Runbook 连接人类判断、AI agent 和服务执行，通过共享上下文、版本化脚本与独立验收，让日常运维可理解、可重复、可验证。'
+description: '从 Calibre-Web 的现有 Runbook 和初始化代码，说明人和 AI 怎样共享运维上下文，以及可重复执行、验收与恢复还缺少什么。'
 pubDate: 2026-10-26T21:35:21-07:00
-updatedDate: 2026-10-26T22:49:51-07:00
+updatedDate: 2026-10-26T23:47:42-07:00
 translationKey: homelab-ops-runbook
 categories: [Homelab Ops]
 tags: [homelab, AI, runbook, automation, workflow]
@@ -49,6 +49,8 @@ AI 能帮我读代码、查日志、修改配置，也能执行命令。于是�
 
 通常，runbook 指实现特定结果的操作流程。它可以从一份简单清单开始，逐步包含工具、权限、错误处理和升级路径。这也是 [AWS 对 runbook 的基本定义](https://docs.aws.amazon.com/wellarchitected/latest/framework/ops_ready_to_support_use_runbooks.html)。在我的 Homelab 中，一个服务的 runbook 还会连接当前说明、部署配置、执行脚本和验证方法，让人和 AI 都能从同一个入口开始工作。
 
+目前落地较完整的是共享当前状态、明确配置与数据边界，以及部分部署约束。服务级别的操作、验收和恢复流程还不齐全。下面先展示现有 Calibre-Web Runbook 和实际代码，再讨论尚待补齐的执行要求。
+
 ## 把当前状态和历史分开
 
 这件事首先要求我们知道：今天的系统究竟是什么样。
@@ -57,7 +59,7 @@ AI 能帮我读代码、查日志、修改配置，也能执行命令。于是�
 
 2026 年 10 月，我的 runbook 收敛工作集中处理了这类问题：互相冲突的当前状态、已经退役却仍留在目录中的可执行文件，以及夹在部署步骤中的迁移记录。对于接手的人和 AI，这些材料都增加了同一种负担——先判断哪些内容仍然有效，再开始处理任务。
 
-因此，我开始把当前入口和详细历史分开。当前 README 解释服务现在由谁管理、数据和配置在哪里、有哪些约束、怎样操作、如何验证，以及支持什么恢复路径。详细迁移过程、失败尝试和旧拓扑进入 `history.md`，并明确标注不能据此部署。
+因此，我开始把当前入口和详细历史分开。当前 README 先解释服务现在由谁管理、数据和配置在哪里、有哪些约束；操作、验证和恢复方法则需要按服务继续补齐。详细迁移过程、失败尝试和旧拓扑进入 `history.md`，并明确标注不能据此部署。
 
 一个服务目录可以组织成这样：
 
@@ -91,82 +93,69 @@ Runbook 接入服务也有不同方式。操作脚本可以通过 SSH、命令�
 
 ## Calibre-Web 的 Runbook 示例
 
-[Calibre](https://calibre-ebook.com/about) 是一款免费开源的电子书管理软件，可以整理书名、作者、封面等信息，转换电子书格式，并把书传到阅读器。[Calibre-Web](https://github.com/janeczku/calibre-web) 是使用 Calibre 书库数据库的独立 Web 应用，让人通过浏览器浏览、阅读和下载书籍。本文维护的是 Calibre-Web 服务，升级时需要同时保护书库记录和实际的电子书文件。
+[Calibre](https://calibre-ebook.com/about) 是一款免费开源的电子书管理软件，可以整理书名、作者、封面等信息，转换电子书格式，并把书传到阅读器。[Calibre-Web](https://github.com/janeczku/calibre-web) 是使用 Calibre 书库数据库的独立 Web 应用，让人通过浏览器浏览、阅读和下载书籍。本文维护的是 Calibre-Web 服务，需要同时保护书库记录和实际的电子书文件。
 
-在我的 Homelab 中，Calibre-Web 由 doco-cd 管理，应用配置、书库元数据和电子书文件分别挂载到 `/config`、`/library` 和 `/storage`。它还有两个初始化服务：`calibre-library-init` 处理初始书库，`calibre-config-init` 处理应用配置，然后才启动 `calibre-web`。旧主机、迁移过程和修复经过已经移入 `history.md`。
-
-假设这次任务是“升级 Calibre-Web，保留原来的书库”。下面是一份面向这项任务的 README 示例：部署关系和数据约束来自现有 runbook，操作与验收部分是为本文补全的示例流程；主机和宿主机路径通过清单查找，不在这里复制。
+现有的 `runbooks/calibre-web/README.md` 标题就是“current snapshot”。它有四个部分：`Snapshot`、`Deployment invariants`、`Historical summary` 和 `Authority and pointers`。下面摘录其中的当前状态和部署约束，保留原文，省略主机、地址、宿主机路径等条目；没有为它增加操作章节。核对版本是 2026 年 10 月 26 日的仓库快照 `1d5db4f7ef9a`。
 
 ```markdown
-# Calibre-Web 常规升级
+# Calibre-Web — current snapshot
 
-## 当前状态与入口
+> Current state only. Detailed migration and repair history:
+> [`history.md`](history.md).
 
-- 部署方式：配置 PR 合并后，由 doco-cd 应用。
-- 配置入口：runbooks/calibre-web/docker-compose.tp.yml。
-- 目标主机与访问地址：查服务清单中的 calibre-web。
-- 数据：/config 保存应用配置与用户；/library 保存书库元数据；
-  /storage 保存电子书文件。宿主机路径以当前 Compose 为准。
+## Snapshot
 
-## 适用范围与前提
+| Field            | Current state                                                                  |
+| ---------------- | ------------------------------------------------------------------------------ |
+| Status           | Deployed; doco-cd managed                                                      |
+| Library mode     | Native split library: `/library` metadata + `/storage` payloads                |
+| Uploads          | Globally enabled in Calibre-Web `app.db`; not reconciled by Compose            |
+| Observed library | 8 EPUB files / 19,928,132 bytes on 2026-10-23; operational data, not Git state |
 
-- 本流程只处理应用镜像更新，不迁移书库、不修改挂载、不重置账户。
-- 确认目标版本、当前运行镜像及更新说明中的数据库兼容性。
-- 确认覆盖应用配置、书库元数据和电子书文件的恢复点与恢复方法。
-- 记录升级前可访问的一本书，作为升级后的对照样本。
-- 缺少恢复依据、存在数据迁移或现状与文档不符时，先停止升级。
+## Deployment invariants
 
-## 必须保持的约束
-
-- 已有书库不能按新安装处理。
-- library-init 会在 metadata.db 缺失或为空时初始化空库；
-  升级前发现这两种情况，应调查挂载或数据丢失，不能直接继续部署。
-- config-init 与主服务都引用应用镜像，变更时必须核对两处。
-- 凭据沿用现有注入路径，不复制到 README、PR 或执行回执。
-
-## 操作
-
-1. 读取当前配置，核对运行镜像、挂载和升级前的书库访问结果。
-2. 在配置 PR 中写明目标镜像版本或摘要，同时核对初始化服务。
-   检查 diff，确认没有混入路径、账户或初始化逻辑的变更。
-3. 检查通过并在已有授权内合并，等待 doco-cd 应用对应提交。
-4. 核对初始化服务的退出结果、主服务实际镜像和挂载，再做应用验收。
-
-## 验收
-
-- 实际运行镜像与本次变更的目标一致，原有挂载仍然存在。
-- 访问服务地址，确认到达 Calibre-Web，登录后看到原有书库。
-- 找到升级前记录的书，打开详情并验证其文件可读取。
-- 回执记录提交、目标、时间、各项结果和未验证的能力。
-
-## 失败处理
-
-- 未通过验收时，不宣布升级完成；保留日志和观测结果。
-- 书库为空时，先核对挂载和原始数据，不能用重新初始化来修复。
-- 只有确认数据格式兼容且恢复路径受支持，才考虑回退镜像；
-  数据库已变化时，不能把 Git revert 当作数据恢复。
+- `calibre-library-init` creates the checksum-pinned empty `metadata.db` only
+  when the file is absent or empty.
+- Book files and mutable SQLite databases are runtime data. Git records their
+  locations and initialization rules, not their contents.
 ```
 
-这份示例让人可以先审查任务的边界，再把执行交给 agent。给 AI 的任务也可以具体到：“按这份 runbook 准备升级 PR，完成变更前检查；本次授权到提交 PR 为止。”已有流程并不会扩大这次授权，合并和实际部署要等到相应授权成立。
+这份入口已经能回答几个实际问题：服务由 doco-cd 管理；书库采用 `/library` 元数据与 `/storage` 书籍文件分离的布局；上传开关保存在应用数据库中，不由 Compose 调和；Git 记录数据的位置与初始化规则，不保存书库内容。README 后半部分把迁移经过指向 `history.md`，把当前配置、部署登记、服务清单、路由和凭据引用指向各自的权威来源。
 
-其中“核对运行镜像和挂载”还可以落成一个独立的 `inspect.sh`。下面是本文示例中的只读入口，`BOOK_HOST` 由操作者从服务清单确认后传入；人通过终端调用，拥有相同权限的 agent 也调用这份文件。
+沿着 README 找到 `docker-compose.tp.yml`，还可以看到已经执行这些约束的代码。以下是 `calibre-library-init` 的实际 `command` 字段，仅调整展示缩进。`$$` 是 Compose 中保留给容器 shell 的美元符号写法；这段摘录依赖同一服务的环境变量和挂载，不能单独当作 shell 脚本运行。
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-: "${BOOK_HOST:?请先从当前服务清单确认 SSH 目标}"
-
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$BOOK_HOST" \
-  'docker inspect --format "{{.Config.Image}} {{.Image}}" calibre-web'
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$BOOK_HOST" \
-  'docker inspect --format "{{json .Mounts}}" calibre-web'
+```yaml
+command:
+  - sh
+  - -euc
+  - |
+    target=/library/metadata.db
+    chown 1000:1000 /library /storage
+    chmod 2775 /library /storage
+    if [ -s "$$target" ]; then
+      chown 1000:1000 "$$target"
+      chmod 664 "$$target"
+      echo "existing Calibre metadata.db retained"
+      exit 0
+    fi
+    tmp=$$(mktemp /library/.metadata.db.XXXXXX)
+    trap 'rm -f "$$tmp"' EXIT
+    wget -qO "$$tmp" "$$CALIBRE_METADATA_URL"
+    echo "$$CALIBRE_METADATA_SHA256  $$tmp" | sha256sum -c -
+    chown 1000:1000 "$$tmp"
+    chmod 664 "$$tmp"
+    mv "$$tmp" "$$target"
+    trap - EXIT
+    echo "initialized empty Calibre library"
 ```
 
-这个脚本只提供主服务的镜像和挂载证据，结果还要与配置及目标版本比较。它没有证明初始化成功，也没有证明用户能读到书。对于这个例子，实际变更仍然通过配置 PR 和 doco-cd 完成，不需要另造一份手动部署脚本。如果以后把检查登记为 procedure，MCP 入口也应调用同一份实现。
+这里已经固定了一段具体行为：`metadata.db` 非空时，调整权限并保留其内容；文件缺失或为空时，从固定来源下载空数据库，校验 SHA-256 后再放到目标位置。下载地址绑定了上游提交，校验值也写在 Compose 中。人和 AI 都可以沿着文档找到并审查同一份实现，初始化时不必重新生成命令。
 
-这里的数据边界会直接影响操作选择：Git 保存部署配置、数据位置和初始化规则，书籍文件与可变数据库属于运行数据。仓库能够重新部署应用，并不能据此推导出书库也能够恢复。因此，“书库为空”应当触发调查，而不能让 AI 把旧服务重新初始化成一个看似健康的新服务。
+这段代码的保证也有明确边界。`-s` 只判断文件非空，不判断它是不是原来的书库，也不验证书籍文件能否读取。后续 `calibre-config-init` 会查询库 UUID、检查应用数据库结构并配置路径与管理账户，但这些检查仍不等于用户能打开原有书籍。缺失数据库时创建空库属于初始化，不能恢复丢失的书库。同一份 Compose 中，配置初始化服务和主服务的应用镜像仍使用 `latest`，因此固定了初始化样本，也没有固定整套应用版本。
 
-当前入口也不需要复制所有信息。主机与服务清单有自己的权威来源，负责按配置更新服务的部署控制器有自己的管理配置，密钥有自己的存储和注入机制。README 的职责是把它们连接起来，并解释重要约束。把同一份配置抄到多个地方，会让下一次修改更难保持一致。
+如果此时交给 AI 的任务是“升级 Calibre-Web，保留原书库”，这份 README 还不足以支持直接照章执行。它没有列出升级前检查、升级顺序、书库验收条件，也没有给出可直接调用的升级检查脚本或受支持的恢复步骤。人或 agent 能据此定位配置与数据边界，但仍需要调查运行状态、确认版本与恢复依据，再把操作和验收补成可审查的流程。这些是下一步需要完成的工作。
+
+因此，这个实际案例已经证明了共享当前上下文和部分初始化规则的价值；它还没有证明一次完整升级可以跨会话重复执行并独立验收。现有 Runbook 把“先找对系统、配置和数据”这一步做得更明确，后续的操作契约仍然需要补齐。
 
 ## 让执行过程可以重复检查
 
@@ -196,13 +185,13 @@ AI 在其中承担的工作依然很多：阅读现状、调查差异、判断�
 
 ## 一次操作的执行与验收流程
 
-一次操作从目标走到验收，可以整理成下面的流程。图中的执行者可以是人，也可以是 AI agent；“适用且可执行”包括流程与任务匹配、当前状态满足前提，以及已有授权和实际权限足够。
+补齐服务级别的操作与验收时，我希望遵循下面的流程。Calibre-Web 当前的 README 尚未完整覆盖它。图中的执行者可以是人，也可以是 AI agent；“适用且可执行”包括流程与任务匹配、当前状态满足前提，以及已有授权和实际权限足够。
 
 ![Runbook 操作流程：明确授权、核对现状、检查前提、选择脚本或配置部署路径，验收失败时保留证据并在授权内处理](/images/runbook/flow-zh.png)
 
 [查看矢量图](/images/runbook/flow-zh.svg) · [Mermaid 源文件](/images/runbook/flow-zh.mmd)
 
-_图 2：一次 runbook 操作的执行与验收流程。已有授权可以复用；只有出现新的取舍或超出授权范围时，才需要补充人的决定。_
+_图 2：待逐项落实到各服务的执行与验收要求。已有授权可以复用；只有出现新的取舍或超出授权范围时，才需要补充人的决定。_
 
 发现条件不满足时，先停止对应变更，保留观察结果，再补齐参数、调查状态差异或提出流程修订。条件解决后重新检查，不能把第一次失败当成自动扩大权限的理由。两条执行路径最终都要核对服务结果：脚本退出成功、PR 合并或控制器报告完成，各自只证明流程中的一段。
 
@@ -220,22 +209,9 @@ Portainer 的退役记录提供了一个很直观的例子。旧服务域名的�
 
 我希望 AI 的执行报告能够回答四件事：用了哪个版本的流程，操作了哪个目标，观察到了什么结果，还有什么没有验证。人可以沿着这些证据检查结论，而不必重新读完整段终端输出，也不必把一句“已完成”当成验收。
 
-回到 Calibre-Web 的升级例子，假设容器已经换成目标镜像，页面也能打开，但登录后没有看到原来的书库，回执就应该表达这个失败，而不是把前两个信号合并成“升级成功”。下面是这种情况下的示例记录，尖括号中的内容应由实际执行证据填写：
+Calibre-Web 的现有 README 留下的是一条更有限的观测：2026 年 10 月 23 日，书库有 8 个 EPUB 文件，总计 19,928,132 字节。它明确把这些数字标记为运行数据，而不是 Git 状态。这能为后续检查提供一个带日期的参照，但文件数量和总字节数不能证明每一本书都能打开，也不能证明之后某次升级通过了验收。当前 README 没有把这条观测组织成完整的升级验收记录。
 
-```text
-任务：升级 Calibre-Web，保留原书库
-执行依据：runbook 提交 <commit>；变更 PR <PR>；部署提交 <commit>
-目标与时间：<清单中的目标>；<带时区的观测时间>
-运行镜像：<实际镜像 ID>，已与目标版本对应
-应用检查：Calibre-Web 页面可访问，登录成功
-数据检查：原书库未出现，对照书目不可见
-结论：验收失败，不能标记完成
-后续：保留初始化日志，在授权内核对挂载和原数据库
-未执行：重新初始化书库、恢复备份、再次部署
-未验证：原电子书文件是否完整；上传等其他功能
-```
-
-人看到这份回执，就知道书库验收尚未通过，需要继续调查挂载、应用配置与数据状态。它也给下一个 AI 会话留下了起点：哪些事实已确认、哪些动作尚未发生，以及为什么不能直接重复部署。
+下一步应把运行镜像、应用访问、书目与文件读取结果关联到同一次操作及其版本，而不能从现有的文件统计推导出这些结论。到那时，下一次 AI 会话才能复用明确的验收条件，而不是重新猜测“正常”意味着什么。
 
 ## 区分历史与恢复路径
 
