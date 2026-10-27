@@ -1,0 +1,21 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","actorBkg":"#eaf2fb","actorBorder":"#6387b2","actorTextColor":"#173352"},"sequence":{"useMaxWidth":true,"mirrorActors":false,"actorMargin":28,"width":105,"messageMargin":24,"diagramMarginX":18,"diagramMarginY":12,"messageFontSize":18,"actorFontSize":18}}}%%
+sequenceDiagram
+    participant GitHub
+    participant Hub
+    participant Linux
+    participant Mac
+    Linux->>Hub: 注册：本地 A
+    Mac->>Hub: 注册：本地 A
+    Hub->>GitHub: fetch main
+    GitHub-->>Hub: 目标 B
+    Hub->>Linux: sync B
+    Hub->>Mac: sync B
+    Linux->>GitHub: fetch main
+    GitHub-->>Linux: refs / objects
+    Linux->>Linux: reset origin/main
+    Linux-->>Hub: 实际 commit / 结果
+    Mac->>GitHub: fetch main
+    GitHub-->>Mac: refs / objects
+    Mac->>Mac: reset origin/main
+    Mac-->>Hub: 实际 commit / 结果
+    Hub->>Hub: 更新各节点状态

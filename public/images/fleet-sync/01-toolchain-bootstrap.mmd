@@ -1,0 +1,16 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    startNode["选择节点与执行用户"] --> reachable{"SSH 可达？"}
+    reachable -->|否| skipped["报告并跳过"]
+    reachable -->|是| ship["SSH 发送安装器"]
+    ship --> stage["执行安装器
+探测依赖"]
+    stage --> platform["识别平台与已有工具"]
+    platform --> present{"需要安装？"}
+    present -->|否| keep["保留已有工具"]
+    present -->|是| install["安装对应平台产物"]
+    install --> entry["配置 PATH / 命令入口"]
+    keep --> entry
+    entry --> report["verify：版本或 MISSING"]
+    report -.-> acceptance["额外验收：实际用户
+验证任务可执行"]
