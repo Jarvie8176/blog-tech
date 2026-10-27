@@ -2,27 +2,40 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import PostList from '~/components/PostList.astro';
 import Pagination from '~/components/Pagination.astro';
-import { SITE } from '~/config';
+import { SITE, type Locale } from '~/config';
 import { localizedPath, useTranslations } from '~/i18n/utils';
 import { getPosts } from '~/utils/posts';
 
 interface Props {
   current: number;
   last: number;
-  locale: any;
+  locale: Locale;
+  availableLocales: Locale[];
 }
 
 export async function getStaticPaths() {
   let paths = [];
+  const pageCounts = new Map(
+    await Promise.all(
+      SITE.locales.map(
+        async (locale) =>
+          [locale, Math.ceil((await getPosts(locale)).length / SITE.postsPerPage)] as const,
+      ),
+    ),
+  );
   for (const locale of SITE.locales) {
-    const allPosts = await getPosts(locale);
-    const totalPages = Math.ceil(allPosts.length / SITE.postsPerPage);
+    const totalPages = pageCounts.get(locale)!;
     const localeParams = { locale: locale === SITE.defaultLocale ? undefined : locale };
     // Skip page 1 (handled by index.astro)
     for (let i = 2; i <= totalPages; i++) {
       paths.push({
         params: { ...localeParams, page: String(i) },
-        props: { locale, current: i, last: totalPages },
+        props: {
+          locale,
+          current: i,
+          last: totalPages,
+          availableLocales: SITE.locales.filter((candidate) => pageCounts.get(candidate)! >= i),
+        },
       });
     }
   }
@@ -31,7 +44,7 @@ export async function getStaticPaths() {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const { current, last } = Astro.props as Props;
+const { current, last, availableLocales } = Astro.props as Props;
 const allPosts = await getPosts(locale);
 const pageSize = SITE.postsPerPage;
 const start = (current - 1) * pageSize;
@@ -43,6 +56,7 @@ const hrefForPage = (n: number) => localizedPath(n === 1 ? '/' : `/page/${n}/`, 
 <BaseLayout
   title={`${t('list.allPosts')} — ${t('pagination.page')} ${current}`}
   pathWithoutLocale={`/page/${current}/`}
+  availableLocales={availableLocales}
 >
   <header class="mb-6">
     <h1 class="text-3xl font-bold tracking-tight">{t('list.allPosts')}</h1>

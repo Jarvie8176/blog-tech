@@ -43,6 +43,8 @@ toc: true
 
 同一篇文章共享 translationKey。中文无语言前缀，日英分别位于 /tech/ja/、/tech/en/。缺失译文不生成页面或语言链接。草稿使用 draft: true；公开 Git 仓库的草稿标记不能隐藏文件。
 
+各语言按实际文章数量分页；分页的语言切换与 hreflang 只指向确实存在的同页码列表。
+
 侧栏通过「专题 → Yaaa」两级导航组织系列内容，专题总览位于各语言的 `/topics/`。在 `src/config.ts` 的 TOPICS 中维护专题清单，侧栏二级入口与总览共用配置。文章标题下的日期、分类和阅读时长区域提供同篇语言切换，仅展示已存在的译文，并标明当前语言。
 
 Yaaa 导读已包含完整中文稿、对应日英编辑译文及三语架构图。图片位于 `public/images/yaaa/`，PNG 用于正文显示，SVG 保留可编辑源；文章中的 `/images/` 链接由构建器统一加上 `/tech`。更新正文、译文和配图时参见 [内容维护](docs/content.md)。本地 LLM 调度、源版本校验、增量重译、语义检查与自动接受仍由 [epic #1](https://github.com/Jarvie8176/blog-tech/issues/1) 跟踪。

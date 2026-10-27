@@ -7,6 +7,7 @@ The owner selected Chirping Astro on 2026-10-25, following [issue #2](https://gi
 - Chinese-default zh/en/ja UI, dates, feeds, HTML and Open Graph metadata.
 - `/tech` base for assets, fonts, Markdown links, Pagefind modules and result URLs.
 - Actual article translation destinations rendered into HTML, without client-side link rewriting.
+- Paginated listings expose language links and hreflang only for locales with that page, since editorial translation counts can differ.
 - Topics overview and two-level sidebar navigation share the TOPICS catalog; Yaaa remains at its existing URL. Article metadata exposes inline links to available language versions with the current language marked.
 - Self-canonical language variants and existing-sibling hreflang; editorial translations link to the source.
 - `blog.tech.theme` preference key and full-document navigation to isolate other blog sections.
