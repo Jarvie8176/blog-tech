@@ -1,0 +1,11 @@
+flowchart TB
+    draft["著者が UUID 付きの pending ADR を作成"]
+    firstPr["草稿 PR を検証して main へマージ"]
+    assign["採番し、参照と置き換えチェーンを更新"]
+    generated["索引を再生成し no-pending 検証を実行"]
+    followPr["採番 PR を作成して PR 検証を実行"]
+    merged["採番 PR のマージで正式番号が main へ"]
+    retained["検証失敗：main に pending ファイルが残る"]
+    draft --> firstPr --> assign --> generated
+    generated -->|"成功"| followPr --> merged
+    generated -->|"失敗"| retained
