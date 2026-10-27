@@ -1,0 +1,21 @@
+flowchart TB
+  human["人类操作者"] -->|"阅读与核对"| docs["Runbook 说明与入口"]
+  agent["AI agent"] -->|"按需读取"| docs
+  docs -.->|"脚本入口"| terminal["人或 agent 的终端 / CLI"]
+  docs -.->|"已登记操作"| dispatcher["Agent 的 MCP 入口"]
+  docs -.->|"配置入口"| change["人或 agent 提交 PR"]
+  terminal -->|"参数与前置检查"| script["版本化操作脚本"]
+  dispatcher -->|"参数、作用域与 gate 检查"| script
+  change -->|"检查通过并按授权合并"| controller["doco-cd 等部署控制器"]
+  script -->|"SSH / CLI / 服务 API"| service["目标服务与运行环境"]
+  controller -->|"拉取配置并执行部署"| service
+  service -->|"状态与业务结果"| verify["独立验证步骤或检查程序"]
+  verify -->|"留下可核对证据"| receipt["人和 agent 核对执行回执"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef source fill:#f0fdfa,stroke:#0f766e,color:#134e4a;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class human,agent actor;
+  class docs source;
+  class terminal,dispatcher,change,script,controller,service operation;
+  class verify,receipt result;

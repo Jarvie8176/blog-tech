@@ -1,0 +1,24 @@
+flowchart TB
+  goal["人明确目标与授权范围"] --> read["读取 Runbook，核对现状"]
+  read --> ready{"适用且可执行？"}
+  ready -->|"否"| hold["停止变更并补齐依据"]
+  hold -.->|"补齐条件后重新检查"| read
+  ready -->|"是"| route{"执行路径？"}
+  route -->|"直接操作"| invoke["调用脚本或已登记 procedure"]
+  route -->|"配置驱动"| merge["检查与授权合并配置 PR"]
+  merge --> reconcile["等待控制器应用目标版本"]
+  invoke --> verify["核对版本、应用与数据"]
+  reconcile --> verify
+  verify --> accepted{"验收条件满足？"}
+  accepted -->|"否或证据不足"| recover["保留证据，按授权排障或恢复"]
+  accepted -->|"是"| record["记录结果，更新说明与任务"]
+  classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+  classDef decision fill:#fffbeb,stroke:#b45309,color:#78350f;
+  classDef operation fill:#f8fafc,stroke:#64748b,color:#0f172a;
+  classDef stopped fill:#fff1f2,stroke:#be123c,color:#881337;
+  classDef result fill:#f0fdf4,stroke:#15803d,color:#14532d;
+  class goal actor;
+  class ready,route,accepted decision;
+  class read,invoke,merge,reconcile,verify operation;
+  class hold,recover stopped;
+  class record result;

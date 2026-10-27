@@ -114,6 +114,26 @@ test('removed and draft articles and other blog paths are not published', async 
   }
 });
 
+test.describe('unequal translated listing lengths without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+  test('page two only advertises existing language destinations', async ({ page, request }) => {
+    expect((await page.goto('/tech/page/2/'))?.status()).toBe(200);
+    for (const { prefix, lang } of variants) {
+      const path = `/tech${prefix}/page/2/`;
+      const exists = (await request.get(path)).status() === 200;
+      const language = page.locator(`a[data-lang-target="${prefix.slice(1) || 'zh'}"]`);
+      const alternate = page.locator(`link[hreflang="${lang}"]`);
+      if (exists) {
+        if (prefix) await expect(language).toHaveAttribute('href', path);
+        await expect(alternate).toHaveAttribute('href', `https://blog.fnpg.me${path}`);
+      } else {
+        await expect(language).toHaveCount(0);
+        await expect(alternate).toHaveCount(0);
+      }
+    }
+  });
+});
+
 test('theme preference is isolated and keyboard-accessible', async ({ page }) => {
   await page.goto('/tech/');
   await page.evaluate(() => localStorage.setItem('theme', 'photo-theme'));
