@@ -2,7 +2,7 @@
 title: '[06] What if secrets leak?'
 description: 'Assume credentials may be exposed: diagnostic safeguards, Compose secrets, temporary escalation, knowledge propagation and rotation cost.'
 pubDate: 2026-10-26T14:34:59-07:00
-updatedDate: 2026-10-26T19:30:55-07:00
+updatedDate: 2026-10-26T20:04:53-07:00
 translationKey: homelab-ops-secrets
 categories: [Homelab Ops]
 tags: [homelab, AI, secrets, envctl, security]
@@ -87,10 +87,10 @@ Rotation needs exact consumers and targets, a verified script version, dry-run a
 
 The PAT script has partial fixes but lacks unified end-to-end acceptance; some paths without observed success logs can still exit successfully. Updating ciphertext, age identities or SOPS data keys does not revoke business tokens. Fewer consumers per rotation, repeatable updates and failure protection reduce ongoing remediation cost.
 
-## Why envctl was finished first
+## Improving everyday use after rotation
 
-After the June incident, October’s first completed work packaged existing dotenv editing and backup tools as envctl/bakctl. Existing code and clear file interfaces made reads, writes and restoration independently testable with synthetic data. Exec also gives agents a simpler path with less value retrieval and plaintext transfer. Troubleshooting changes also involve account permissions, exploratory interfaces and everyday working habits, with the trade-offs above still to resolve.
+The token was rotated at the time of the exposure. The work that followed concerns everyday credential use: if an agent has to locate a credential, read its value and assemble it into a command for every task, it repeatedly passes through steps that can bring secrets into the conversation.
 
-Packaging familiar tools was easier to advance and kept attention in familiar territory. File-based tokens, common dump interception and known-format detection could have been handled independently first. Next I want those direct output reductions in place, alongside evaluation of short-lived issuance and separate accounts, then connect escalation, propagation review and rotation.
+Packaging and publishing envctl/bakctl in October turned existing dotenv editing and backup tools into a reusable interface. `envctl exec` gives agents a more direct path: specify a credential file and a business command, and let the tool inject the values into the child process. The agent can complete the task without first retrieving the plaintext. Reducing those deliberate discovery, reading and transfer steps is the purpose of this tool work.
 
-The results I care about are fewer exposures along common diagnostic paths, fewer objects to rotate per incident, and traceable copies with recoverable services. The [next article](/en/posts/envctl-design/) continues with the local tool design.
+Alongside output filtering, permission isolation and short-lived credentials, this path helps reduce contact with secrets, restrict access and shorten exposure windows. The results I care about are fewer exposures along common diagnostic paths, fewer objects to rotate per incident, and traceable copies with recoverable services. The [next article](/en/posts/envctl-design/) continues with the local tool design.
