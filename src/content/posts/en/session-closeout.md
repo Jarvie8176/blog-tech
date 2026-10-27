@@ -2,6 +2,7 @@
 title: '[04] From AI conversations to lasting knowledge: session closeout in practice'
 description: 'A blog deployment illustrates session closeout: check facts, preserve evidence, hand off unfinished work, and review lessons before turning them into memory, SOPs, and tests.'
 pubDate: 2026-10-25T19:15:00-07:00
+updatedDate: 2026-10-26T18:39:11-07:00
 translationKey: session-closeout-knowledge
 categories: [Homelab Ops]
 tags: [Yaaa, closeout, knowledge, workflow]
@@ -67,6 +68,12 @@ _Working records can include unfinished work. Lasting knowledge needs a separate
 The blog cache issue supports a conditional method: when a gateway serves a site that permits content deletion, release acceptance should check the original deleted URL and confirm which commit the public page represents. This method gained a home in [publishing code, documentation, and regression checks](https://github.com/Jarvie8176/blog-tech/pull/13/files). The case traces a lesson into maintained artifacts; it does not establish successful independent takeover across tools.
 
 A small knowledge card can contain just **the conclusion, evidence, applicability, invalidation conditions, maintenance location, and next-use entry point**. A conclusion must be revisable or removable when it stops holding. Summaries, scrubbed text, and search indexes may still contain private information. Raw conversations and lasting knowledge need separate access, retention, and deletion management.
+
+### Check secrets before promoting knowledge
+
+The [credential exposure review](/en/posts/secrets-and-credentials/) adds a closeout requirement: examine visible conversation, tool output and retained artifacts for secrets first. Detection or unresolved suspicion restricts raw records and related summaries, journals, candidates, agent-manifest and indexes as high sensitivity, suspending routine archiving, further cloud processing and knowledge promotion. Record scan coverage and unknowns; passing does not prove absence.
+
+Derivatives inherit the highest source sensitivity. Promote only necessary facts and methods after an independent redaction review. Keep a secret-free propagation and response receipt, then check synchronized copies, backups and provider retention. This is a process requirement; automatic cross-tool detection, sensitivity tags and blocking still need implementation and acceptance.
 
 ## An implementation shared across tools
 
@@ -146,6 +153,10 @@ Complete these five steps:
    Check issues, PRs, commits, and evidence; distinguish direct observation, reports, inference, and unknowns.
    Save goals, actions, decisions and reasons, results, corrections, and remaining work.
    Handle raw conversations and sensitive material under the existing archive rules.
+   Check conversation, tool output and artifacts for secrets; record coverage. A clean scan cannot prove absence.
+   On detection or unresolved suspicion, restrict records and derivatives as high sensitivity and suspend
+   routine archiving, further cloud processing and knowledge promotion. Record propagation and response
+   without values; promote only necessary facts and methods after an independent redaction review.
 2. Update tasks: check relevant issue and parent-project bodies for current status, acceptance, and remaining work.
    Add only this run's progress; close tasks only when evidence meets acceptance. Preserve unrelated edits.
 3. Disposition artifacts and lessons: classify each as already canonical, worth retaining as reusable knowledge,
