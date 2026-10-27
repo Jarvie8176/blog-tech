@@ -1,0 +1,17 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart TD
+    manifest{"配置包含 repo？"}
+    manifest -->|否| ignore["忽略"]
+    manifest -->|是| repoLock["取得 per-repo 锁"]
+    repoLock --> fetch["git fetch origin main"]
+    fetch --> fetched{"fetch 成功？"}
+    fetched -->|是| update["reset 到 origin/main"]
+    fetched -->|否| retain["保留旧内容
+fetch_ok=0 / in_sync=0"]
+    update --> hook["执行 apply hooks"]
+    retain --> hook
+    hook --> result["记录三项状态"]
+    result --> localMetrics["原子写入 textfile"]
+    localMetrics --> alloy["监控采集"]
+    classDef fail fill:#fff0ed,stroke:#b66352,color:#5e3028;
+    class retain fail;

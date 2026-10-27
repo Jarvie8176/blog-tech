@@ -1,0 +1,24 @@
+%%{init: {"htmlLabels":false,"themeCSS":".edgeLabel .background { fill: #ffffff; opacity: 1; }","theme":"base","themeVariables":{"fontFamily":"Noto Sans Mono CJK SC, sans-serif","fontSize":"18px","primaryColor":"#eaf2fb","primaryTextColor":"#173352","primaryBorderColor":"#6387b2","lineColor":"#526579"},"flowchart":{"htmlLabels":false,"nodeSpacing":24,"rankSpacing":28,"padding":12,"curve":"linear"}}}%%
+flowchart LR
+    originRepo["GitHub main"] -->|"hub fetch"| hub["Fleet Sync Hub
+60 秒 reconcile
+目标 commit / 节点状态"]
+    subgraph fleetNodes["各节点主动建立 WebSocket"]
+        linuxX["A · Linux amd64
+systemd / 原生 agent"]
+        linuxArm["B · Linux arm64
+systemd / 原生 agent"]
+        macNode["C · macOS arm64 或 x86_64
+launchd / 原生 agent"]
+        winNode["D · Windows amd64
+SCM / 原生 agent"]
+    end
+    hub <-->|"指令 / 状态"| linuxX
+    hub <-->|"指令 / 状态"| linuxArm
+    hub <-->|"指令 / 状态"| macNode
+    hub <-->|"指令 / 状态"| winNode
+    hub -->|"metrics"| monitoring["Prometheus / Grafana"]
+    classDef nodeStyle fill:#eaf6ef,stroke:#448566,color:#173e2a;
+    classDef control fill:#fff2d9,stroke:#b57a22,color:#50370f;
+    class hub control;
+    class linuxX,linuxArm,macNode,winNode nodeStyle;

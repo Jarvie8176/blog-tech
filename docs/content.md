@@ -58,6 +58,16 @@ The Homelab browser checks cover the six article destinations, paired language l
 
 ## Editing and acceptance
 
+### Fleet Sync article
+
+Article `[09]` is the Chinese edition at `src/content/posts/zh/fleet-sync.md`, with `translationKey: homelab-ops-fleet-sync` and public path `/tech/posts/fleet-sync/`. English and Japanese editions are not yet available; do not create translation destinations without actual entries.
+
+Its problem is distributing a usable operations toolchain to heterogeneous nodes. Keep initial SSH installation, the deployed Go hub/agent repository sync, and the successor fleet-dist pull/apply design distinct. Nodes fetch Git content directly from GitHub; the hub sends commands and collects state. Reconnection and periodic hub reconciliation do not provide an independent node timer in the original system. The successor has node-local fallback timers, but migration is incomplete as of the October 26, 2026 editorial snapshot. Current fetch failures can still execute hooks against retained content, so apply success alone does not prove an update. Repository sync, installed tool versions and running processes need separate verification.
+
+The six diagrams live in `public/images/fleet-sync/`, with Mermaid sources, outlined SVG exports and 2× PNGs. PNGs render without JavaScript. Focusable scroll regions preserve label size on narrow screens, and each figure links to its SVG and Mermaid source. Do not reintroduce private evidence links, host identifiers or raw operational records. Research and rendering scratch files remain outside the public repository.
+
+### General acceptance
+
 1. Update the Chinese source and review which facts, examples, and status dates changed.
 2. Update corresponding editorial translations together, including code comments, illustrative strings, qualifications, and external citations. If a translation is unavailable, omit its published entry rather than generating a false destination.
 3. Keep the Python rule consistent across all three articles. Translated YAML values are illustrative text; field names and the approval requirements remain the same.
