@@ -1,0 +1,303 @@
+---
+title: '[10] Homelab Ops 的 ADR 机制与决策演进'
+description: '从 ADR 与 MADR Light 出发，用真实替代链解释决策记录的结构、pending 与生命周期，以及自动编号、关系维护和 CI 校验。'
+pubDate: 2026-10-26T23:30:00-07:00
+translationKey: homelab-ops-adr-mechanism
+categories: [Homelab Ops]
+tags: [homelab, adr, madr, architecture, automation]
+toc: true
+---
+
+配置能够告诉我，一项服务今天运行在哪里；几个月前为什么把它放在那里，就未必还能从配置中读出来。
+
+当时可能受限于内存、网络或权限，也可能只是选择了成本最低的过渡方案。随着环境变化，原来的取舍不再成立。如果理由只留在聊天和提交记录中，下一次维护就要重新调查一遍。接手者可能是未来的自己，也可能是一个没有参与原始讨论的 AI agent。
+
+我希望运维仓库能够同时保存两种信息：当前采用什么方案，以及为什么走到这里。Git 保存文件的变化，runbook 说明操作方法，ADR 则把重要决定的背景、选择和代价写成可以追溯的记录。
+
+[第 09 篇 Fleet Sync](/posts/fleet-sync/)讨论过配置分发：早期由 hub 协调向 spoke 分发，后继方案让节点从 Git 拉取内容，由通知触发应用。这里沿用那组决定作为样本，重点解释 ADR 机制本身：记录如何组织，提案怎样进入生命周期，后继决定怎样接替旧决定，以及哪些维护工作可以交给工具。
+
+## ADR 和 MADR 分别解决什么问题
+
+ADR 是 Architecture Decision Record，即架构决策记录。一条 ADR 围绕一个重要决定，说明当时的背景、选择、状态，以及由此产生的后果。它可以记录服务部署位置、数据保存方式、身份边界，也可以记录配置分发策略。
+
+Michael Nygard 在介绍 ADR 时强调，决定被改变之后，旧记录仍应保留，并标记它已被后继决定替代。这样，后来的维护者既能理解过去，也能识别哪些结论已经失效。[Documenting Architecture Decisions](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+
+MADR 的全称是 Markdown Architectural Decision Records。它为 ADR 提供结构化的 Markdown 模板，帮助作者组织问题背景、考虑过的选项、决策结果和取舍。上游提供完整和精简的模板，项目可以根据需要选择。[MADR 官方说明](https://adr.github.io/madr/)
+
+ADR 约定要保存决策信息，MADR 帮助作者把这些信息组织成文档。至于编号如何分配、替代关系是否允许分叉、什么情况下需要新记录，以及怎样用 CI 检查，都需要项目进一步规定。
+
+在运维仓库里，这些记录也有明确的职责边界：
+
+| 载体               | 主要回答的问题                     |
+| ------------------ | ---------------------------------- |
+| ADR                | 为什么这样选，当时接受了什么代价   |
+| Runbook            | 执行、验证和恢复的步骤是什么       |
+| 配置与 inventory   | 声明的配置和资源关系是什么         |
+| 运行检查与部署证据 | 机器现在实际运行什么，是否符合预期 |
+
+我判断是否需要 ADR，通常会问：未来改变这项选择时，是否需要知道当初的约束和代价。服务边界、数据模型、权限和长期依赖通常值得记录；临时排障过程可以留在 issue，具体操作步骤维护到 runbook。
+
+## homelab-ops 为什么采用 MADR Light 变体
+
+homelab-ops 在 ADR-0026 中把自己的模板称为 MADR Light：保留 Context、Decision、Consequences 和 Rejected alternatives，允许作者按问题规模决定展开程度。一次分发架构更换需要详细比较，一个较小的接口约定可能只需要几段文字。
+
+选择轻量模板，是为了让记录成本与决策规模相称。篇幅可以短，但背景、选择、后果，以及放弃其他方案的理由仍要说清楚。否则，留下来的只是结论，未来遇到新约束时仍无法判断原来的决定是否适用。
+
+模板之外，还需要处理决定的变化。早期仓库会在旧 ADR 后追加 Amendment。ADR-0026 记录了这种做法的问题：照片管线的一份 ADR 已经出现正文与多次修订相互矛盾的情况。读者必须把原决定和后续补丁重新组合，才能得到应该遵循的版本。
+
+因此，项目为这套变体增加了几项约定：已接受决策的正文实质变更通过新 ADR 表达；完整替代形成线性链；局部替代明确标注影响范围；编号、索引和关系维护交给工具。这些属于 homelab-ops 的工程选择，并非 MADR 模板要求所有项目照做。[ADR-0026](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0026-madr-supersede-discipline.md)
+
+## 一份 homelab-ops ADR 的结构
+
+一份 homelab-ops ADR 是 `decisions/` 目录下的 Markdown 文件，包含身份与状态、决策正文、导航与参考资料三个部分。
+
+ADR-0049 记录原来的 hub-spoke 分发方案，ADR-0059 记录 git-pull 与通知触发的后继方案。后者的文件名是 `adr-0059-fleet-sync-gitpull-ntfy.md`：0059 是顺序编号，后半段标识主题。文件开头由两行 `---` 包住 YAML 元数据，也称 front matter：
+
+```yaml
+---
+id: '0059'
+uuid: 73fa7bc9
+title: Fleet distribution — git-pull + ntfy-triggered apply-agent
+date: 2026-07-03
+status: accepted
+original-adr: '0049'
+original-adr-uuid: da2bdab9
+supersedes: '0049'
+supersedes-uuid: da2bdab9
+---
+```
+
+`id` 用于日常引用，`uuid` 是本项目采用的八位十六进制稳定别名，草稿取得正式编号后也不变。`title` 与 `date` 标明主题和记录日期；`status` 表示决定目前所处的生命周期阶段。身份字段帮助我们找到同一条记录，状态字段帮助我们判断该怎样使用它。
+
+这份记录同时写着 `original-adr: "0049"` 和 `supersedes: "0049"`，因为 ADR-0049 既是本次决定的直接前任，也是这条演进链的起点。如果以后再有新决定替代 ADR-0059，新记录的直接前任会变成 0059，链根仍然是 0049。对应的 `-uuid` 字段用于核对关联记录的稳定身份。
+
+正文负责把字段无法表达的判断讲清楚。homelab-ops 的轻量骨架关注四类内容：
+
+| 正文部分              | 应当写什么                   | 读者应能回答的问题                   |
+| --------------------- | ---------------------------- | ------------------------------------ |
+| Context               | 问题、约束、促成决策的新事实 | 为什么需要现在做决定，当时有哪些限制 |
+| Decision              | 选择、适用范围和关键规则     | 具体决定了什么，哪些部分仍未决定     |
+| Consequences          | 收益、成本和接受的限制       | 这项选择会带来什么，需要承担什么     |
+| Rejected alternatives | 考虑过的方案及未采用的原因   | 为什么其他可行方案此时不合适         |
+
+正文不必机械照抄标题。ADR-0059 把备选方案写在 `Alternatives`，并补充配置模型、健康可见性和迁移章节。这些内容说明决定的适用条件与实施约束；会持续更新的日常操作步骤，则通过链接交给 runbook。
+
+导航信息负责连接历史与当前入口。ADR-0049 的 front matter 和文首提示都指向 ADR-0059，历史正文仍保留当初接受方案的理由。文末的 issue、设计文档和相关 ADR，则让读者能够继续追溯讨论与实现。
+
+这两份记录的完整英文版本已公开在同一个 Gist 中，可对照查看 [ADR-0049](https://gist.github.com/cyber-ayi/bee0dc359a661352ced8152f52f76fee#file-adr-0049-fleet-sync-hub-spoke-distribution-md) 与 [ADR-0059](https://gist.github.com/cyber-ayi/bee0dc359a661352ced8152f52f76fee#file-adr-0059-fleet-sync-gitpull-ntfy-md)。
+
+## 从提案到已接受决策
+
+ADR 的生命周期表达一项决定如何被对待：`proposed` 是提案，`accepted` 是已接受的决定，`rejected` 是未采用的提案。已接受的决定后来可以弃用，也可以由新决定替代。
+
+<div role="region" aria-label="ADR 生命周期：提案经评审接受或否决，已接受的决定可以弃用或被后继替代，可横向滚动" tabindex="0" style="overflow-x: auto;">
+
+<div style="min-width: 560px; width: 640px; max-width: 100%;">
+
+![ADR 生命周期：提案经评审接受或否决，已接受的决定可以弃用或被后继替代](/images/adr-mechanism/lifecycle.png)
+
+</div>
+
+</div>
+
+[查看矢量图](/images/adr-mechanism/lifecycle.svg) · [Mermaid 源文件](/images/adr-mechanism/lifecycle.mmd)
+
+接受一份 ADR，意味着认可其中的选择和代价。评审需要判断问题是否真实、约束是否完整、备选方案是否得到合理比较，以及结果怎样验证。写完文件、通过 CI、获得编号，都不能单独完成这项判断。这个状态图表达的是流程语义；仓库中的字段能否及时反映实际决定，还取决于后面的维护机制。
+
+`rejected` 与 `deprecated` 保留了不同的历史：前者没有成为已接受的方案，后者曾经有效而后来不再适用。`superseded` 则进一步给出替代记录，让读者知道应该去哪里继续阅读。保留这些状态，能避免同一方案在缺少历史背景时被反复提出。
+
+[ADR-0042](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0042-monitoring-presentation-perses.md)是一个真实的 rejected 例子：它曾提出采用 Perses 作为监控展示终态，文首记录了 2026 年 6 月 30 日被拒绝，并注明从未进入 accepted。后续方向由 ADR-0051 继续记录。它保存了一次未被采用的选择，而非一项后来失效的既定方案。
+
+### pending 表示等待编号
+
+`pending` 描述的是另一件事：编号尚未完成。它出现在 `id: pending` 和 `adr-pending-<uuid>-<slug>.md` 文件名中，不是 `status` 的决策状态。
+
+把编号与决策状态分开，是为了支持并行起草。多个作者或 agent 可以各自生成稳定的 UUID 别名，不必争抢同一个“下一个编号”。顺序编号留给统一的合并后工作流分配，讨论期间则通过 UUID 和草稿路径识别记录。
+
+| 编号字段      | 决策状态   | 含义                                                                  |
+| ------------- | ---------- | --------------------------------------------------------------------- |
+| `id: pending` | `proposed` | 尚未编号，决定仍在讨论                                                |
+| `id: pending` | `accepted` | 决定已接受，正在等待编号完成                                          |
+| `id: 0071`    | `proposed` | 已有编号，但状态字段仍为提案；后文的 Music Assistant 链尾就是这种情况 |
+| `id: 0059`    | `accepted` | 已有编号，决定也已接受；部署进度仍需另行验证                          |
+
+新主题的草稿还会使用 `original-adr: pending`，表示它将成为自己的链根；取得编号后，该字段与 `id` 一起更新。若草稿准备替代已有 ADR，`original-adr` 则直接继承原链根，只有新记录自己的 `id` 等待分配。两种情况下，`uuid` 与 `original-adr-uuid` 都保留各自的稳定身份。
+
+pending 文件可以暂时存在于主分支。草稿 PR 合并后触发编号工作流，工作流再创建一个编号 PR；只有后者合并，正式文件名与编号才进入主分支。因此，等待编号不等于等待决策，也不等于提案被否决。后文会展开这两次 PR 的具体过程。
+
+部署进度是第三个独立问题。第 09 篇记录过新分发方案已有核心实现、全 fleet 迁移仍未完成的阶段。即使 ADR 已 accepted，实施是否完成仍要通过任务、部署记录和验收证据判断。[Fleet Sync 的实现边界](/posts/fleet-sync/)
+
+## 用替代关系保留决策历史
+
+决定改变时，旧记录仍有价值。ADR-0049 保存选择 hub-spoke 的背景与代价，ADR-0059 保存促成重新判断的事实和新的取舍。两者通过替代关系连接，读者既能找到后继，也能还原当初为什么没有直接选择后来的方案。
+
+homelab-ops 为完整替代设置了线性关系：新 ADR 的 `supersedes` 只能指向一个前任，目标在主分支上必须处于 `accepted` 状态，同一前任不能被分叉替代。这让工具能够明确回答一条历史链最终指向哪里。
+
+| 字段                  | 含义                       |
+| --------------------- | -------------------------- |
+| `supersedes`          | 当前 ADR 直接替代的前任    |
+| `original-adr`        | 这条链最初的 ADR           |
+| `superseded-by`       | 旧 ADR 当前指向的链尾      |
+| `superseded-by-chain` | 用于追溯中间替代关系的记录 |
+
+链继续延长后，旧 ADR 的 `superseded-by` 指向新的链尾，`superseded-by-chain` 保留中间路径。这样，查找后继终点和研究演进过程都可以从同一份记录开始。
+
+这里的“不改旧决定”，并不意味着文件每个字节都冻结。项目保留历史决策正文，同时允许维护替代状态、导航指针、引用和规定格式的注释。历史理由与当前导航各有职责。
+
+### 实例 Music Assistant 的三代 ADR
+
+Music Assistant 在仓库中形成了真实的三代链：ADR-0009 → ADR-0028 → ADR-0071。以下关系与状态以 2026 年 10 月 26 日核对的记录为准。
+
+[ADR-0009](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0009-music-assistant-host.md)选择将服务部署在 a1989 的 macOS 容器环境中，并接受相应限制。[ADR-0028](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0028-music-assistant-orbstack-bind-workaround.md)随后整理端口绑定兼容问题，把网络方面的调整从旧 Amendment 提取为独立记录。到了 [ADR-0071](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0071-music-assistant-host-tp-server.md)，播放后端与网络要求已经变化，记录中的选择转为 Linux 主机 tp-server、host 网络和 Soloist 后端。
+
+当前文件中的关系链已经延伸到 0071：0009 和 0028 均标为 `superseded by ADR-0071`，并直接指向 0071。但 0071 的 front matter 仍写着 `status: proposed`。图中保留这个实际状态：
+
+<div role="region" aria-label="Music Assistant 的 ADR 演进：0009、0028 到 0071，旧记录直达链尾，0071 字段仍为 proposed，可横向滚动" tabindex="0" style="overflow-x: auto;">
+
+<div style="min-width: 404px; width: 404px; max-width: 100%;">
+
+![Music Assistant 的 ADR 演进：0009、0028 到 0071，旧记录直达链尾，0071 字段仍为 proposed](/images/adr-mechanism/music-assistant-chain.png)
+
+</div>
+
+</div>
+
+[查看矢量图](/images/adr-mechanism/music-assistant-chain.svg) · [Mermaid 源文件](/images/adr-mechanism/music-assistant-chain.mmd)
+
+实线沿旧到新的方向表示记录中的替代顺序，虚线展示旧记录直达链尾的入口。实际的 `supersedes` 字段反向指向直接前任；三份文件的字段如下：
+
+| ADR  | original-adr | supersedes | superseded-by | superseded-by-chain |
+| ---- | ------------ | ---------- | ------------- | ------------------- |
+| 0009 | 0009         | 无         | 0071          | [0028, 0071]        |
+| 0028 | 0009         | 0009       | 0071          | [0071]              |
+| 0071 | 0009         | 0028       | 无            | 无                  |
+
+0028 和 0071 各自保存直接前任，三份记录的链根始终是 0009。0009 可以通过 `superseded-by: 0071` 直达链尾，也可以沿 `[0028, 0071]` 回顾中间变化。链根、直接前任和链尾由此承担不同职责。
+
+这个实例还保留了早期规则迁移的痕迹：0028 的正文只调整网络行和对应后果，其他决定沿用 0009，元数据却使用了完整替代关系。它来自旧 Amendment 的整理，今天遇到类似范围的变更，应采用下一节的局部替代机制。
+
+0071 的 proposed 值还揭示了生命周期维护的现实问题。它的[创建 PR #2308](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2308)和[编号 PR #2311](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2311)均已合并；[迁移 epic #2306](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2306#issuecomment-6013885010)保存了实施记录，[incident #2297](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2297#issuecomment-6014588343)记录了 10 月 6 日在恢复、重新配置后的实例上确认 Spotify 播放出声。实际工作已经推进，状态字段没有同步。读取工具能发现这个差异，修正它则需要回到决策依据，而不能仅凭 proposed 推断迁移还没开始。
+
+查询结果会如实保留这个差异：`chain-of 0009` 返回 `0009,0028,0071`，`terminal-of 0009` 返回 `0071`；而 `status-of 0071` 返回 `proposed`，`is-active 0071` 的退出码为 `1`。链尾位置与 accepted 状态是两个独立的查询结果。
+
+### 局部替代保留未变更的范围
+
+如果只改变原决定的一部分，把整份 ADR 标为失效就会误伤仍然有效的内容。[ADR-0056](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/decisions/adr-0056-workstream-repeatable-pipeline.md)调整的是 ADR-0034 的 workstream 定义及相关约束，其他分类继续有效。因此它创建独立 ADR，并在旧记录对应位置添加范围注释；旧记录保持 accepted，完整替代的 `supersedes` 字段留空。
+
+这种做法维持了完整替代链的简单结构，却让局部关系留在正文中。进一步的改进方向，是增加可查询的范围索引，让工具回答“这一部分现在由哪份 ADR 定义”。下面是尚未实现的设计建议。
+
+在新 ADR 中结构化记录目标 ADR 的稳定 UUID、被覆盖的范围标识和新决定的章节位置，再从这些关系生成旧记录的提示与查询索引。范围标识应对应决策条目，避免依赖易变的行号。以 0056 为例，需要分别登记 workstream 定义、权威资料入口、CI invariant #3，才能覆盖这次变更的完整范围。
+
+查询 0034 时，预期得到的应是一份按范围组织的阅读入口：
+
+| 查询范围                                    | 应定位到的决定 | 应保留的解释                           |
+| ------------------------------------------- | -------------- | -------------------------------------- |
+| workstream 定义                             | ADR-0056       | 改为可重复执行的跨 stack 管线或 SOP    |
+| workstream 的权威资料入口与 CI invariant #3 | ADR-0056       | 指向 workflow 文档，并检查对应文件存在 |
+| app、stack、host 等其他分类                 | ADR-0034       | 未被此次局部替代覆盖                   |
+
+查询应返回完整替代链、局部覆盖清单、记录状态与正文定位。已接受的覆盖进入有效结果，proposed 单列为待定变更；同一范围存在无法确定先后的多个有效决定时，报告冲突，而不是按日期或编号选一个。后继自身被替代时，还需明确原覆盖范围是否继承。
+
+相应的 CI 可以检查目标和范围是否存在、关系是否成环、覆盖是否冲突，以及生成结果是否与声明一致。范围本身是否准确仍需评审。可以先用 0034／0056 这组关系验证设计，再迁移其他记录；未收录的局部关系应显式提示并链接原注释。如果覆盖不断叠加，已经难以组合阅读，就由一份新的完整 ADR 汇总仍有效的决定，经评审后整体替代。
+
+## ADR 机制如何机械化实现
+
+上述记录和关系需要持续维护。homelab-ops 用 Markdown 保存决定，用脚本维护编号与导航，用 CI 检查明确的约束。README 和链索引均从 ADR 生成，减少独立维护手工清单的负担。
+
+### 草稿生成与编号分配
+
+`adr-new.py` 生成八位十六进制 UUID，并按已有链索引检查冲突。新主题获得正文骨架和自指的链根占位符；替代草稿继承原链根，填写直接前任，并复制前任正文供作者逐节修订。这样既减少漏字段，也让新决定与原决定的差异更容易检查。
+
+```bash
+python3 tools/adr-new.py example-topic
+python3 tools/adr-new.py --supersedes NNNN replacement-topic
+```
+
+第二行的 `NNNN` 是待替代的真实 ADR 编号。生成器先检查目标状态，但它读取的是本地索引；PR 检查还会依据合并基线再验证一次，防止起草之后主分支已经发生变化。[草稿生成器](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-new.py)
+
+pending 文件合入 `main` 后，`adr-assign.yml` 串行执行编号任务，按文件首次引入时间排序，再从当前最大编号开始递增分配。同一时间的文件按文件名排序，使分配顺序可重复。
+
+编号器重命名文件，替换 `id` 和新主题的链根占位符，更新标题，并改写仓库内的 pending 路径及 `ADR-<uuid>` 引用。稳定 UUID 保留，决策状态也保留：取得编号不会自动把 proposed 改为 accepted。[编号工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-assign.yml)与[变换函数库](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-assign-lib.sh)
+
+### 替代链与引用怎样自动维护
+
+新记录带有 `supersedes` 时，`adr-supersede.py` 更新前任及祖先的状态、链尾 ID 与 UUID、历史路径和文首提示。首次替代日期保留，链更新日期刷新，链根不变。这就是旧 ADR 能同时保留历史路径并直达新链尾的实现方式。
+
+随后，`adr-supersede-sweep.py` 扫描指定范围内的 runbook、文档和 ADR 引用，在旧引用旁加入包含后继编号的 HTML 注释。它保留原链接，提示作者或读取源码的 agent 检查适用性；这些注释通常不会出现在渲染后的正文中，也不表示脚本已经替人判断了引用是否应当删除或改写。
+
+最后，`adr-chain-gen.py` 从 front matter 重建 `.terminal-map.json`，计算链根、成员和终点，并检查分叉与环；`adr-readme-gen.py` 据此更新阅读索引。派生文件的职责是提供可查询、可浏览的入口，决策内容仍保存在 ADR 中。[链维护脚本](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-supersede.py)、[引用扫描脚本](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-supersede-sweep.py)与[链索引生成器](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-chain-gen.py)
+
+### 两次 PR 怎样完成一次编号
+
+编号工作流在工作分支上完成变换，运行 `adr-verify.sh --no-pending`，确认结果中没有待编号文件及相应校验错误，然后创建自动 PR。正式编号只有在这次 PR 合并后才进入主分支。
+
+<div role="region" aria-label="ADR 自动编号流程：初稿 PR 合并、分配编号、校验、编号 PR 合并，可横向滚动" tabindex="0" style="overflow-x: auto;">
+
+<div style="min-width: 520px; width: 520px; max-width: 100%;">
+
+![ADR 自动编号流程：初稿 PR 合并、分配编号、校验、编号 PR 合并](/images/adr-mechanism/numbering-flow.png)
+
+</div>
+
+</div>
+
+[查看矢量图](/images/adr-mechanism/numbering-flow.svg) · [Mermaid 源文件](/images/adr-mechanism/numbering-flow.mmd)
+
+自动变换通过 PR 留下 diff，也保留审查与 CI 入口。工作流会尝试开启自动合并；不可用时则等待人工合并。串行执行降低分配时的竞争，但生成 PR 和合并 PR 是两个阶段，仍要通过 PR 检查确认结果。没有 pending 文件时，编号任务直接退出；校验失败时不创建编号 PR，修复后可以重新触发。[编号工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-assign.yml)
+
+### CI 分层检查哪些约束
+
+PR 工作流把检查组合成 `adr-corpus`。普通 PR 阶段允许 pending 文件；编号工作流末尾的 `--no-pending` 则要求编号已经全部完成。同一个校验器以不同模式检查不同阶段的合法状态。
+
+| 检查层     | 机械检查的内容                                                                      | 想阻止的问题                         |
+| ---------- | ----------------------------------------------------------------------------------- | ------------------------------------ |
+| 文件与编号 | 新增文件采用 pending 命名；编号、UUID、必需字段与状态枚举符合规则                   | 人工抢号、重复身份、字段缺失         |
+| 关系与基线 | 前任在合并基线上为 accepted；既有链根不可变；链结构不能分叉或成环                   | 从失效前任另开分支、改写链的起点     |
+| 正文变更   | 对照基线检查已受保护的正文，禁止新增 Amendment 修订节，允许规定的关系注释和引用改写 | 在原地改变已记录的决定及其理由       |
+| 派生文件   | 重新生成链索引和 README，再比较 Git diff                                            | 正文与索引不一致，或手工修改生成结果 |
+
+关系与正文检查需要对照 PR 的有效合并基线，才能区分本次修改与主分支已有变化。派生文件则通过重新生成并比较 Git diff 检查；发现差异，作者需要提交与 ADR 一致的生成结果。
+
+`adr-corpus` 每个 PR 都运行。与 ADR 无关的改动会快速通过，而不是让整个工作流因路径过滤被跳过；这是为了让必需检查始终返回结果，避免无关 PR 一直等待一个不会出现的检查。[ADR 检查工作流](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/.github/workflows/adr-pr-check.yml)
+
+### 为什么状态会停在 proposed
+
+自动编号与决策接受是分开的。当前工作流发现 `supersedes` 就会维护替代链，没有额外要求新记录已 accepted；R1 检查的是前任在基线上的状态。于是，链和编号可以更新，新记录仍保留 proposed，Music Assistant 的例子就呈现了这种结果。
+
+另一类情况发生在 PR 尚未合并时。截至 2026 年 10 月 26 日，[浏览器迁移 PR #2353](https://github.com/homelab-s5oyt03iv9/homelab-ops/pull/2353)仍开放：Helium ADR 同时是 `id: pending` 和 `status: proposed`，D1–D7 子决策仍待 operator 确认。方向已有讨论，具体取舍与主分支中的记录尚未完成收敛。
+
+因此，看到 proposed 时，需要区分三种情况：决定尚待确认；接受状态的更新尚待合并；相关 PR 已合并，但状态字段没有更新。合并一份仍写着 proposed 的草稿，不会自动产生 accepted。
+
+状态字段与实际决定脱节的问题，已经由 [#2231 ADR 生命周期字段失维](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2231)跟踪。它在当时的快照中列出 14 个 proposed，其中多项已有生产执行证据。[复核评论](https://github.com/homelab-s5oyt03iv9/homelab-ops/issues/2231#issuecomment-5705171531)确认了后继状态检查的缺口，并提出先核对历史决定、再增加机械检查。截至本文核对时，该 issue 仍开放，等待相应的生命周期确认。
+
+这项修复需要按顺序推进。复核时，新的“后继不得仍为 proposed”约束会命中 0032、0033、0046 等既有记录；直接启用，会先让历史数据阻塞检查。应依据决策证据完成状态修正，再加入检查和回归用例，并写明 proposed 的流程含义。生产中已经运行是一条核对线索，不能直接触发批量 accepted。
+
+这里也回到[第 05 篇《PR review 太多了！》](/posts/pr-review-too-many/)讨论的分工。agent 可以整理证据、找出状态差异、准备修正与测试；需要人确认的是尚未决定的范围和代价。确认之后，接受依据、状态变更和承载它的 PR 应一起跟踪，直到主分支与决定对齐。这样既减少重复判断，也避免每次读取都重新询问同一个问题。
+
+## 让人和 agent 正确读取决策
+
+文档越多，读取路径越重要。搜索结果可能来自旧 runbook、历史 ADR 或会话记录，命中关键词不能证明内容仍然适用。
+
+homelab-ops 生成 `.terminal-map.json`，并提供按需查询工具。以这次配置分发变更为例，可以在仓库根目录执行：
+
+```bash
+python3 tools/adr-chain-query.py terminal-of 0049
+python3 tools/adr-chain-query.py status-of 0059
+python3 tools/adr-chain-query.py is-active 0059
+```
+
+第一个命令定位链尾，第二个读取记录状态，第三个用退出码判断状态是否为 `accepted`。小范围查询让 agent 可以先定位，再读取必要的正文，无需把完整索引和所有历史记录都塞进上下文。[链查询工具](https://github.com/homelab-s5oyt03iv9/homelab-ops/blob/main/tools/adr-chain-query.py)
+
+读取时仍要分开回答三个问题：链尾在哪里，记录是否已标为 accepted，实际系统是否已经落实。README 的 Active 分组也包含 proposed，不能仅凭分组判断接受状态。局部替代目前通过范围注释表达，未来的范围索引应把这些阅读入口一并返回。
+
+对人和 agent 都适用的读取顺序是：找到候选 ADR，定位后继与局部覆盖，核对状态和决策依据，再结合 runbook 与运行证据判断下一步。遇到字段与证据不一致时，把差异交回对应的跟踪任务，推动一次修正，而不是在每次任务里重复猜测。
+
+## 从最小可维护的机制开始
+
+个人项目可以从很小的约定开始：重要决定写下背景、选择、代价和放弃的方案；状态明确；决定变化时保留旧记录并链接后继。仅这几件事，就能减少未来重新寻找理由的成本。
+
+当并行起草开始造成编号冲突，再加入自动编号；当旧引用频繁误导读者，再增加替代警示和索引；当约定反复被破坏，再把明确的约束编码进 CI。
+
+每增加一层自动化，也会增加工具维护和 PR 数量。值得投入的部分，是已经反复造成冲突、遗漏或误读的步骤。新记录的粒度、局部变更的范围、是否需要重新比较方案，仍应围绕实际问题判断。
+
+我希望这套机制最终留下的，是能够继续使用的判断依据：从一个当前决定找到它的理由，从一个历史决定找到它的后继，在发现状态漂移时找到修正入口。正文保存取舍，关系字段连接历史，工具维护可重复的部分。后来的维护者因此能够理解已有选择，也有依据改变它。

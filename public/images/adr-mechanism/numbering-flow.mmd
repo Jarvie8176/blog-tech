@@ -1,0 +1,11 @@
+flowchart TB
+    draft["作者创建带 UUID 的 pending ADR"]
+    firstPr["初稿 PR 检查并合入 main"]
+    assign["工作流分配编号并维护引用与替代链"]
+    generated["重建索引并执行 no-pending 校验"]
+    followPr["创建编号 PR 并运行 PR 检查"]
+    merged["编号 PR 合并后主分支取得正式编号"]
+    retained["校验失败 主分支保留 pending 文件"]
+    draft --> firstPr --> assign --> generated
+    generated -->|"通过"| followPr --> merged
+    generated -->|"失败"| retained

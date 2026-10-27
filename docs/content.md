@@ -66,6 +66,14 @@ Its problem is distributing a usable operations toolchain to heterogeneous nodes
 
 The six diagrams live in `public/images/fleet-sync/`, with Mermaid sources, outlined SVG exports and 2× PNGs. PNGs render without JavaScript. Focusable scroll regions preserve label size on narrow screens, and each figure links to its SVG and Mermaid source. Do not reintroduce private evidence links, host identifiers or raw operational records. Research and rendering scratch files remain outside the public repository.
 
+### ADR mechanism article
+
+Article `[10]` is the Chinese edition at `src/content/posts/zh/adr-mechanism.md`, with `translationKey: homelab-ops-adr-mechanism` and public path `/tech/posts/adr-mechanism/`. No translated entries are published yet. The approved article uses selected real ADR fields and repository references, with the previously authorized English ADR-0049/0059 examples on the public Gist; research downloads and raw issue/PR records stay outside this repository.
+
+Keep numbering (`id: pending`), decision status and deployment evidence distinct. The October 26, 2026 snapshot of ADR-0071 remains `proposed` even though creation and numbering PRs merged and the linked incident records playback acceptance. Issue #2231 tracks lifecycle drift; it is not evidence of a completed automatic acceptance workflow. PR #2353 illustrates a separate still-open proposal. The partial-supersession scope index is a proposed extension, not delivered functionality.
+
+The three diagrams in `public/images/adr-mechanism/` include Mermaid sources, outlined SVGs and 2× PNGs. The Music Assistant diagram uses vertical layout for the article while preserving its relationships. PNGs support reading without JavaScript; focusable overflow regions preserve label size on phones. Keep links to articles 05 and 09 and the public Gist intact.
+
 ### General acceptance
 
 1. Update the Chinese source and review which facts, examples, and status dates changed.
