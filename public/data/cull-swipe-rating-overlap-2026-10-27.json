@@ -17,7 +17,9 @@
     "pairing": "Retained same-shot XMP metadata; all paired AI ratings predate the human ratings.",
     "aiRejectCandidateRatings": [1, 2],
     "humanRejectRating": -1,
-    "humanKeepRatings": [1, 2, 3, 4, 5]
+    "humanKeepRatings": [1, 2, 3, 4, 5],
+    "indexedAiProvenanceChecked": 5206,
+    "additionalPairedAiScoreFromXmpNotInIndex": 1
   },
   "comparisonCounts": {
     "ai_low_human_reject": 5,
@@ -37,6 +39,14 @@
   "limitations": [
     "Personal-use observational sample, not random or blinded; AI ratings were visible during human review.",
     "Unpaired records are excluded from both metric denominators and correctness judgments.",
-    "This snapshot does not establish a reduction in human review time or a general VLM accuracy rate."
-  ]
+    "This snapshot does not establish a reduction in human review time or a general VLM accuracy rate.",
+    "A legacy whole-sidecar human write can overwrite the original AI score; a missing retained pair does not establish that AI never scored that shot."
+  ],
+  "indexedAiScoredShots": 5206,
+  "indexedAiScoreCounts": {
+    "1": 68,
+    "2": 1580,
+    "3": 3558
+  },
+  "aiVolumeVerifiedAt": "2026-10-27T00:46:34-07:00"
 }

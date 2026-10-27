@@ -2,7 +2,7 @@
 title: '[11] What I have built with my homelab'
 description: 'Photo culling, media migration, email triage, immersive walks and city videos: the practical tools and creative work my homelab supports beyond operations.'
 pubDate: 2026-10-26T23:55:00-07:00
-updatedDate: 2026-10-27T00:31:15-07:00
+updatedDate: 2026-10-27T00:46:34-07:00
 translationKey: homelab-outcomes
 categories: [Homelab Ops]
 tags: [homelab, photography, workflow, Amanuensis, Trailwalk, VR]
@@ -35,7 +35,7 @@ AI uses VLMs to assist with ratings, selection and descriptions. Human choices t
 
 ### How much do AI low scores overlap with human rejects
 
-I compare two sets that match the actual decision: **AI ratings of 1–2 are reject suggestions, and the human reject marker (-1) is an actual rejection**. Any human star rating from 1 to 5 counts as not rejected; the star values do not have to match. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded from this comparison.
+I compare two sets that match the actual decision: **AI ratings of 1–2 are reject suggestions, and the human reject marker (-1) is an actual rejection**. Any human star rating from 1 to 5 counts as not rejected; the star values do not have to match. AI has processed far more than these 102 shots. The current interface index contains **5,206 shots with AI scores**, each checked against VLM provenance in its XMP: 68 rated 1, 1,580 rated 2 and 3,558 rated 3. The figure of 102 is the reliably paired comparison sample. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded from this comparison. An older implementation can overwrite the original AI score when saving a human rating, so a missing retained score does not mean that AI never assessed the photo.
 
 | AI assessment   | Human rejected | Human did not reject | Total |
 | --------------- | -------------: | -------------------: | ----: |
