@@ -2,7 +2,7 @@
 title: '[11] What I have built with my homelab'
 description: 'Photo culling, media migration, email triage, immersive walks and city videos: the practical tools and creative work my homelab supports beyond operations.'
 pubDate: 2026-10-26T23:55:00-07:00
-updatedDate: 2026-10-27T00:10:00-07:00
+updatedDate: 2026-10-27T00:31:15-07:00
 translationKey: homelab-outcomes
 categories: [Homelab Ops]
 tags: [homelab, photography, workflow, Amanuensis, Trailwalk, VR]
@@ -15,7 +15,7 @@ Questions like these have gradually given my homelab a concrete purpose. It prov
 
 AI handles the coding and media post-production for all of these projects. I set the requirements and direction, guide the choices and review the results. AI carries out the implementation, including writing code, performing edits and compositing in DaVinci Resolve, and using vision-language models (VLMs) to rate photos. I provide goals and feedback; AI implements them; actual use and rendered previews guide the next revision.
 
-Earlier articles covered [how this environment began](/en/posts/why-homelab/) and [how I manage it](/en/posts/managing-homelab-with-ai/). This one looks at what it has helped produce: a photo workflow, media migration tools, an information assistant and two kinds of 360° experience. The project status described below is as of October 26, 2026.
+Earlier articles covered [how this environment began](/en/posts/why-homelab/) and [how I manage it](/en/posts/managing-homelab-with-ai/). This one looks at what it has helped produce: a photo workflow, media migration tools, an information assistant and two kinds of 360° experience. The project status described below is as of October 26, 2026; Cull Swipe usage and the rating comparison were checked again on October 27.
 
 ## Photo Pipeline and Cull Swipe
 
@@ -29,9 +29,23 @@ The most directly usable result is **Cull Swipe**, a browser interface for culli
 
 _Cull Swipe in use. The large image supports the decision, while the queue and rating distribution help me revisit choices across the batch._
 
-This part is already running on real photos. During one deployment acceptance check in October, more than 5,000 photos were available to browse and seven real human ratings were successfully submitted. Those numbers show that it is connected to actual material. The more useful change is that culling can become something I do a few photos at a time, whenever I have a moment.
+This part is already in use with real photos. A read-only check on October 27, 2026 found **371 photos with persisted human ratings submitted through Cull Swipe**, out of 5,777 currently browsable photos: 142 rejected, 69 with one star, 135 with two stars and 25 with three stars. Each rating matched the Cull Swipe provenance in its XMP file. This counts distinct shots with ratings still present, grouping a JPG and its RAW as one shot. It is not a lifetime count of photos viewed, and deployment acceptance submissions are not a measure of usage. Culling has become something I can do a few photos at a time whenever I have a moment.
 
 AI uses VLMs to assist with ratings, selection and descriptions. Human choices take priority. I want AI to narrow the set that needs close attention, while I decide which photos to keep.
+
+### How much do AI low scores overlap with human rejects
+
+I compare two sets that match the actual decision: **AI ratings of 1–2 are reject suggestions, and the human reject marker (-1) is an actual rejection**. Any human star rating from 1 to 5 counts as not rejected; the star values do not have to match. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded from this comparison.
+
+| AI assessment   | Human rejected | Human did not reject | Total |
+| --------------- | -------------: | -------------------: | ----: |
+| Low score (1–2) |              5 |                    4 |     9 |
+| Rating of 3     |             32 |                   61 |    93 |
+| Total           |             37 |                   65 |   102 |
+
+I rejected 5 of the 9 AI low-score suggestions, giving a **55.6% hit rate**. Of the 37 photos I rejected, AI low scores identified 5, giving **13.5% coverage**. The two sets share 5 shots out of a union of 41, so their Jaccard overlap is **12.2%**. The [aggregate comparison data](/data/cull-swipe-rating-overlap-2026-10-27.json) contains only counts and the statistical definitions.
+
+In this sample, AI low scores overlap only modestly with my rejection choices. They miss 32 photos I wanted to reject and flag 4 that I did not reject. I still need to browse the photos myself; these results do not establish a large reduction in the set I need to review. These are 102 pairs retained from personal use, with AI suggestions visible during selection and rating, rather than a random or blinded evaluation. Unpaired photos are counted as neither correct nor incorrect AI decisions.
 
 The full photo workflow is still being connected. Import, ratings and some metadata processing have produced real results. Editing metadata round trips, final exports and visibility after publication still need verification across the whole workflow. There is also a plan to release Cull Swipe as an independent self-hosted application; Docker packaging, general configuration and a public alpha have yet to ship.
 

@@ -1,0 +1,42 @@
+{
+  "asOf": "2026-10-27T00:31:15.209475-07:00",
+  "scope": "Current browsable shots with persisted Cull Swipe human ratings; one JPG/RAW capture group counts once, not a lifetime usage total.",
+  "servableShots": 5777,
+  "pendingShots": 5406,
+  "humanRatedShots": 371,
+  "humanRatingCounts": {
+    "reject": 142,
+    "1": 69,
+    "2": 135,
+    "3": 25
+  },
+  "method": {
+    "humanProvenanceChecked": 371,
+    "pairedShots": 102,
+    "unpairedHumanRatedShots": 269,
+    "pairing": "Retained same-shot XMP metadata; all paired AI ratings predate the human ratings.",
+    "aiRejectCandidateRatings": [1, 2],
+    "humanRejectRating": -1,
+    "humanKeepRatings": [1, 2, 3, 4, 5]
+  },
+  "comparisonCounts": {
+    "ai_low_human_reject": 5,
+    "ai_low_human_keep": 4,
+    "ai_high_human_reject": 32,
+    "ai_high_human_keep": 61
+  },
+  "metrics": {
+    "intersection": 5,
+    "union": 41,
+    "ai_low_count": 9,
+    "human_rejected_in_paired": 37,
+    "jaccard_overlap": 0.12195121951219512,
+    "ai_low_precision": 0.5555555555555556,
+    "human_reject_recall": 0.13513513513513514
+  },
+  "limitations": [
+    "Personal-use observational sample, not random or blinded; AI ratings were visible during human review.",
+    "Unpaired records are excluded from both metric denominators and correctness judgments.",
+    "This snapshot does not establish a reduction in human review time or a general VLM accuracy rate."
+  ]
+}
