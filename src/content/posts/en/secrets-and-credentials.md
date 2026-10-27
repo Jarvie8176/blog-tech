@@ -2,7 +2,7 @@
 title: '[06] What if secrets leak?'
 description: 'Assume credentials may be exposed: diagnostic safeguards, Compose secrets, temporary escalation, knowledge propagation and rotation cost.'
 pubDate: 2026-10-26T14:34:59-07:00
-updatedDate: 2026-10-26T18:51:39-07:00
+updatedDate: 2026-10-26T19:30:55-07:00
 translationKey: homelab-ops-secrets
 categories: [Homelab Ops]
 tags: [homelab, AI, secrets, envctl, security]
@@ -12,6 +12,8 @@ toc: true
 _Design for credentials that may be read, copied and propagated: reduce exposure while keeping revocation and recovery manageable._
 
 In June 2026, environment output from `docker inspect` carried a deployment controller’s shared GitHub personal access token (PAT) into a conversation. Rotation then overwrote unrelated settings, used wrong variable names and falsely reported success. The incident exposed three problems together: reads, credential sharing and change verification.
+
+Rotation was performed after the exposure. A complete receipt for revocation or invalidation of the old PAT at GitHub was not retained; that part of the incident record still needs reconstruction.
 
 The incident made me reconsider how to keep AI troubleshooting flexible while containing the cost of exposed credentials. Tool selection and components are covered in [the next article](/en/posts/envctl-design/).
 
@@ -27,21 +29,33 @@ I want to start from a zero trust premise: assume every credential will be expos
 
 Four concerns belong together: **exposure opportunities, credential permissions and lifetime, propagation, and rotation cost**. Banning every exploratory read reduces diagnostic ability; rotating everything after every ordinary check introduces disruption and change risk. Routine checks should avoid values, privileged exceptions need boundaries, and revocation must have a known scope.
 
-A shared PAT amplifies that cost: revoking one value interrupts several nodes. An inventory locates consumers; splitting credentials by node or service, restricting repositories and granting read-only access narrows impact. Options include independent deploy keys for single repositories, fine-grained PATs for HTTPS, and GitHub Apps for long-lived multi-repository integration, with different key-management, user-binding and issuance costs. [GitHub authentication options](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys)
+Sharing a PAT increases rotation cost; splitting by node or service narrows revocation impact. I also want to prioritize shorter lifetimes. GitHub App installation tokens expire one hour after issuance and can be restricted by repository and permission, making them worth evaluating for controllers requesting read-only access on demand. [GitHub App tokens](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app)
 
-The existing rotation path still centers on a shared PAT. Per-node separation comes next, with a direct check: revoke one node’s credential while the others continue pulling.
+Separation answers who is affected; lifetime answers how long a leaked value remains usable. Expired copies in conversations, indexes and backups lose that token’s direct access capability, while data already retrieved still needs handling. The costs are issuance-key protection, renewal and failure handling. Treating a one-hour token as a permanent configuration value creates a different outage risk.
+
+The current path still uses a shared PAT. Next I want to compare short-lived issuance and per-consumer allocation together, testing independent revocation as well as expiry and renewal.
+
+## Keep secret-reading permissions at the executor
+
+Encryption and command interception reduce mistakes; permission separation determines what the agent can read. If the agent and envctl share a user with access to an age private key, the agent can call SOPS directly. Docker administration likewise permits reading container secrets.
+
+I want a separate agent account without business decryption keys, vault-read credentials, Docker socket access or arbitrary sudo. It submits allowed business actions to a controlled executor holding identities and credentials, with executor code and allowed programs outside the agent’s write access. That common isolation boundary is not built yet; exec, interception and redaction currently aim primarily to reduce accidental exposure.
 
 ## Reduce easy accidental exposure first
 
 Full isolation takes time. I plan to start with safeguards at a few common points of accidental exposure.
 
-**Intercept before execution.** Reject unrestricted `docker inspect`, `env`, `printenv`, `.env` reads and `envctl get/export` at the agent tool interface, directing work to restricted checks. These inexpensive rules can stop accidental dumps, with synthetic secrets used to check their effect. Compound commands, scripts, aliases and other APIs remain bypass paths for later permission design to cover.
+**Intercept before execution.** Start with unrestricted `docker inspect`, `env`, `printenv`, `.env` reads and `envctl get/export`, checking their handling with synthetic secrets. Equivalent values can also emerge from interpolated `docker compose config`, `docker exec … env`, `/proc/<pid>/environ` and startup logs. A blacklist easily misses equivalent paths. [Compose configuration output](https://docs.docker.com/reference/cli/docker/compose/config/)
+
+A rejection should explain that the operation could send secrets into the conversation, name an allowed diagnostic entry point, tell the agent not to rewrite the command to retrieve the same value, and direct insufficient coverage to escalation. Otherwise an agent may simply try a different spelling. Longer term, allowlists of actions, targets and return fields belong at the independent executor.
 
 **Keep fewer secrets in environment variables.** Compose `secrets:` grants files to individual services under `/run/secrets/...`. An application reading the file directly no longer puts that value in its container environment, so a routine inspect of environment fields does not contain it. `_FILE` support is application-specific and must match the deployed version. Reading the file back into the environment reintroduces that exposure route. [Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/)
 
 doco-cd documents `GIT_ACCESS_TOKEN_FILE`, mutually exclusive with a directly configured token. Migration needs a running-version check, removal of the old environment value, a real pull check and a synthetic test that inspect does not contain the sample. Existing deployment declarations mount some other secrets as files, while the Git token remains an environment variable. [doco-cd Git settings](https://doco.cd/latest/Git-Settings/)
 
 Ordinary file-backed Compose secrets mount files; they do not automatically encrypt the host source. Local plaintext bootstrap still needs access and lifecycle management. Host root or Docker administrators can still read it. File mounting reduces accidental dumps; access permissions still need separate management. [Compose secrets reference](https://docs.docker.com/reference/compose-file/secrets/)
+
+**Detect known formats first.** GitHub PAT prefixes `ghp_` and `github_pat_` support inexpensive regex checks that block or replace intact plaintext before it reaches the model, returning only an error category. Encodings, truncation and values split across output chunks need additional handling; pattern matching also does not establish validity. Start with known plaintext leaks, then extend detection. [GitHub token formats](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github#githubs-token-formats)
 
 **Constrain responses.** Common procedures select necessary fields locally, returning status, counts or error categories. Hold unfamiliar output at the controlled executor. Apply detection and redaction to stdout, stderr, exceptions and artifacts too. Detection catches mistakes, while field selection reduces what reaches the channel. Both belong before output enters the model.
 
@@ -75,8 +89,8 @@ The PAT script has partial fixes but lacks unified end-to-end acceptance; some p
 
 ## Why envctl was finished first
 
-After the June incident, October’s first completed work packaged existing dotenv editing and backup tools as envctl/bakctl. Existing code and clear file interfaces made reads, writes and restoration independently testable with synthetic data. Troubleshooting changes also involve account permissions, exploratory interfaces and everyday working habits, with the trade-offs above still to resolve.
+After the June incident, October’s first completed work packaged existing dotenv editing and backup tools as envctl/bakctl. Existing code and clear file interfaces made reads, writes and restoration independently testable with synthetic data. Exec also gives agents a simpler path with less value retrieval and plaintext transfer. Troubleshooting changes also involve account permissions, exploratory interfaces and everyday working habits, with the trade-offs above still to resolve.
 
-That delivery order leaves a clear gap: file editing is more robust, while ad hoc troubleshooting can still read secrets. Next I want to put interception, file-based tokens and response filtering into use, then connect escalation, propagation review and rotation in one exercise.
+Packaging familiar tools was easier to advance and kept attention in familiar territory. File-based tokens, common dump interception and known-format detection could have been handled independently first. Next I want those direct output reductions in place, alongside evaluation of short-lived issuance and separate accounts, then connect escalation, propagation review and rotation.
 
 The results I care about are fewer exposures along common diagnostic paths, fewer objects to rotate per incident, and traceable copies with recoverable services. The [next article](/en/posts/envctl-design/) continues with the local tool design.

@@ -2,7 +2,7 @@
 title: '[06] 秘密泄露怎么办'
 description: '默认凭据可能暴露，结合排障事故讨论低成本拦截、Compose secrets、临时权限升级、知识传播与轮换成本。'
 pubDate: 2026-10-26T14:34:59-07:00
-updatedDate: 2026-10-26T18:51:39-07:00
+updatedDate: 2026-10-26T19:30:55-07:00
 translationKey: homelab-ops-secrets
 categories: [Homelab Ops]
 tags: [homelab, AI, secrets, envctl, security]
@@ -12,6 +12,8 @@ toc: true
 _设计从凭据可能被读取、复制和传播出发：尽量减少暴露，并让不可避免的轮换范围和恢复成本可控。_
 
 2026 年 6 月的一次排障中，`docker inspect` 的环境变量输出把部署控制器的共享 GitHub PAT（personal access token，个人访问令牌）带进了对话。后续轮换又覆盖了其他配置、写错了部分变量名，并误报成功。它同时暴露了读取、凭据共用和变更验收三个问题。
+
+泄露后，当时已经做了轮换；旧 PAT 在 GitHub 端撤销或失效的回执没有完整保留下来。这是这次处置记录中需要补齐的一段。
 
 这次经历让我重新考虑：怎样让 AI 排障保持灵活，又让凭据暴露后的代价可控？具体的工具选型和组件设计放在[下一篇](/posts/envctl-design/)。
 
@@ -27,21 +29,33 @@ _设计从凭据可能被读取、复制和传播出发：尽量减少暴露，�
 
 因此，需要一起优化四件事：**暴露机会、单份凭据的权限与寿命、传播范围、轮换成本**。禁止所有探索性读取，会损失排障能力；每次普通检查都轮换全部凭据，也会制造中断和新的变更风险。应让常规检查尽量不接触值，让高权限例外有边界，并能找全需要撤销与更新的对象。
 
-共享 PAT 正好放大了成本：撤销一个值，会同时打断多个节点。清单只能帮助找全消费者，按节点或服务拆分、限定仓库和只读权限，才能缩小一次撤销的范围。单仓库可以评估独立 deploy key，HTTPS 可以评估细粒度 PAT，多仓库长期集成可以评估 GitHub App；分别承担密钥管理、用户绑定或短期 token 签发的成本。[GitHub 认证选项](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys)
+共享 PAT 放大了轮换成本，按节点或服务拆分可以缩小撤销范围。我还想优先评估更短的寿命：GitHub App 的 installation token 签发后一小时到期，也能限定仓库和权限，适合让控制器按需取得只读访问。[GitHub App token](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app)
 
-现有轮换路径仍围绕共享 PAT，按节点拆分是接下来要做的事。我会用一个直接的检查判断拆分是否有效：撤销一个节点的凭据，其他节点仍能拉取。
+拆分回答“一次影响谁”，短期 token 回答“泄露后还能用多久”。对话、索引和备份中的过期副本会失去该 token 的直接访问能力，已经取走的数据仍要处理。代价也更具体：App 私钥要留在可信签发端，控制器要处理续期、到期和签发失败；把一小时 token 当固定 PAT 长期写进配置，会变成另一种停机原因。
+
+现有路径还在使用共享 PAT。接下来应一起比较短期签发与按消费者分配的成本，既检查撤销一个消费者是否影响其他节点，也演练 token 到期后能否正常续期。
+
+## 把秘密的读取权限留在执行端
+
+加密和命令拦截能减少误操作，权限分离决定 agent 能读到什么。agent 与 envctl 如果运行在同一用户下，能拿到 age 私钥，就可以绕开 envctl 直接调用 SOPS；持有 Docker 管理权限也能读取容器中的秘密。
+
+我准备让 agent 使用独立账户，不持有业务解密私钥、vault 读取凭据、Docker socket 或任意 sudo 权限，只向受控执行端提交允许的业务动作。执行端保留身份和凭据，代码与允许的程序也由它管理。目前还没有这层统一隔离；在它建立之前，exec、拦截和脱敏主要是在减少无意泄露。
 
 ## 先减少最容易发生的无意暴露
 
 完整隔离需要时间。我准备先从几处容易误操作的地方加上保护。
 
-**执行前拦截。** 在 agent 工具入口拒绝裸用 `docker inspect`、`env`、`printenv`、读取 `.env` 的命令，以及 `envctl get/export` 等常见值输出操作，提示改走受限检查。这类拦截成本低，适合先挡住无意转储，再用合成秘密检查效果。组合命令、脚本、别名和其他 API 仍是绕过路径，后续权限设计还要覆盖它们。
+**执行前拦截。** 先挡住裸用 `docker inspect`、`env`、`printenv`、读取 `.env` 和 `envctl get/export` 这类值输出，再用合成秘密检查效果。但同一个值还可能从 `docker compose config` 的插值结果、`docker exec … env`、`/proc/<pid>/environ` 或启动日志里出来。黑名单很容易漏掉等价路径。[Compose 配置输出](https://docs.docker.com/reference/cli/docker/compose/config/)
+
+拒绝提示应说明“这个操作可能把秘密送进对话”，给出允许的诊断入口，明确不要换一种命令去读同一个值，并在覆盖不足时申请升级。否则 agent 可能只是换一种写法继续找值。长期更合适的是按动作、目标和返回字段放行的白名单，由独立执行端实施。
 
 **减少环境变量中的秘密。** Compose 的 `secrets:` 可按服务授予文件，挂到 `/run/secrets/...`，让应用直接读取文件，不再把值放进容器环境。这样常规 inspect 的环境字段就不会包含该值。`_FILE` 是应用约定，需要确认目标版本支持；把文件重新读进环境再启动应用，会重新引入环境泄露路径。[Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/)
 
 doco-cd 的文档提供 `GIT_ACCESS_TOKEN_FILE`，与直接的 token 设置互斥。迁移时应核对运行版本，移除原环境值，确认实际拉取成功，并用合成数据验证 inspect 不含样本值。现有部署声明里，其他秘密已用文件挂载，Git token 仍走环境变量。[doco-cd Git 设置](https://doco.cd/latest/Git-Settings/)
 
 普通 Compose 的文件型 secret 是文件挂载，并不自动加密宿主机源文件。bootstrap 的本地明文仍要管理权限和生命周期，主机 root 或 Docker 管理者也仍可读取。文件挂载减少了无意转储的机会，访问权限仍要单独管理。[Compose secrets 参考](https://docs.docker.com/reference/compose-file/secrets/)
+
+**先检测已知格式。** GitHub PAT 的 `ghp_`、`github_pat_` 前缀适合做便宜的正则检查，在完整原文进入模型前就拦住或替换匹配值；返回错误时也只报类别。编码、截断或跨输出块拆开的值要另处理，正则也不能判断凭据是否有效。这里先解决已知明文的漏出，再扩展通用检测。[GitHub token 格式](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github#githubs-token-formats)
 
 **限制返回内容。** 常用 procedure 在本地选必要字段，只返回状态、计数或错误分类；未知输出先保留在受控执行端。返回通道再做检测与脱敏，覆盖 stdout、stderr、异常和产物。检测适合补漏，字段选择则减少进入通道的内容；两者都应发生在输出进入模型之前。
 
@@ -75,8 +89,8 @@ AI 的价值包括临时看日志、配置和没有预想到的状态。procedur
 
 ## 为什么 envctl 先做完了
 
-6 月事故之后，10 月先完成的是把已有 dotenv 编辑与备份工具整理成独立的 envctl/bakctl 包。它有现成的代码和清楚的文件接口，可以用合成数据独立检查读写与恢复。排障侧则牵涉账户权限、探索入口和日常操作方式，仍有前面这些取舍要落实。
+6 月事故之后，10 月先完成的是把已有 dotenv 编辑与备份工具整理成独立的 envctl/bakctl 包。它有现成的代码和清楚的文件接口，可以用合成数据独立检查读写与恢复。exec 也给 agent 提供了少找值、少传明文的简化路径。排障侧则牵涉账户权限、探索入口和日常操作方式，仍有前面这些取舍要落实。
 
-这个交付顺序留下了明显的缺口：文件编辑更稳了，临时排障仍能读到秘密。下一步我想先把执行前拦截、文件型 token 和返回筛选用起来，再把临时升级、传播核对与轮换接成一次完整演练。
+把已有工具整理好更容易推进，也把注意力留在了熟悉的地方。文件型 token、常见转储拦截和已知格式检测本来可以单独先做；它们不需要等工具包整理完。接下来我想先补这些直接减少输出的改动，同时评估短期签发和独立账户，再把升级、传播核对与轮换接起来。
 
 我更关心的结果是，一条常见泄露路径少了多少暴露，一次事故需要轮换多少对象，以及能否顺着记录找到副本并恢复服务。[下一篇](/posts/envctl-design/)继续解释本地工具这一段的设计。
