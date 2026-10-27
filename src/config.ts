@@ -59,7 +59,7 @@ export const SITE: SiteConfig = {
     name: 'J. Kong',
     url: 'https://portfolio.fnpg.me/',
     avatar: avatarImg,
-    bio: '记录设计，也记录设计被验证的过程。',
+    bio: '记录一些关于是什么和为什么的工程设计和实践笔记',
   },
   /** Default OG image. */
   defaultOgImage: ogDefaultImg.src,

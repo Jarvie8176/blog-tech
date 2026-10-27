@@ -208,7 +208,7 @@ export const messages = {
     'footer.copyright': '',
     'site.title': '技术笔记',
     'site.description': 'Yaaa、个人 AI 系统，以及从工程实践中留下的知识。',
-    'site.tagline': '记录设计，也记录设计被验证的过程。',
+    'site.tagline': '记录一些关于是什么和为什么的工程设计和实践笔记',
     'nav.homelabOps': 'Homelab Ops',
     'nav.yaaa': 'Yaaa',
     'nav.topics': '专题',
