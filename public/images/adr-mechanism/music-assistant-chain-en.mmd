@@ -1,0 +1,7 @@
+flowchart TB
+    adrNine["ADR-0009: superseded by 0071"]
+    adrTwentyEight["ADR-0028: superseded by 0071"]
+    adrSeventyOne["ADR-0071: still proposed"]
+    adrNine -->|"0028 records replacement of 0009"| adrTwentyEight
+    adrTwentyEight -->|"0071 records replacement of 0028"| adrSeventyOne
+    adrNine -.->|"superseded-by: direct to chain end"| adrSeventyOne

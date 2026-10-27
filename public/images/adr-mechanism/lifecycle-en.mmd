@@ -1,0 +1,10 @@
+flowchart TB
+    proposed["proposed: under discussion"]
+    accepted["accepted: agreed decision"]
+    rejected["rejected: not adopted"]
+    deprecated["deprecated: no longer used"]
+    superseded["superseded by ADR-NNNN"]
+    proposed -->|"Review accepts"| accepted
+    proposed -->|"Review rejects"| rejected
+    accepted -->|"No longer applicable"| deprecated
+    accepted -->|"Successor replaces it"| superseded
