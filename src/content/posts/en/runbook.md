@@ -1,8 +1,8 @@
 ---
 title: '[08] How one person can manage dozens of homelab services'
-description: 'Connect human judgment, AI agents and service operations with shared runbooks, versioned scripts and independent verification, so maintenance stays understandable, repeatable and verifiable.'
+description: 'Use the existing Calibre-Web runbook and initialization code to examine shared operational context for people and AI, and the gaps in repeatability, acceptance and recovery.'
 pubDate: 2026-10-26T21:35:21-07:00
-updatedDate: 2026-10-26T22:49:51-07:00
+updatedDate: 2026-10-26T23:47:42-07:00
 translationKey: homelab-ops-runbook
 categories: [Homelab Ops]
 tags: [homelab, AI, runbook, automation, workflow]
@@ -49,6 +49,8 @@ The operating approach I want needs to satisfy all of these conditions: people c
 
 A runbook generally describes an operational procedure for achieving a particular outcome. It can start as a simple checklist and grow to cover tools, permissions, error handling and escalation paths. This is also the basis of [AWS's definition of a runbook](https://docs.aws.amazon.com/wellarchitected/latest/framework/ops_ready_to_support_use_runbooks.html). In my homelab, a service's runbook also connects its current documentation, deployment configuration, execution scripts and verification methods, giving people and AI a common starting point.
 
+The most developed parts today are shared current-state documentation, explicit configuration and data boundaries, and some deployment constraints. Service-specific operation, acceptance and recovery procedures remain incomplete. The Calibre-Web case below shows the existing runbook and code before discussing the execution requirements still to be met.
+
 ## Separate current state from history
 
 First, we need to know what the system actually looks like today.
@@ -57,7 +59,7 @@ As services move and deployment methods change, documentation tends to accumulat
 
 In October 2026, my runbook cleanup focused on this problem: conflicting descriptions of current state, retired executables still present in service directories, and migration records mixed into deployment instructions. For a person or AI taking over, these materials create the same burden: decide what is still valid before starting the task.
 
-I began separating the current entry point from detailed history. The current README explains what manages the service, where its data and configuration live, which constraints apply, how to operate and verify it, and which recovery paths are supported. Detailed migrations, failed attempts and old topologies go into `history.md`, explicitly marked as unsuitable for deployment instructions.
+I began separating the current entry point from detailed history. The current README first establishes what manages the service, where its data and configuration live, and which constraints apply. Operation, verification and recovery procedures still need to be completed for each service. Detailed migrations, failed attempts and old topologies go into `history.md`, explicitly marked as unsuitable for deployment instructions.
 
 A service directory might look like this:
 
@@ -91,96 +93,69 @@ Runbooks also reach services in different ways. Operation scripts can query or m
 
 ## A Calibre-Web runbook example
 
-[Calibre](https://calibre-ebook.com/about) is a free, open-source ebook manager. It can organize titles, authors, covers and other metadata, convert ebook formats and transfer books to reading devices. [Calibre-Web](https://github.com/janeczku/calibre-web) is a separate web application that uses a Calibre library database to let people browse, read and download books in a browser. The service maintained here is Calibre-Web, so an upgrade must protect both the library records and the actual ebook files.
+[Calibre](https://calibre-ebook.com/about) is a free, open-source ebook manager. It can organize titles, authors, covers and other metadata, convert ebook formats and transfer books to reading devices. [Calibre-Web](https://github.com/janeczku/calibre-web) is a separate web application that uses a Calibre library database to let people browse, read and download books in a browser. The service maintained here is Calibre-Web, and both its library records and ebook files need protection.
 
-In my homelab, doco-cd manages Calibre-Web. Application configuration, library metadata and ebook files are mounted at `/config`, `/library` and `/storage`, respectively. Two initialization services run before `calibre-web`: `calibre-library-init` handles the initial library, and `calibre-config-init` handles application configuration. Old hosts, migrations and repairs are documented in `history.md`.
-
-Suppose the task is “upgrade Calibre-Web while preserving the existing library.” The README below is an example for that task. Its deployment relationships and data constraints come from the existing runbook; the operation and acceptance steps are completed here as an illustrative procedure. Hosts and host filesystem paths are looked up in the inventory rather than copied into the example.
+The existing `runbooks/calibre-web/README.md` is titled “current snapshot.” It has four sections: `Snapshot`, `Deployment invariants`, `Historical summary` and `Authority and pointers`. The excerpt below preserves the original wording while omitting entries such as hosts, addresses and host filesystem paths. No operation section has been added. The source is repository snapshot `1d5db4f7ef9a`, checked on October 26, 2026.
 
 ```markdown
-# Routine Calibre-Web upgrade
+# Calibre-Web — current snapshot
 
-## Current state and entry points
+> Current state only. Detailed migration and repair history:
+> [`history.md`](history.md).
 
-- Deployment: doco-cd applies configuration after a PR is merged.
-- Configuration: runbooks/calibre-web/docker-compose.tp.yml.
-- Target host and URL: look up calibre-web in the service inventory.
-- Data: /config holds application configuration and users;
-  /library holds library metadata; /storage holds ebook files.
-  The current Compose configuration defines the host paths.
+## Snapshot
 
-## Scope and prerequisites
+| Field            | Current state                                                                  |
+| ---------------- | ------------------------------------------------------------------------------ |
+| Status           | Deployed; doco-cd managed                                                      |
+| Library mode     | Native split library: `/library` metadata + `/storage` payloads                |
+| Uploads          | Globally enabled in Calibre-Web `app.db`; not reconciled by Compose            |
+| Observed library | 8 EPUB files / 19,928,132 bytes on 2026-10-23; operational data, not Git state |
 
-- Update application images only; do not migrate the library,
-  change mounts or reset accounts.
-- Confirm the target version, running image and database compatibility
-  described in the release notes.
-- Confirm recovery points and methods covering application configuration,
-  library metadata and ebook files.
-- Record a book accessible before the upgrade as a comparison sample.
-- Stop if recovery is unsubstantiated, data migration is involved,
-  or observed state differs from the documentation.
+## Deployment invariants
 
-## Constraints to preserve
-
-- Do not treat an existing library as a new installation.
-- library-init initializes an empty library when metadata.db is missing
-  or empty. Investigate mounts or data loss before deploying if either
-  condition is found during upgrade preparation.
-- Both config-init and the main service reference the application image;
-  check both when making the change.
-- Keep the existing credential injection path. Do not copy secret values
-  into the README, PR or execution report.
-
-## Operation
-
-1. Read the current configuration. Check the running image, mounts and
-   library access before the upgrade.
-2. Specify the target image version or digest in the configuration PR,
-   checking the initialization service too. Review the diff for unintended
-   changes to paths, accounts or initialization logic.
-3. Once checks pass, merge within the existing authorization and wait
-   for doco-cd to apply that commit.
-4. Check initialization exit results, the main service's actual image
-   and its mounts, then verify the application.
-
-## Acceptance
-
-- The running image matches the change's target; existing mounts remain.
-- The service URL reaches Calibre-Web, and login shows the original library.
-- Find the sample book, open its details and verify that its file is readable.
-- Record the commit, target, time, individual results and unverified features.
-
-## Failure handling
-
-- Do not declare completion if acceptance fails. Preserve logs and observations.
-- If the library is empty, check mounts and original data first.
-  Do not attempt to fix it by reinitializing the library.
-- Consider reverting the image only after confirming data compatibility
-  and a supported recovery path. If the database changed, a Git revert
-  is not a data restore.
+- `calibre-library-init` creates the checksum-pinned empty `metadata.db` only
+  when the file is absent or empty.
+- Book files and mutable SQLite databases are runtime data. Git records their
+  locations and initialization rules, not their contents.
 ```
 
-This example lets a person review the task boundaries before handing execution to an agent. The instruction can be specific: “Use this runbook to prepare an upgrade PR and perform the pre-change checks. This task is authorized only through PR submission.” An existing procedure does not expand that authorization; merging and actual deployment require the corresponding authority.
+This entry point already answers practical questions: doco-cd manages the service; library metadata and book files are split between `/library` and `/storage`; the upload setting lives in the application database and is not reconciled by Compose; and Git records data locations and initialization rules, not library contents. The rest of the README points migration details to `history.md` and identifies the authoritative configuration, deployment enrollment, inventory, routing and credential references.
 
-The step for checking the running image and mounts can also become a standalone `inspect.sh`. The read-only entry point below belongs to this article's example. The operator supplies `BOOK_HOST` after confirming it in the service inventory. A person can call the file from a terminal, and an agent with the same permissions can call it too.
+Following the README to `docker-compose.tp.yml` reveals code that already implements some of these constraints. This is the actual `command` field of `calibre-library-init`, with indentation adjusted for display. In Compose, `$$` preserves a dollar sign for the container's shell. This excerpt depends on the service's environment variables and mounts; it is not a standalone shell script.
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-: "${BOOK_HOST:?Confirm the SSH target in the current service inventory first}"
-
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$BOOK_HOST" \
-  'docker inspect --format "{{.Config.Image}} {{.Image}}" calibre-web'
-ssh -o BatchMode=yes -o ConnectTimeout=10 "$BOOK_HOST" \
-  'docker inspect --format "{{json .Mounts}}" calibre-web'
+```yaml
+command:
+  - sh
+  - -euc
+  - |
+    target=/library/metadata.db
+    chown 1000:1000 /library /storage
+    chmod 2775 /library /storage
+    if [ -s "$$target" ]; then
+      chown 1000:1000 "$$target"
+      chmod 664 "$$target"
+      echo "existing Calibre metadata.db retained"
+      exit 0
+    fi
+    tmp=$$(mktemp /library/.metadata.db.XXXXXX)
+    trap 'rm -f "$$tmp"' EXIT
+    wget -qO "$$tmp" "$$CALIBRE_METADATA_URL"
+    echo "$$CALIBRE_METADATA_SHA256  $$tmp" | sha256sum -c -
+    chown 1000:1000 "$$tmp"
+    chmod 664 "$$tmp"
+    mv "$$tmp" "$$target"
+    trap - EXIT
+    echo "initialized empty Calibre library"
 ```
 
-This script supplies evidence about the main service's image and mounts. Its output still needs comparison with the configuration and target version. It does not establish successful initialization or prove that a user can read a book. Actual changes in this example still go through a configuration PR and doco-cd, without a second manual deployment script. If the check later becomes a registered procedure, the MCP entry point should call the same implementation.
+A specific behavior is already defined here: if `metadata.db` is nonempty, adjust its permissions and retain its contents; if it is missing or empty, download an empty database from a fixed source, verify its SHA-256 checksum and put it in place. The download URL is tied to an upstream commit, and the checksum is stored in Compose. People and AI can follow the documentation to inspect the same implementation, without generating initialization commands again.
 
-The data boundary directly affects the choice of operation. Git stores deployment configuration, data locations and initialization rules; books and mutable databases are runtime data. Being able to redeploy the application from the repository does not establish that the library can be restored. An empty library should therefore trigger investigation, rather than lead AI to reinitialize the old service into an apparently healthy new one.
+Its guarantees have limits. The `-s` check establishes only that the file is nonempty, not that it is the original library or that book files are readable. The subsequent `calibre-config-init` queries the library UUID, checks the application database schema and configures paths and the management account. Those checks still do not establish that a user can open an existing book. Creating an empty database is initialization, not restoration of a lost library. Both the configuration initializer and the main service still use `latest` for their application images, so pinning the initialization sample has not pinned the whole application version.
 
-The current entry point does not need to duplicate everything. Host and service inventories have their own authoritative sources, deployment controllers have their own management configuration, and secrets have their own storage and injection mechanisms. The README connects these sources and explains important constraints. Copying configuration into several places makes the next change harder to keep consistent.
+If the task given to AI is “upgrade Calibre-Web while preserving the existing library,” this README is not yet enough to execute it as a documented procedure. It does not specify pre-upgrade checks, upgrade order, library acceptance criteria, an upgrade-check script to invoke or supported recovery steps. A person or agent can locate configuration and understand the data boundaries, but must still investigate runtime state, establish version and recovery requirements, and turn the operation and acceptance checks into a reviewable procedure. That work remains to be done.
+
+This case demonstrates the value of shared current context and some implemented initialization rules. It does not yet demonstrate a complete upgrade that another session can repeat and independently verify. The existing runbook makes finding the right system, configuration and data more reliable; the operational procedure still needs to be completed.
 
 ## Make execution repeatable and inspectable
 
@@ -210,13 +185,13 @@ AI continues to have plenty to do: understand current state, investigate differe
 
 ## From a task to acceptance
 
-The path from an operation's goal to its acceptance can be expressed as follows. The operator may be a person or an AI agent. “Applicable and executable” means the procedure fits the task, current state satisfies its preconditions, and both existing authorization and actual permissions are sufficient.
+The following flow describes the requirements I want to apply as service-specific operation and acceptance procedures are completed. The current Calibre-Web README does not cover the whole flow. The operator may be a person or an AI agent. “Applicable and executable” means the procedure fits the task, current state satisfies its preconditions, and both existing authorization and actual permissions are sufficient.
 
 ![Runbook workflow: establish authorization, check current state and prerequisites, choose a script or configuration deployment path, then verify and handle failures within authorization](/images/runbook/flow-en.png)
 
 [View SVG](/images/runbook/flow-en.svg) · [Mermaid source](/images/runbook/flow-en.mmd)
 
-_Figure 2: Execution and acceptance of a runbook operation. Existing authorization can be reused; a further human decision is needed only for a new tradeoff or work outside that scope._
+_Figure 2: Execution and acceptance requirements to implement for each service. Existing authorization can be reused; a further human decision is needed only for a new tradeoff or work outside that scope._
 
 When a condition is unmet, stop the corresponding change and preserve observations. Supply missing parameters, investigate state differences or propose a procedure revision, then check again once the issue is resolved. A first failure is not a reason to expand permissions automatically. Both execution paths must ultimately check the service's result: a successful script exit, a merged PR and a controller's completion report each establish only one part of the process.
 
@@ -234,23 +209,9 @@ Likewise, a running container establishes something about process state; configu
 
 I want an AI execution report to answer four questions: which procedure version it used, which target it operated on, what it observed, and what it did not verify. People can then follow the evidence to assess the conclusion without rereading a whole terminal session or accepting “done” as proof.
 
-Return to the Calibre-Web example. Suppose the container is running the target image and the page opens, but login does not reveal the original library. The report should express that failure instead of combining the first two signals into “upgrade successful.” This illustrative record shows what it might look like; the placeholders should be filled from actual execution evidence:
+The existing Calibre-Web README contains a more limited observation: on October 23, 2026, the library held 8 EPUB files totaling 19,928,132 bytes. It explicitly identifies those numbers as runtime data rather than Git state. This gives later checks a dated reference, but file counts and total bytes cannot establish that every book opens or that a subsequent upgrade passed acceptance. The current README does not turn this observation into a complete upgrade acceptance record.
 
-```text
-Task: upgrade Calibre-Web while preserving the original library
-Basis: runbook commit <commit>; change PR <PR>; deployment commit <commit>
-Target and time: <inventory target>; <observation time with timezone>
-Running image: <actual image ID>, checked against the target version
-Application check: Calibre-Web is reachable; login succeeds
-Data check: original library is absent; sample book is not visible
-Conclusion: acceptance failed; do not mark complete
-Next: preserve initialization logs; inspect mounts and original database
-      within authorization
-Not performed: library reinitialization, backup restoration, redeployment
-Not verified: integrity of original ebook files; uploads and other features
-```
-
-This tells a person that library acceptance has not passed and that mounts, application configuration and data state need further investigation. It also gives the next AI session a starting point: confirmed facts, actions that have not happened, and why it must not simply repeat deployment.
+The next step is to connect the running image, application access, library entries and file-reading results to the same operation and version. Those conclusions cannot be inferred from the existing file statistics. With that work done, another AI session could reuse explicit acceptance criteria instead of guessing what “healthy” means.
 
 ## Distinguish history from recovery
 

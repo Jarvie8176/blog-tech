@@ -66,6 +66,8 @@ Its problem is distributing a usable operations toolchain to heterogeneous nodes
 
 The six diagrams live in `public/images/fleet-sync/`, with Mermaid sources, outlined SVG exports and 2× PNGs. PNGs render without JavaScript. Focusable scroll regions preserve label size on narrow screens, and each figure links to its SVG and Mermaid source. Do not reintroduce private evidence links, host identifiers or raw operational records. Research and rendering scratch files remain outside the public repository.
 
+The Ansible comparison acknowledges overlapping capabilities: repository distribution is already supported by Ansible, and `ansible-pull` provides a node-initiated path. Distinguish repository revision and hook outcomes from declared machine state; do not imply that Ansible cannot work with pull scheduling, that arbitrary tasks are idempotent, or that a playbook runs continuously by itself. The existing Git scripts explain the initial scope, not a measured cost advantage. Broader package, account, template and service management is a reason to evaluate an established configuration manager. Composition or replacement with Ansible remains a proposal.
+
 ### ADR mechanism article
 
 Article `[10]` is the Chinese edition at `src/content/posts/zh/adr-mechanism.md`, with `translationKey: homelab-ops-adr-mechanism` and public path `/tech/posts/adr-mechanism/`. No translated entries are published yet. The approved article uses selected real ADR fields and plain-text ADR/PR/issue identifiers, with the previously authorized English ADR-0049/0059 examples on the public Gist; links to the homelab-ops repository are omitted, and research downloads and raw issue/PR records stay outside this repository.
