@@ -1,7 +1,8 @@
 ---
 title: '[06] What if secrets leak?'
-description: 'An exposure and rotation incident explains the choice of 1Password, age, SOPS and envctl, and how people and agents create, inject, revoke and verify credentials.'
+description: 'A diagnostic leak and failed rotations expose separate needs: control reads, split credentials, protect writes, and assess envctl against SOPS and the cost of extra copies.'
 pubDate: 2026-10-26T14:34:59-07:00
+updatedDate: 2026-10-26T18:19:23-07:00
 translationKey: homelab-ops-secrets
 categories: [Homelab Ops]
 tags: [homelab, AI, secrets, envctl, security]
@@ -12,7 +13,7 @@ _Delegating operations to AI means assigning responsibility for how credentials 
 
 In the [previous article](/en/posts/pr-review-too-many/), I discussed redistributing responsibility among human judgment, machine execution, engineering verification and project decisions as implementation becomes abundant. Credentials make that question concrete: AI can deploy a service or diagnose authentication failures while handling tokens capable of changing the environment.
 
-I want services to use the credentials they need while routine work avoids copying values into conversations and logs. After exposure, I also need to know what a credential permits, who consumes it, and how to invalidate the old access and restore service. Saving an encrypted file covers one part of that work.
+This incident exposed three connected failures: diagnostic output carried a secret into a conversation, a shared credential widened the revocation impact, and rotation damaged configuration. Encryption and safe import can improve routine work. Preventing recurrence also requires control over ad hoc diagnostic reads and output, plus verifiable rotation changes.
 
 ## How troubleshooting became a rotation across several consumers
 
@@ -24,15 +25,31 @@ That experience connected several tasks: limit secrets in diagnostic output, fin
 
 This is a historical exposure and recovery case. A credential entering a conversation record is an exposure to address; misuse by a third party requires separate evidence. Recovery at that time also does not establish that all later hardening is complete today.
 
-## What the service needs and what the model needs
+## Control what troubleshooting can read and return
 
-An operation involves several distinct places: model context, the agent’s tool call, the local process, credential storage and the target service.
+The incident happened on an ad hoc read path. Even flawless import, encryption and `exec` cannot prevent the next `docker inspect`, `env`, `cat .env` or `envctl get` from sending values into context. The five-step workflow below improves planned operations; it is not evidence that this incident has been prevented.
 
-The model can organize work around a service, a credential reference, an allowed action and its verification. An authorized local tool can read the value and pass it to the process that needs it. What returns to the model can be the result and a necessary error category.
+Three controls need separate treatment:
 
-Execution and output must implement that division. If a read command prints a token, the tool result can carry it back. If a business command expands an authorization header into its arguments, the value enters another observable surface. Encrypting the input file does not constrain either behavior.
+- **Diagnostic entry points:** wrap common checks in procedures accepting approved targets and actions, selecting necessary fields locally. A container running flag and restart count can return a boolean and a number. Full environments, labels, logs and error text must not return by default. Hold unfamiliar output back for controlled handling.
+- **Tool responses:** construct results from an allowed set of fields before stdout, stderr, exceptions or artifacts enter the agent channel, then apply secret detection or redaction. Detection can catch mistakes, but cannot guarantee recognition of arbitrary formats, encodings or split values. Filtering text after it reaches the model cannot undo exposure.
+- **Execution permissions:** isolation requires a separate agent account without Docker administration, arbitrary sudo, business decryption keys or credential-file access. It requests operations through restricted interfaces whose code, configuration and allowed programs it cannot modify.
 
-Operating conventions also need a real permission boundary where isolation is required. An agent with arbitrary shell access as the same user, decryption rights or Docker administration may bypass the normal path. 1Password’s environment-injection documentation says to assume that processes running as the same user can access each other’s environments. Stronger isolation needs separate accounts, restricted execution interfaces and permission checks. [1Password environment injection](https://www.1password.dev/cli/secrets-environment-variables)
+Docker administration matters here. For ordinary rootful Docker Engine, Docker explicitly states that membership in the `docker` group grants root-level privileges. Removing one command or moving a token into a file does not stop a daemon administrator reading container or mounted secrets. [Docker permissions](https://docs.docker.com/engine/install/linux-postinstall/)
+
+The model needs a service, a credential reference, an allowed action and its verified result; a trusted executor passes values to the business process. 1Password likewise advises assuming that processes under the same user can access each other’s environments. [Environment injection](https://www.1password.dev/cli/secrets-environment-variables)
+
+These diagnostic interfaces, channel filters and independent permissions have not completed end-to-end acceptance in this environment. Paths that can expose secrets remain, and addressing them takes priority over polishing a general importer.
+
+## Shared credentials widen the impact
+
+A shared PAT turns revocation into a coordinated change across nodes. A consumer inventory helps locate updates, but cannot narrow the credential’s permissions or impact. The existing rotation path still handles a shared PAT; it does not establish a completed move to per-node credentials.
+
+For consumers pulling one repository, evaluate a separate read-only deploy key per node and repository. HTTPS consumers can evaluate fine-grained tokens restricted to the required repositories and permissions. Multi-repository, long-lived integrations can also consider short-lived GitHub App installation tokens. The controller’s authentication support and actual pull checks determine suitability. Deploy keys default to read-only but do not expire automatically; fine-grained PATs remain tied to their issuing user; Apps add issuance and renewal work. [GitHub deploy keys and Apps](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys) · [Fine-grained PATs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+
+Acceptance means revoking one node’s credential while other nodes continue their own pulls. The credential count may grow while each exposure and revocation affects less. A privileged account able to read every node’s secrets still defeats full isolation.
+
+The controller’s plaintext bootstrap configuration also remains. It needs restricted account access, recorded consumers and a rotation owner. A token file can reduce values in environment dumps, but host root or Docker administrators may still read it; that does not resolve the exception.
 
 ## What this credential stack solves and why I chose it
 
@@ -55,6 +72,17 @@ I call these encrypted configuration copies carriers. `envsync` produces service
 
 The deployment controller’s own startup credentials have a bootstrap problem: it needs Git access before it can fetch later deployment inputs. The existing path uses separately generated, host-local plaintext configuration with restricted file permissions. That exception is part of the system to manage too.
 
+### Apply the four complexity questions
+
+This design gives copies a source relationship; it does not automatically reduce their number. A credential may exist in 1Password, a service SOPS carrier, a local envctl file and bootstrap configuration. Every service need not use all four. The [previous article’s four questions](/en/posts/pr-review-too-many/) require a reason to retain or remove each layer.
+
+1. **Which observed problem does it solve?** 1Password centralizes records; SOPS puts configuration in Git; local carriers support operations without live vault access; bootstrap enables the controller’s first pull. None directly addresses diagnostic reads or shared privileges.
+2. **Would a simpler path suffice?** Tasks accepting live access can use `op run`. Existing SOPS files needed only for execution can use `sops exec-env`. Without local editing needs, omit an envctl copy; a consumer should not gain another copy just to standardize the stack.
+3. **What maintenance does it add?** Each derived copy needs its source reference, consumers, generation or deployment version, update time, permissions and update owner. Check versions and actual authenticated actions without publishing secret hashes as proof. Source changes do not refresh running processes automatically.
+4. **What is lost by removing a layer?** Removing local caching restores a live-source dependency. Removing envctl loses its editing and snapshot conventions, while SOPS still supports injection. Removing service carriers changes deployment delivery. Only consumers needing those capabilities should carry their copies.
+
+Keeping local carriers is currently an availability and maintenance trade-off. A complete copy inventory and staleness checks are not yet unified, so source relationships do not establish a closed rotation process. Review consumers to consolidate duplicate carriers and expose failed updates, undeployed changes and continued use of old values.
+
 ## How envctl connects the components
 
 `envctl` began as a dotenv tool for this homelab. Its independent public repository is [Jarvie8176/envctl](https://github.com/Jarvie8176/envctl), with a [v0.1.0 release](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0). It connects editing, SOPS calls, backups and process execution, and ships with its file-snapshot companion `bakctl`. Other tools handle 1Password integration and node distribution. Moving existing installations to the public version requires separate acceptance.
@@ -75,11 +103,17 @@ _Logical responsibilities. The relevant envctl implementation currently lives in
 | Backup adapter           | Call bakctl for snapshots, history and restoration                                |
 | Runner and output        | Inject variables into a process, or output keys or values as requested            |
 
+Process injection is not unique to envctl. SOPS already provides `exec-env` for passing decrypted values into a child environment and `exec-file` for programs consuming files. Consider those native capabilities first if the requirement is simply decrypting and running once. envctl’s main distinction is editing: stdin input by key, preservation of other lines, ciphertext round-trip checks, locking and atomic replacement, plus paired backup and restore conventions. It supplies a common interface for existing dotenv operations, without adding runtime isolation. [SOPS process execution](https://getsops.io/docs/usage/advanced/#passing-secrets-to-other-processes)
+
 The default target is still `~/cc/.env`. Only names ending in `.enc` automatically take the encrypted path. The example explicitly selects `service.env.enc`. Deployment carriers often use another naming convention and are consumed by SOPS and doco-cd; a filename merely containing `enc` does not establish that envctl will decrypt it.
 
 `exec` inherits the parent environment and injects every variable in the selected file. Separating carriers by purpose can reduce what is handed to a business operation; there is no per-command variable allowlist yet. `get` and `export` output values, while `list` outputs keys. For secret-bearing work, the business process should usually consume the value directly instead of returning it to the model first.
 
 Encrypted writes create ciphertext temporary files, and bakctl snapshots of encrypted targets remain ciphertext. This reduces plaintext copies explicitly created by that tool path. Output from subprocesses, logs and other programs still needs separate control.
+
+Those defaults reflect a tool built for people and are not conservative for agents. Round-trip checks, locks and atomic replacement in v0.1.0 protect **write integrity**. This exposure calls for **read and output controls**.
+
+An agent mode could require an explicit encrypted file, reject `get`/`export`, and inject only declared variables through `exec`, while also filtering the inherited environment so old secrets cannot arrive from the parent. It would need restricted actions and return fields too: giving an arbitrary program fewer variables does not prevent printing them or reading other secrets. **These are proposed interface constraints; v0.1.0 has no agent mode.** Even with them, enforcement still needs separate permissions and a controlled executor.
 
 ## From an empty item to an execution with credentials
 
@@ -140,20 +174,27 @@ SOPS `updatekeys` adjusts recipients; `rotate` renews a file’s data key. Neith
 
 If exposure occurs in Git, deleting the string from the latest version does not revoke it. Address access at the service first, then arrange cleanup of history, clones, caches and other copies according to the sensitive content and its spread. [GitHub sensitive-data removal](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)
 
-## Evidence for revocation rotation and recovery
+## Treat rotation as a controlled change
 
-Urgency determines the sequence. Active misuse or exposed high-privilege access calls for restricting access first and accepting necessary interruption. When a controlled transition is possible and the service supports overlap, deploy and verify the replacement, then revoke the old credential, with an explicit limit on that overlap.
+SSH key rotation in June 2026 had a related failure: a script treated a prefix shared by keys of the same type as the old key’s identity, locking out five hosts. Recovery then ran the stale script after a version switch failed and locked them out again. The PAT rotation’s wrong variable names, configuration overwrite and false success share a pattern: inaccurate target selection, an unverified executing version and unreliable success criteria. Fixing one matching expression cannot prevent the next rotation failure.
 
-Consumers include repository references, running containers, scheduled tasks, external nodes and manually maintained locations. Searching a variable name supplies leads; no results do not establish zero consumers. Preserve the management and recovery access needed for the rotation, rather than removing the only identity that makes recovery possible.
+The PAT script now preserves other configuration, selects targets and checks for success logs. It is still short of the complete procedure below: there is no unified dry-run, pre-write backup or automatic old-access invalidation check. Some paths with no observed success log only request a recheck and can still end with a successful exit status. General rotation procedures and hardening remain unfinished.
 
-Acceptance needs several answers: does the new credential perform the required action with the intended permissions? Is old access invalid under the service’s rules? Do known consumers perform their actual functions? Is unrelated configuration intact? Does troubleshooting still expose secrets? Existing sessions, derived tokens and cached authorization need their own checks under the service’s revocation semantics.
+The minimum workflow I want to establish is:
 
-One HTTP success cannot establish all of these. A healthy container may fail to pull code; a successful file write may not reach the running process; a failed request may target the wrong service or encounter a network problem. Retain the checked version, target and action result without outputting secrets again to demonstrate success.
+1. **Plan and dry-run:** enumerate the credential, consumers, exact target keys, permissions, change set and executing script version. Test multiple keys, similar keys, empty input and wrong targets with synthetic configuration. Keep secret values out of the plan.
+2. **Preserve recovery:** make protected configuration backups before writing and verify restoration. Start with one consumer and retain management access outside this rotation. Stop if retrieving or switching to the specified version fails.
+3. **Update and check configuration:** retrieve the replacement inside a controlled process, change the exact target, preserve the original on failure and check that unrelated fields remain intact. Treat backups as secrets too.
+4. **Verify replacement and consumers:** establish which version the consumer loaded, then perform a real pull, login or business action. Clean logs, container health and successful writes cannot substitute. Missing success evidence must produce failure or an explicit unverified state.
+5. **Revoke and verify old access:** revoke at the issuer and check old access against the same target. Distinguish network errors and wrong targets from authorization denial. Check sessions, derived tokens and caches under service-specific rules. Return redacted results to the agent.
+6. **Retain a receipt:** record versions, targets, consumer results, revocation, rollback conditions and unfinished work. A revoked credential is no rollback option; retain a separate recovery identity or reissuance capability.
 
-## Current implementation and next steps
+Urgency still sets the order. Active misuse or high-privilege exposure calls for restricting access first and accepting interruption. Verify the replacement before revocation only when the service supports a controlled overlap with a deadline. A smooth transition must not delay necessary revocation.
 
-As of October 26, 2026, envctl/bakctl are used in this environment, and envsync with service-level SOPS carriers has been implemented. Public v0.1.0 adds ciphertext round-trip checks, mutation locking and input validation, with temporary identities and synthetic values covering encrypted paths. The plaintext default, whole-file environment injection and value output by get/export remain. Deployment bootstrap also includes permission-restricted plaintext configuration.
+## Current implementation and priorities
 
-A general safe importer from 1Password to envctl, end-to-end acceptance of the five-step use case, runtime credential isolation and some rotation follow-ups remain. The [envctl repository](https://github.com/Jarvie8176/envctl) maintains public package versions and change records. Migration of older installations, the version running on each node, and actual activation or invalidation of business credentials each require separate verification.
+As of October 26, 2026, delivered work includes envctl/bakctl, service carriers and some rotation-script fixes. Public v0.1.0’s write protections have synthetic encrypted-path tests. That does not establish that ad hoc diagnostics cannot leak, shared PATs have been split, all old access is invalid, or a full rotation procedure has passed acceptance.
 
-I want an inspectable chain of responsibility: the human confirms purpose, permissions and interruption trade-offs; the agent prepares and progresses within authorization; local tools handle values and execute; verification checks actual activation and invalidation; and [session closeout](/en/posts/session-closeout/) retains redacted results, remaining work and reusable methods. The next task can reuse a checked path while keeping its unfinished parts visible.
+Priorities are diagnostic entry points, tool responses and permission boundaries, followed by credential separation and controlled rotation, then completion of the five-step importer. Agent mode and copy-staleness checks need their own implementation and acceptance. The [envctl repository](https://github.com/Jarvie8176/envctl) maintains tool versions; node adoption and real business results need separate verification.
+
+[Session closeout](/en/posts/session-closeout/) should record the specific leak path blocked, consumers switched, old access invalidated and interfaces still open. Those facts determine whether the incident’s causes have been addressed, alongside whether the new tool works.
