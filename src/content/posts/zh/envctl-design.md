@@ -1,7 +1,8 @@
 ---
 title: '[07] envctl 的设计与边界'
-description: '解释 envctl 与 1Password、SOPS、Compose secrets 的分工，区分已发布的编辑保护、五步目标流程与尚未实现的 agent 模式。'
+description: '从本地 dotenv 的编辑需求出发，解释 envctl 的组件、凭据创建流程，以及它与 1Password、SOPS、Compose secrets 的分工。'
 pubDate: 2026-10-26T18:38:15-07:00
+updatedDate: 2026-10-26T18:52:41-07:00
 translationKey: homelab-ops-envctl
 categories: [Homelab Ops]
 tags: [homelab, envctl, secrets, design]
@@ -10,7 +11,7 @@ toc: true
 
 _envctl 管理本地 dotenv 的编辑、快照与执行。它能改善凭据的正常使用路径；排障读取与知识传播的处置见[上一篇](/posts/secrets-and-credentials/)。_
 
-[envctl/bakctl v0.1.0](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0)把已有的本地工具整理成独立发布。它的主要工作是安全地修改载体和恢复文件，不是替同权限 agent 隔离秘密。下面区分已实现能力与仍待封装的流程设计。
+[envctl/bakctl v0.1.0](https://github.com/Jarvie8176/envctl/releases/tag/v0.1.0)把已有的本地工具整理成独立发布。它把按 key 编辑、加密、快照和恢复接在一起，服务于已有的本地 dotenv 工作流。
 
 ## 为什么保留本地载体
 
@@ -31,13 +32,13 @@ carrier 是供消费者使用的配置副本。envsync 从 1Password 生成服�
 
 容器消费者还可使用 Compose `secrets:` 把文件交给指定服务，避免值直接进入容器环境。这一层处理消费方式，SOPS 处理保存形式，envctl 处理部分编辑操作；不需要为使用其中一个而加入全部组件。应用是否能直接读文件仍需确认，普通 Compose 文件挂载不会自动加密源文件，也不阻止 Docker 管理者读取。[Compose secrets](https://docs.docker.com/compose/how-tos/use-secrets/)
 
-我的取舍是复用已有 dotenv 编辑需求，没有这一需求的消费者可以不用 envctl。它不替代凭据签发、轮换、权限隔离或输出控制。
+我的取舍是复用已有 dotenv 编辑需求，没有这一需求的消费者可以不用 envctl。凭据签发、轮换和执行权限则由各自的入口管理。
 
 ## 当前组件与默认行为
 
 ![凭据栈与 envctl 逻辑组件](/images/secrets/components-zh.png)
 
-_逻辑职责示意。当前实现集中在一个脚本中，分组不代表独立服务或模块已经拆分。_
+_当前实现集中在一个脚本中，图中按配置、编辑、存储、备份和执行划分职责。_
 
 | 逻辑职责                | 内容                                 |
 | ----------------------- | ------------------------------------ |
@@ -47,23 +48,23 @@ _逻辑职责示意。当前实现集中在一个脚本中，分组不代表独�
 | Backup adapter          | 通过 bakctl 保存快照、查看历史与恢复 |
 | Runner 与 Output        | 注入进程环境，或按命令输出键名和值   |
 
-v0.1.0 的候选密文要通过解密回读后才原子替换，写入有互斥与输入检查。加密目标的临时文件和 bakctl 快照保存密文，合成测试覆盖相关路径。这些保护减少写入损坏，不保证读取后不暴露。[公开版安全模型](https://github.com/Jarvie8176/envctl/blob/v0.1.0/docs/security-model.md)
+v0.1.0 的候选密文要通过解密回读后才原子替换，写入有互斥与输入检查。加密目标的临时文件和 bakctl 快照保存密文，合成测试覆盖相关路径。这部分工作关注写入完整性。[公开版安全模型](https://github.com/Jarvie8176/envctl/blob/v0.1.0/docs/security-model.md)
 
 三个默认行为需要特别注意：历史目标是明文 `~/cc/.env`；只有终端 `.enc` 后缀触发自动加密；`exec` 继承父环境并注入文件内全部变量。`get/export` 刻意打印值，`list` 打印键名。按用途拆分文件可以减少注入内容，但目前没有逐命令变量白名单，也没有同用户隔离。
 
-## 五步目标流程 尚非可直接照做的教程
+## 从空条目到执行的五步设计
 
-下面是准备封装和验收的设计，**不是 v0.1.0 已交付的完整集成，也没有随包提供安全导入器或业务检查脚本**。示意条目 `op://demo-vault/demo-service/credential` 和 key `DEMO_API_TOKEN` 都是虚构的。图中本地工具承担的校验与返回约束仍需实现。
+我准备把现有能力接成下面的流程。envctl 已提供 stdin 编辑和进程注入，安全导入器、业务检查脚本和统一返回约定还需要编写。用虚构的 `op://demo-vault/demo-service/credential` 和 `DEMO_API_TOKEN` 举例：
 
 ![创建与注入凭据的五步目标设计](/images/secrets/use-case-zh.png)
 
-1. **Agent 准备基础环境。** 在获准执行端准备 op、SOPS、age 与配对工具，检查实际版本、recipient、权限和恢复入口，用临时身份与合成值自检。首次 op 访问仍需要沿既有控制面引导；如果 agent 直接持有这些身份和任意 shell，就不构成秘密隔离。
-2. **Agent 建立空条目。** 在指定 vault 记录服务、用途、消费者和待填字段，返回条目标识。秘密字段为空，stub 存在不等于凭据可用。[1Password 条目接口](https://www.1password.dev/cli/reference/management-commands/item)
+1. **Agent 准备基础环境。** 在获准执行端准备 op、SOPS、age 与配对工具，检查实际版本、recipient、权限和恢复入口，用临时身份与合成值自检。首次 op 访问沿既有控制面完成认证引导。
+2. **Agent 建立空条目。** 在指定 vault 记录服务、用途、消费者和待填字段，返回条目标识。秘密字段留给用户填写，导入前再检查内容。[1Password 条目接口](https://www.1password.dev/cli/reference/management-commands/item)
 3. **Human 填写凭据。** 人在签发服务确认权限与期限，直接填入 1Password；对话只通知填写完成。敏感值不经过聊天复制。
 4. **Agent 请求受控导入。** 参数只有引用、目标 key 和明确的加密文件。可信本地导入器先确认读取成功、字段存在、非空及格式正确，再经 stdin 调用写入；失败保持原值，返回状态而不返回秘密。`op read` 直接管道给 setter 时，下游可能在上游失败后先写入空值，`pipefail` 无法撤销它；v0.1.0 的密文回读也不能代替上游校验。
 5. **Agent 请求受控执行。** 业务进程在内部使用凭据，返回约定的状态字段。值不展开到认证参数，不进入调试日志、原始响应或异常。验收用合成 canary 检查正常与失败路径的 stdout、stderr、参数和产物，并检查失败后旧载体不变。
 
-这个设计减少正常流程的误暴露，同权限的任意程序仍可能读值或打印值。真实的隔离、探索性排障升级和暴露后轮换，需要[上一篇所述的执行与处置边界](/posts/secrets-and-credentials/)。
+这些步骤处理正常使用时的值流向；探索性排障和暴露后的轮换取舍见[上一篇](/posts/secrets-and-credentials/)。
 
 ## 用复杂度四问决定保留哪些副本
 
@@ -74,12 +75,12 @@ v0.1.0 的候选密文要通过解密回读后才原子替换，写入有互斥�
 - **增加什么维护？** 记录来源引用、消费者、生成与部署版本、更新时间、权限和更新入口；验证实际认证动作，不公开秘密哈希作为证明。
 - **删掉会失去什么？** 删除缓存会恢复实时来源依赖；删除 envctl 会失去编辑与快照约定，但 SOPS 注入仍可用。按消费者决定，而不是统一堆栈。
 
-全量副本清单和过期检查尚未统一。后续应合并不必要的层，让更新失败、未部署和旧值继续使用成为可见状态；不能把来源已知当作轮换闭环。
+我还需要补齐副本清单和过期检查，合并不必要的层，让更新失败、未部署和旧值继续使用成为可见状态。
 
-## 已发布能力与待实现约束
+## 接下来改什么
 
-已发布的是配对 CLI、编辑与快照能力，以及 v0.1.0 的写入保护。通用 op 导入器、五步整链验收、统一输出契约和运行时隔离仍待实现。
+v0.1.0 先整理了配对 CLI、编辑、快照和写入保护。下一步是通用 op 导入器，以及贯穿五步流程的业务检查与返回格式。
 
-agent 模式也是提案：要求显式加密文件，拒绝 get/export，exec 只注入声明变量，并筛选父环境、限定执行动作及返回字段。缩小环境不阻止任意程序输出值；强制执行还需要独立权限。**v0.1.0 没有 agent 模式。**
+另一个想做的是 agent 模式：要求显式加密文件，拒绝 get/export，让 exec 只注入声明变量，同时筛选父环境、限定执行动作和返回字段。它会减少顺手读出值的机会；任意程序的读取和输出仍要通过独立的执行权限约束。
 
-安装见 [README 固定版本说明](https://github.com/Jarvie8176/envctl#install-a-fixed-release)与 [Releases](https://github.com/Jarvie8176/envctl/releases)。已有安装按[集成与迁移约定](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md)先用独立前缀验证，再切换消费者；envctl 与 bakctl 保持同一版本，核对实际执行文件。源码更新不会替其他节点更新复制版本，工具可用也不证明业务凭据已生效或旧值已失效。
+安装见 [README 固定版本说明](https://github.com/Jarvie8176/envctl#install-a-fixed-release)与 [Releases](https://github.com/Jarvie8176/envctl/releases)。已有安装按[集成与迁移约定](https://github.com/Jarvie8176/envctl/blob/main/docs/integrations.md)先用独立前缀验证，再切换消费者；envctl 与 bakctl 保持同一版本，核对实际执行文件。复制安装的节点需要分别更新，切换后再检查实际的业务认证。
