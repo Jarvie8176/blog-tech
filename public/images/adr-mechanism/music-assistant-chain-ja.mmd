@@ -1,0 +1,7 @@
+flowchart TB
+    adrNine["ADR-0009：0071 に置き換え済み"]
+    adrTwentyEight["ADR-0028：0071 に置き換え済み"]
+    adrSeventyOne["ADR-0071：状態は proposed のまま"]
+    adrNine -->|"0028 が 0009 を置き換え"| adrTwentyEight
+    adrTwentyEight -->|"0071 が 0028 を置き換え"| adrSeventyOne
+    adrNine -.->|"superseded-by は末尾を直接参照"| adrSeventyOne

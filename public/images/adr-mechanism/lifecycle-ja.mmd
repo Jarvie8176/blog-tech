@@ -1,0 +1,10 @@
+flowchart TB
+    proposed["proposed：議論中の提案"]
+    accepted["accepted：受け入れ済み"]
+    rejected["rejected：採用せず"]
+    deprecated["deprecated：廃止済み"]
+    superseded["superseded by ADR-NNNN：後継へ"]
+    proposed -->|"レビューで受け入れ"| accepted
+    proposed -->|"レビューで却下"| rejected
+    accepted -->|"適用されなくなる"| deprecated
+    accepted -->|"新しい決定で置き換え"| superseded

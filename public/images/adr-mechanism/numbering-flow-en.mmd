@@ -1,0 +1,11 @@
+flowchart TB
+    draft["Author creates a pending ADR with a UUID"]
+    firstPr["Draft PR passes checks and merges into main"]
+    assign["Workflow assigns IDs and updates references and chains"]
+    generated["Rebuild index and run no-pending validation"]
+    followPr["Create numbering PR and run PR checks"]
+    merged["Merge numbering PR: official IDs reach main"]
+    retained["Validation fails: main retains pending files"]
+    draft --> firstPr --> assign --> generated
+    generated -->|"Pass"| followPr --> merged
+    generated -->|"Fail"| retained
