@@ -15,32 +15,22 @@
     "pairedShots": 102,
     "unpairedHumanRatedShots": 269,
     "pairing": "Retained same-shot XMP metadata; all paired AI ratings predate the human ratings.",
-    "aiRejectCandidateRatings": [1, 2],
     "humanRejectRating": -1,
-    "humanKeepRatings": [1, 2, 3, 4, 5],
     "indexedAiProvenanceChecked": 5206,
-    "additionalPairedAiScoreFromXmpNotInIndex": 1
-  },
-  "comparisonCounts": {
-    "ai_low_human_reject": 5,
-    "ai_low_human_keep": 4,
-    "ai_high_human_reject": 32,
-    "ai_high_human_keep": 61
-  },
-  "metrics": {
-    "intersection": 5,
-    "union": 41,
-    "ai_low_count": 9,
-    "human_rejected_in_paired": 37,
-    "jaccard_overlap": 0.12195121951219512,
-    "ai_low_precision": 0.5555555555555556,
-    "human_reject_recall": 0.13513513513513514
+    "additionalPairedAiScoreFromXmpNotInIndex": 1,
+    "aiRatings": [1, 2, 3],
+    "allowedHumanRatingsByAiScore": {
+      "1": [-1],
+      "2": [-1, 1, 2],
+      "3": [2, 3, 4, 5]
+    }
   },
   "limitations": [
     "Personal-use observational sample, not random or blinded; AI ratings were visible during human review.",
     "Unpaired records are excluded from both metric denominators and correctness judgments.",
     "This snapshot does not establish a reduction in human review time or a general VLM accuracy rate.",
-    "A legacy whole-sidecar human write can overwrite the original AI score; a missing retained pair does not establish that AI never scored that shot."
+    "A legacy whole-sidecar human write can overwrite the original AI score; a missing retained pair does not establish that AI never scored that shot.",
+    "Only one paired example has AI score 1 and eight have AI score 2; their within-range rates do not establish performance on a broader sample."
   ],
   "indexedAiScoredShots": 5206,
   "indexedAiScoreCounts": {
@@ -48,5 +38,73 @@
     "2": 1580,
     "3": 3558
   },
-  "aiVolumeVerifiedAt": "2026-10-27T00:46:34-07:00"
+  "aiVolumeVerifiedAt": "2026-10-27T00:46:34-07:00",
+  "schemaVersion": 2,
+  "rulesConfirmedOn": "2026-10-29",
+  "evaluation": "Human outcome falls within the allowed range for its AI score; neither exact-star agreement nor a binary reject prediction.",
+  "scorePairCounts": [
+    {
+      "ai": 1,
+      "human": -1,
+      "count": 1
+    },
+    {
+      "ai": 2,
+      "human": -1,
+      "count": 4
+    },
+    {
+      "ai": 2,
+      "human": 1,
+      "count": 4
+    },
+    {
+      "ai": 3,
+      "human": -1,
+      "count": 32
+    },
+    {
+      "ai": 3,
+      "human": 1,
+      "count": 17
+    },
+    {
+      "ai": 3,
+      "human": 2,
+      "count": 36
+    },
+    {
+      "ai": 3,
+      "human": 3,
+      "count": 8
+    }
+  ],
+  "compatibilityByAiScore": [
+    {
+      "ai": 1,
+      "allowedHumanRatings": [-1],
+      "compatible": 1,
+      "total": 1,
+      "rate": 1.0
+    },
+    {
+      "ai": 2,
+      "allowedHumanRatings": [-1, 1, 2],
+      "compatible": 8,
+      "total": 8,
+      "rate": 1.0
+    },
+    {
+      "ai": 3,
+      "allowedHumanRatings": [2, 3, 4, 5],
+      "compatible": 44,
+      "total": 93,
+      "rate": 0.4731182795698925
+    }
+  ],
+  "overallCompatibility": {
+    "compatible": 53,
+    "total": 102,
+    "rate": 0.5196078431372549
+  }
 }

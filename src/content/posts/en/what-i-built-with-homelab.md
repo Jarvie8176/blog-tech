@@ -2,7 +2,7 @@
 title: '[11] What I have built with my homelab'
 description: 'Photo culling, media migration, email triage, immersive walks and city videos: the practical tools and creative work my homelab supports beyond operations.'
 pubDate: 2026-10-26T23:55:00-07:00
-updatedDate: 2026-10-27T00:46:34-07:00
+updatedDate: 2026-10-29T00:00:00-07:00
 translationKey: homelab-outcomes
 categories: [Homelab Ops]
 tags: [homelab, photography, workflow, Amanuensis, Trailwalk, VR]
@@ -33,19 +33,24 @@ This part is already in use with real photos. A read-only check on October 27, 2
 
 AI uses VLMs to assist with ratings, selection and descriptions. Human choices take priority. I want AI to narrow the set that needs close attention, while I decide which photos to keep.
 
-### How much do AI low scores overlap with human rejects
+### AI scores and the human ratings they allow
 
-I compare two sets that match the actual decision: **AI ratings of 1–2 are reject suggestions, and the human reject marker (-1) is an actual rejection**. Any human star rating from 1 to 5 counts as not rejected; the star values do not have to match. AI has processed far more than these 102 shots. The current interface index contains **5,206 shots with AI scores**, each checked against VLM provenance in its XMP: 68 rated 1, 1,580 rated 2 and 3,558 rated 3. The figure of 102 is the reliably paired comparison sample. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded from this comparison. An older implementation can overwrite the original AI score when saving a human rating, so a missing retained score does not mean that AI never assessed the photo.
+AI assigns only scores 1–3. Each score corresponds to an allowed range of human outcomes: 1 means reject; 2 means acceptable but may be rejected; 3 means acceptable. A human rating of -1 marks rejection. An AI score of 2 paired with one human star therefore fits the rule; different numbers do not by themselves imply an error.
 
-| AI assessment   | Human rejected | Human did not reject | Total |
-| --------------- | -------------: | -------------------: | ----: |
-| Low score (1–2) |              5 |                    4 |     9 |
-| Rating of 3     |             32 |                   61 |    93 |
-| Total           |             37 |                   65 |   102 |
+AI has assessed far more shots than the comparison sample. The October 27 interface index contains **5,206 shots with AI scores**, each checked against VLM provenance in its XMP: 68 rated 1, 1,580 rated 2 and 3,558 rated 3. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded. An older implementation can overwrite the original AI score when saving a human rating, so a missing retained score does not mean that AI never assessed the photo.
 
-I rejected 5 of the 9 AI low-score suggestions, giving a **55.6% hit rate**. Of the 37 photos I rejected, AI low scores identified 5, giving **13.5% coverage**. The two sets share 5 shots out of a union of 41, so their Jaccard overlap is **12.2%**. The [aggregate comparison data](/data/cull-swipe-rating-overlap-2026-10-27.json) contains only counts and the statistical definitions.
+Applying the rubric to the 102 pairs retained from the October 27 check gives the following results. Human ratings of three stars or higher include 3, 4 and 5 in the existing rating system.
 
-In this sample, AI low scores overlap only modestly with my rejection choices. They miss 32 photos I wanted to reject and flag 4 that I did not reject. I still need to browse the photos myself; these results do not establish a large reduction in the set I need to review. These are 102 pairs retained from personal use, with AI suggestions visible during selection and rating, rather than a random or blinded evaluation. Unpaired photos are counted as neither correct nor incorrect AI decisions.
+| AI score | Meaning                     | Allowed human outcomes | Within range / paired shots |
+| -------- | --------------------------- | ---------------------- | --------------------------: |
+| 1        | Reject                      | -1 (reject)            |                1 / 1 (100%) |
+| 2        | Acceptable, may be rejected | -1, 1, 2               |                8 / 8 (100%) |
+| 3        | Acceptable                  | 2, 3, 4, 5             |             44 / 93 (47.3%) |
+| Total    | —                           | —                      |            53 / 102 (52.0%) |
+
+All nine low-score records fall within their allowed human outcomes, but there is only one example of AI score 1 and eight of score 2. The main difference appears in the AI score 3 group. Of those 93 shots, 36 received two human stars and eight received three stars, fitting the rule. Another 32 were rejected and 17 received one star, outside the allowed range. The [aggregate data](/data/cull-swipe-rating-overlap-2026-10-27.json) provides the score-pair counts, allowed ranges and calculations.
+
+In this retained sample, AI gives a score of 3 to some photos I would reject or rate at only one star. Those photos still need human review. The overall 52.0% measures whether human ratings fall within the allowed range; it is not exact-star agreement and cannot be converted directly into time saved while culling. These are personal-use records, with AI suggestions visible during rating, rather than a random or blinded evaluation. Unpaired photos are counted as neither correct nor incorrect AI decisions.
 
 The full photo workflow is still being connected. Import, ratings and some metadata processing have produced real results. Editing metadata round trips, final exports and visibility after publication still need verification across the whole workflow. There is also a plan to release Cull Swipe as an independent self-hosted application; Docker packaging, general configuration and a public alpha have yet to ship.
 
