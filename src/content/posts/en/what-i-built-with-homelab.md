@@ -2,7 +2,7 @@
 title: '[11] What I have built with my homelab'
 description: 'Photo culling, media migration, email triage, immersive walks and city videos: the practical tools and creative work my homelab supports beyond operations.'
 pubDate: 2026-10-26T23:55:00-07:00
-updatedDate: 2026-10-29T00:00:00-07:00
+updatedDate: 2026-10-29T13:59:21-07:00
 translationKey: homelab-outcomes
 categories: [Homelab Ops]
 tags: [homelab, photography, workflow, Amanuensis, Trailwalk, VR]
@@ -15,7 +15,7 @@ Questions like these have gradually given my homelab a concrete purpose. It prov
 
 AI handles the coding and media post-production for all of these projects. I set the requirements and direction, guide the choices and review the results. AI carries out the implementation, including writing code, performing edits and compositing in DaVinci Resolve, and using vision-language models (VLMs) to rate photos. I provide goals and feedback; AI implements them; actual use and rendered previews guide the next revision.
 
-Earlier articles covered [how this environment began](/en/posts/why-homelab/) and [how I manage it](/en/posts/managing-homelab-with-ai/). This one looks at what it has helped produce: a photo workflow, media migration tools, an information assistant and two kinds of 360° experience. The project status described below is as of October 26, 2026; Cull Swipe usage and the rating comparison were checked again on October 27.
+Earlier articles covered [how this environment began](/en/posts/why-homelab/) and [how I manage it](/en/posts/managing-homelab-with-ai/). This one looks at what it has helped produce: a photo workflow, media migration tools, an information assistant and two kinds of 360° experience. The project status described below is as of October 26, 2026; Cull Swipe usage was checked again on October 27, and the low-score comparison and staging queue were rechecked on October 29.
 
 ## Photo Pipeline and Cull Swipe
 
@@ -33,24 +33,27 @@ This part is already in use with real photos. A read-only check on October 27, 2
 
 AI uses VLMs to assist with ratings, selection and descriptions. Human choices take priority. I want AI to narrow the set that needs close attention, while I decide which photos to keep.
 
-### AI scores and the human ratings they allow
+### Hit rate for low AI scores
 
-AI assigns only scores 1–3. Each score corresponds to an allowed range of human outcomes: 1 means reject; 2 means acceptable but may be rejected; 3 means acceptable. A human rating of -1 marks rejection. An AI score of 2 paired with one human star therefore fits the rule; different numbers do not by themselves imply an error.
+AI assigns only scores 1–3: 1 means reject, 2 means acceptable but may be rejected, and 3 means acceptable. This evaluation covers only the low-score group, AI scores 1–2. A hit means the human outcome falls within the allowed range: AI 1 allows human -1 (reject); AI 2 allows human -1, 1 or 2. An AI score of 2 paired with one human star therefore counts as a hit; the numbers need not match.
 
-AI has assessed far more shots than the comparison sample. The October 27 interface index contains **5,206 shots with AI scores**, each checked against VLM provenance in its XMP: 68 rated 1, 1,580 rated 2 and 3,558 rated 3. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata. The other 269 are excluded. An older implementation can overwrite the original AI score when saving a human rating, so a missing retained score does not mean that AI never assessed the photo.
+AI has assessed far more shots than the comparison sample. The October 27 interface index contains **5,206 shots with AI scores**, each checked against VLM provenance in its XMP. Of the 371 human-rated shots, 102 could be paired with an earlier AI rating in retained XMP metadata, including nine with AI scores 1–2. The other 269 have no retained AI score that could be reliably paired and are excluded. An older implementation can overwrite the original AI score when saving a human rating, so a missing retained score does not mean that AI never assessed the photo.
 
-Applying the rubric to the 102 pairs retained from the October 27 check gives the following results. Human ratings of three stars or higher include 3, 4 and 5 in the existing rating system.
+Applying the rubric to the low-score pairs retained from the October 27 check gives:
 
-| AI score | Meaning                     | Allowed human outcomes | Within range / paired shots |
-| -------- | --------------------------- | ---------------------- | --------------------------: |
-| 1        | Reject                      | -1 (reject)            |                1 / 1 (100%) |
-| 2        | Acceptable, may be rejected | -1, 1, 2               |                8 / 8 (100%) |
-| 3        | Acceptable                  | 2, 3, 4, 5             |             44 / 93 (47.3%) |
-| Total    | —                           | —                      |            53 / 102 (52.0%) |
+| AI score        | Allowed human outcomes            | Hits / paired low-score shots |
+| --------------- | --------------------------------- | ----------------------------: |
+| 1               | -1 (reject)                       |                  1 / 1 (100%) |
+| 2               | -1, 1, 2                          |                  8 / 8 (100%) |
+| Low-score total | Within each score's allowed range |                  9 / 9 (100%) |
 
-All nine low-score records fall within their allowed human outcomes, but there is only one example of AI score 1 and eight of score 2. The main difference appears in the AI score 3 group. Of those 93 shots, 36 received two human stars and eight received three stars, fitting the rule. Another 32 were rejected and 17 received one star, outside the allowed range. The [aggregate data](/data/cull-swipe-rating-overlap-2026-10-27.json) provides the score-pair counts, allowed ranges and calculations.
+Five of these nine shots were rejected by the human and four received one star, all within their respective allowed ranges. The **low-score hit rate is 9 / 9 (100%)**: all nine low-score suggestions fit the human outcome, which does not mean all nine photos were rejects. The [aggregate data](/data/cull-swipe-rating-overlap-2026-10-27.json) provides the low-score pair counts, allowed ranges and calculations.
 
-In this retained sample, AI gives a score of 3 to some photos I would reject or rate at only one star. Those photos still need human review. The overall 52.0% measures whether human ratings fall within the allowed range; it is not exact-star agreement and cannot be converted directly into time saved while culling. These are personal-use records, with AI suggestions visible during rating, rather than a random or blinded evaluation. Unpaired photos are counted as neither correct nor incorrect AI decisions.
+A further read-only check at 13:59 Vancouver time on October 29 also included staged human ratings awaiting writeback to the photo directory. It deduplicated capture groups and gave staged updates priority. Both the staged-rating queue and the pending-clear queue were **empty**. There were still 371 delivered human ratings and 102 pairs with earlier AI scores. Including staged results therefore leaves the low-score sample at nine shots and its hit rate at 9 / 9.
+
+Only the low-score hit rate is discussed here. The high-score set contains many near-duplicate shots taken in quick succession. I may keep just one of several acceptable photos, so rejecting a duplicate does not directly imply poor quality in that individual shot. This evaluation therefore excludes the high-score group and reports no overall compatibility rate.
+
+There is only one example of AI score 1 and eight of score 2. This small sample does not establish that AI reliably narrows the culling workload more broadly, or quantify time saved. These are personal-use records with AI suggestions visible during rating, rather than a random or blinded evaluation. Unpaired photos are counted as neither correct nor incorrect AI decisions.
 
 The full photo workflow is still being connected. Import, ratings and some metadata processing have produced real results. Editing metadata round trips, final exports and visibility after publication still need verification across the whole workflow. There is also a plan to release Cull Swipe as an independent self-hosted application; Docker packaging, general configuration and a public alpha have yet to ship.
 
