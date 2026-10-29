@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1000" viewBox="0 0 1160 1000" role="img" aria-labelledby="title desc">
+<title id="title">Amanuensis · 全体アーキテクチャ</title><desc id="desc">独立した三つの package を利用側アプリケーションが接続</desc>
+<style>text{font-family:"Noto Sans CJK JP",sans-serif;fill:#172a3a;font-size:21px}.title{font-size:34px;font-weight:700}.head{font-size:25px;font-weight:600}.small{font-size:19px;fill:#425a6b}.mono{font-family:monospace;font-size:23px;fill:#126b70}.line{fill:none;stroke:#537d8a;stroke-width:3;marker-end:url(#arrow)}</style>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#537d8a"/></marker></defs>
+<rect width="1160" height="1000" fill="#f8fafb"/>
+<text x="40" y="65" class="title">Amanuensis · 全体アーキテクチャ</text>
+<text x="40" y="107" class="small">独立した三つの package を利用側アプリケーションが接続</text>
+<rect x="40" y="140" width="1080" height="100" rx="14" fill="#eaf2f6" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="181" class="head">digest アプリケーション</text>
+<text x="65" y="217" class="small">照会と変換 · 有効な判断と記録の関連付け · バージョンと独立スケジュール</text>
+<rect x="40" y="275" width="1080" height="95" rx="14" fill="#fff4df" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="314" class="head">T2 · 非公開ポリシーとコンテキスト</text>
+<text x="65" y="348" class="small">対象者の規則 · 実際のチャネル対応 · レビュー済みの修正</text>
+<path d="M580 370 V425" class="line" stroke-dasharray="8 7"/>
+<path d="M950 370 V425" class="line" stroke-dasharray="8 7"/>
+<rect x="40" y="430" width="340" height="205" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="62" y="474" class="head">収集 / gather</text>
+<text x="62" y="515" class="mono">ingest-kit</text>
+<text x="62" y="563" class="small">適応と正規化</text>
+<text x="62" y="600" class="small">カーソル · 同源の重複抑制</text>
+<path d="M210 635 V685" class="line"/>
+<rect x="40" y="690" width="340" height="85" rx="14" fill="#edf5f3" stroke="#b8cbd3" stroke-width="2"/>
+<text x="60" y="741" class="">記録 + 実行監査</text>
+<path d="M380 530 H408" class="line"/>
+<rect x="410" y="430" width="340" height="205" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="432" y="474" class="head">判断 / judge</text>
+<text x="432" y="515" class="mono">triage-kit</text>
+<text x="432" y="563" class="small">機密度でモデル経路を選択</text>
+<text x="432" y="600" class="small">1 項目 → 構造化した判断</text>
+<path d="M580 635 V685" class="line"/>
+<rect x="410" y="690" width="340" height="85" rx="14" fill="#edf5f3" stroke="#b8cbd3" stroke-width="2"/>
+<text x="430" y="741" class="">判断 + モデルの出所</text>
+<path d="M750 530 H778" class="line"/>
+<rect x="780" y="430" width="340" height="205" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="802" y="474" class="head">配信 / deliver</text>
+<text x="802" y="515" class="mono">push-kit</text>
+<text x="802" y="563" class="small">経路と二つの送信検査</text>
+<text x="802" y="600" class="small">digest-first · 窓ごとに配信</text>
+<path d="M950 635 V685" class="line"/>
+<rect x="780" y="690" width="340" height="85" rx="14" fill="#edf5f3" stroke="#b8cbd3" stroke-width="2"/>
+<text x="800" y="741" class="">キュー + 配信台帳</text>
+<rect x="40" y="825" width="1080" height="100" rx="14" fill="#eaf2f6" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="867" class="head">プラットフォーム内 · T0 engine + T1 defaults</text>
+<text x="65" y="901" class="small">仕組みと汎用の規則；個人の識別子や配信経路は利用側が管理</text>
+<text x="40" y="971" class="small">矢印はデータ依存を示す。各ストアは独立して照会でき、アプリがフィールドを変換する。</text>
+</svg>

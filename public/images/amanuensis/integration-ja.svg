@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1070" viewBox="0 0 1160 1070" role="img" aria-labelledby="title desc">
+<title id="title">情報統合 · 三つの層</title><desc id="desc">記録の共通化、判断、まとめ表示は異なる問題を扱う</desc>
+<style>text{font-family:"Noto Sans CJK JP",sans-serif;fill:#172a3a;font-size:21px}.title{font-size:34px;font-weight:700}.head{font-size:25px;font-weight:600}.small{font-size:19px;fill:#425a6b}.mono{font-family:monospace;font-size:23px;fill:#126b70}.line{fill:none;stroke:#537d8a;stroke-width:3;marker-end:url(#arrow)}</style>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#537d8a"/></marker></defs>
+<rect width="1160" height="1070" fill="#f8fafb"/>
+<text x="40" y="65" class="title">情報統合 · 三つの層</text>
+<text x="40" y="107" class="small">記録の共通化、判断、まとめ表示は異なる問題を扱う</text>
+<rect x="40" y="150" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="192" class="head">01 · 収集の統合</text>
+<text x="65" y="235" class="">変更メール + 古いニュースレター</text>
+<text x="65" y="274" class="">形を揃え、別々の記録を保持</text>
+<text x="65" y="311" class="small">source_id + external_id · 時刻 · 出所</text>
+<path d="M580 340 V380" class="line"/>
+<rect x="40" y="385" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="427" class="head">02 · 判断の統合</text>
+<text x="65" y="470" class="">各記録 + 規則 → 判断</text>
+<text x="65" y="509" class="">priority · audience · summary · entities</text>
+<text x="65" y="546" class="small">確立した経路は項目ごとのトリアージ</text>
+<path d="M580 575 V615" class="line"/>
+<rect x="40" y="620" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="662" class="head">03 · 表示の統合</text>
+<text x="65" y="705" class="">複数の判断 → 一つの配信時間帯</text>
+<text x="65" y="744" class="">並べ替え、索引、任意の概説</text>
+<text x="65" y="781" class="small">まとめ配信だけでは同一イベントにならない</text>
+<rect x="40" y="890" width="1080" height="135" rx="14" fill="#fff4df" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="936" class="head">拡張 · 情報源間のイベント照合、矛盾処理、現在の計画</text>
+<text x="65" y="984" class="small">追加実装と確認が必要；結合後も出所と機密度の制約を維持する</text>
+</svg>

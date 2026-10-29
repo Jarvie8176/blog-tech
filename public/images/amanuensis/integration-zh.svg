@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1070" viewBox="0 0 1160 1070" role="img" aria-labelledby="title desc">
+<title id="title">信息整合 · 三个不同的层次</title><desc id="desc">汇入一处、形成判断、集中呈现，各自解决不同问题</desc>
+<style>text{font-family:"Noto Sans CJK SC",sans-serif;fill:#172a3a;font-size:21px}.title{font-size:34px;font-weight:700}.head{font-size:25px;font-weight:600}.small{font-size:19px;fill:#425a6b}.mono{font-family:monospace;font-size:23px;fill:#126b70}.line{fill:none;stroke:#537d8a;stroke-width:3;marker-end:url(#arrow)}</style>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#537d8a"/></marker></defs>
+<rect width="1160" height="1070" fill="#f8fafb"/>
+<text x="40" y="65" class="title">信息整合 · 三个不同的层次</text>
+<text x="40" y="107" class="small">汇入一处、形成判断、集中呈现，各自解决不同问题</text>
+<rect x="40" y="150" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="192" class="head">01 · 采集整合</text>
+<text x="65" y="235" class="">改期邮件 + 旧版简报</text>
+<text x="65" y="274" class="">统一形状，保留两条独立记录</text>
+<text x="65" y="311" class="small">source_id + external_id · 时间 · 出处</text>
+<path d="M580 340 V380" class="line"/>
+<rect x="40" y="385" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="427" class="head">02 · 判断整合</text>
+<text x="65" y="470" class="">每条记录 + 规则 → 判断</text>
+<text x="65" y="509" class="">priority · audience · summary · entities</text>
+<text x="65" y="546" class="small">当前以逐条分诊为主</text>
+<path d="M580 575 V615" class="line"/>
+<rect x="40" y="620" width="1080" height="190" rx="14" fill="#ffffff" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="662" class="head">03 · 呈现整合</text>
+<text x="65" y="705" class="">多条有效判断 → 一个投递窗口</text>
+<text x="65" y="744" class="">排序、索引与可选概述</text>
+<text x="65" y="781" class="small">分组投递不等于同一事件合并</text>
+<rect x="40" y="890" width="1080" height="135" rx="14" fill="#fff4df" stroke="#b8cbd3" stroke-width="2"/>
+<text x="65" y="936" class="head">扩展方向 · 跨源事件识别、冲突处理、实时计划上下文</text>
+<text x="65" y="984" class="small">需要额外实现与验收；组合内容还要继承来源与敏感度约束</text>
+</svg>

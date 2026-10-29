@@ -22,6 +22,16 @@ Each architecture diagram has a 2320 × 1320 PNG and an editable SVG beside it. 
 
 Language links for articles are generated from real content entries. Each article displays both diagrams in its own language, without links to other language images. Preserve alt text and the conceptual-design caption. The first body mention of Yaaa links to its portfolio project page; introduce Amanuensis and link to its portfolio project page before using the component name in the progress table. Keep progress descriptions in plain language and preserve the October 25, 2026 evidence date until new evidence supports an update.
 
+## Amanuensis architecture article
+
+The three editions live at `src/content/posts/{zh,en,ja}/amanuensis.md`, sharing `translationKey: amanuensis-architecture`, category `Yaaa`, and the October 28, 2026 publication timestamp. Routes use the shared `amanuensis` slug. They link to their matching-language Yaaa introduction and appear on the existing Yaaa topic page. No separate topic registry entry is needed.
+
+Each edition embeds `architecture-<locale>.png` (2320 × 2000) and `integration-<locale>.png` (2320 × 2140) from `public/images/amanuensis/`, with links to editable SVG sources. These are static illustrations with localized labels and alt text; reading does not require JavaScript. Keyboard-focusable horizontal scroll regions keep labels readable on narrow screens. Keep the diagrams and their captions aligned with the prose and use `/images/` paths without a duplicated mount.
+
+The event update and older newsletter are fictional. Preserve the separation between within-source field-based deduplication, per-item triage, presentation batching, and future cross-source event matching. Live calendar/plan context is an extension requiring additional implementation, not a delivered consequence of a policy interface. Priority tiers do not directly fix delivery timing: the bundled route policy is digest-first, with explicit immediate-delivery opt-in. Neither priority nor `action_required` grants action permission.
+
+The mail pipeline has historical operation records; the article date is not renewed acceptance. Keep feedback design separate from verification of each capture/review/application connection. The policy tiers organize code and configuration, not a plugin sandbox; runtime data and logs still require controls. Delivery records do not prove exactly-once behavior across every external channel or task completion. General derived-sensitivity propagation remains an integration requirement beyond individual send gates. Private evidence notes, source records, endpoints, and repository identifiers stay outside this public repository.
+
 ## Session closeout article
 
 The Session closeout article belongs to Homelab Ops and lives at `src/content/posts/{zh,en,ja}/session-closeout.md`, with `translationKey: session-closeout-knowledge`. Public destinations are `/tech/posts/session-closeout/`, `/tech/en/posts/session-closeout/`, and `/tech/ja/posts/session-closeout/`. Each uses `/images/closeout/lifecycle-<language>.png`, a 2000 × 1720 PNG with an editable SVG beside it.

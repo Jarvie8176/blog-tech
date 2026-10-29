@@ -33,6 +33,8 @@ ChatGPT dots 可以结合对话、相关 ChatGPT 记忆和自身笔记持续推�
 
 [Amanuensis](https://portfolio.fnpg.me/projects/amanuensis/) 是 Yaaa 里负责信息分诊与提醒的子系统。它收集邮件等来源的信息，结合计划和上下文判断重要性，再决定立即提醒、汇总投递、安静保留或只记录不投递。它的推理和交互围绕信息分诊，不承担通用对话、长期记忆或修改日程等特权操作。
 
+关于三个 kit 的职责、策略分层和多源信息整合，见 [Amanuensis 专题](/posts/amanuensis/)。
+
 作品集的[示例流程](https://portfolio.fnpg.me/projects/amanuensis/walkthrough/)依据线上记录取样并为展示重建，展示从收集到分诊、投递检查和回执的过程。下表列出可用部分、未完成部分和最近一次记录日期。
 
 | 部分                   | 现在能做什么                                                 | 还缺什么                                                   | 最近记录               |

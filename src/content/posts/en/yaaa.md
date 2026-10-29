@@ -33,6 +33,8 @@ As of October 25, 2026, the email ingestion, triage, and digest delivery path wo
 
 [Amanuensis](https://portfolio.fnpg.me/projects/amanuensis/) is Yaaa's information-triage and attention-aware delivery subsystem. It gathers information from email and other sources, judges relevance against plans and context, and chooses immediate delivery, a digest, a quiet hold, or suppression with a record. Its reasoning and interactions stay within information triage; general-purpose conversation, long-term memory, and privileged actions such as changing a calendar stay outside its scope.
 
+For the three kits, policy tiers, and information integration, see the [Amanuensis architecture article](/en/posts/amanuensis/).
+
 The portfolio's [example walkthrough](https://portfolio.fnpg.me/projects/amanuensis/walkthrough/) uses records sampled and reconstructed from the live system for presentation, showing ingestion, triage, delivery checks, and receipts. The table separates what works from what remains, with the date of the latest record.
 
 | Area                                      | What works now                                                                                          | What remains                                                                                                   | Latest record               |

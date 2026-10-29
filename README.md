@@ -49,6 +49,8 @@ toc: true
 
 Yaaa 导读已包含完整中文稿、对应日英编辑译文及三语架构图。图片位于 `public/images/yaaa/`，PNG 用于正文显示，SVG 保留可编辑源；文章中的 `/images/` 链接由构建器统一加上 `/tech`。更新正文、译文和配图时参见 [内容维护](docs/content.md)。本地 LLM 调度、源版本校验、增量重译、语义检查与自动接受仍由 [epic #1](https://github.com/Jarvie8176/blog-tech/issues/1) 跟踪。
 
+Amanuensis 专题文章提供中文、英文和日文稿，沿总体架构、三个 kit 的职责与策略分层、采集/判断/呈现三层信息整合展开。文章位于 `src/content/posts/{zh,en,ja}/amanuensis.md`，归入 Yaaa 专题，每版配有总体架构和信息整合两张 PNG/SVG 静态图；实现记录与未来扩展范围分别说明。
+
 ## Homelab Ops 专题
 
 专题阅读顺序为：[01] 为什么要 Homelab → [02] 如何管理 Homelab → [03] homelab-ops what? → [04] Session closeout →《[05] PR review 太多了！》。各语言标题统一使用 `[NN]` 序号前缀。五篇均提供中、日、英版本。发布时间按这一内容顺序安排，列表仍按新到旧显示。
